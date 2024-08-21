@@ -1,0 +1,97 @@
+<!-- ฟอร์มเข้าสู่ระบบ -->
+<div class="card mx-auto my-4" style="max-width: 400px;">
+    <div class="card-body">
+      <h5 class="card-title text-center mb-4">{{ 'login.title' | translate }}</h5>
+      
+      <form *ngIf="!showRegister" [formGroup]="loginForm" (ngSubmit)="onLogin()">
+        <!-- ฟิลด์อีเมล -->
+        <div class="mb-3">
+          <label for="email" class="form-label">{{ 'login.email' | translate }}</label>
+          <input id="email" formControlName="email" type="email" class="form-control" 
+                 placeholder="{{ 'login.emailPlaceholder' | translate }}" required>
+          <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" class="invalid-feedback">
+            {{ 'login.invalidEmail' | translate }}
+          </div>
+        </div>
+  
+        <!-- ฟิลด์รหัสผ่าน -->
+        <div class="mb-3">
+          <label for="password" class="form-label">{{ 'login.password' | translate }}</label>
+          <div class="input-group">
+            <input id="password" [type]="hidePassword ? 'password' : 'text'" formControlName="password" 
+                   class="form-control" placeholder="{{ 'login.passwordPlaceholder' | translate }}" required>
+            <button class="btn btn-outline-secondary" type="button" (click)="togglePasswordVisibility()">
+              <i class="bi" [ngClass]="hidePassword ? 'bi-eye' : 'bi-eye-slash'"></i>
+            </button>
+          </div>
+          <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="invalid-feedback">
+            {{ 'login.invalidPassword' | translate }}
+          </div>
+        </div>
+  
+        <button class="btn btn-primary w-100" type="submit" [disabled]="loginForm.invalid">{{ 'login.loginButton' | translate }}</button>
+  
+        <div class="mt-3 text-center">
+          <button class="btn btn-link" type="button" (click)="toggleRegisterForm()">{{ 'login.registerButton' | translate }}</button>
+        </div>
+      </form>
+  
+      <!-- ฟอร์มสมัครสมาชิก -->
+      <form *ngIf="showRegister" [formGroup]="registerForm" (ngSubmit)="onRegister()">
+        <div class="mb-3">
+          <label for="firstName" class="form-label">{{ 'login.firstName' | translate }}</label>
+          <input id="firstName" formControlName="firstName" class="form-control" placeholder="{{ 'login.firstNamePlaceholder' | translate }}" required>
+          <div *ngIf="registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched" class="invalid-feedback">
+            {{ 'login.requiredField' | translate }}
+          </div>
+        </div>
+  
+        <div class="mb-3">
+          <label for="lastName" class="form-label">{{ 'login.lastName' | translate }}</label>
+          <input id="lastName" formControlName="lastName" class="form-control" placeholder="{{ 'login.lastNamePlaceholder' | translate }}" required>
+          <div *ngIf="registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched" class="invalid-feedback">
+            {{ 'login.requiredField' | translate }}
+          </div>
+        </div>
+  
+        <div class="mb-3">
+          <label for="phoneNumber" class="form-label">{{ 'login.phoneNumber' | translate }}</label>
+          <input id="phoneNumber" formControlName="phoneNumber" class="form-control" placeholder="{{ 'login.phoneNumberPlaceholder' | translate }}" required>
+          <div *ngIf="registerForm.get('phoneNumber')?.invalid && registerForm.get('phoneNumber')?.touched" class="invalid-feedback">
+            {{ 'login.invalidPhoneNumber' | translate }}
+          </div>
+        </div>
+  
+        <div class="mb-3">
+          <label for="email" class="form-label">{{ 'login.email' | translate }}</label>
+          <input id="email" formControlName="email" class="form-control" placeholder="{{ 'login.emailPlaceholder' | translate }}" required>
+          <div *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" class="invalid-feedback">
+            {{ 'login.invalidEmail' | translate }}
+          </div>
+        </div>
+  
+        <div class="mb-3">
+          <label for="password" class="form-label">{{ 'login.password' | translate }}</label>
+          <input id="password" formControlName="password" type="password" class="form-control" placeholder="{{ 'login.passwordPlaceholder' | translate }}" required>
+          <div *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" class="invalid-feedback">
+            {{ 'login.passwordMinLength' | translate }}
+          </div>
+        </div>
+  
+        <div class="mb-3">
+          <label for="confirmPassword" class="form-label">{{ 'login.confirmPassword' | translate }}</label>
+          <input id="confirmPassword" formControlName="confirmPassword" type="password" class="form-control" placeholder="{{ 'login.confirmPasswordPlaceholder' | translate }}" required>
+          <div *ngIf="registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched" class="invalid-feedback">
+            {{ 'login.passwordMismatch' | translate }}
+          </div>
+        </div>
+  
+        <button class="btn btn-primary w-100" type="submit" [disabled]="registerForm.invalid">{{ 'login.registerButton' | translate }}</button>
+  
+        <div class="mt-3 text-center">
+          <button class="btn btn-link" type="button" (click)="toggleRegisterForm()">{{ 'login.loginButton' | translate }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  

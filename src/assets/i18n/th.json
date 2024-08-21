@@ -1,0 +1,29 @@
+{
+    "WELCOME_MESSAGE": "ยินดีต้อนรับสู่แอปพลิเคชันของเรา!",
+    "login": {
+      "title": "เข้าสู่ระบบ",
+      "email": "อีเมล",
+      "emailPlaceholder": "กรุณากรอกอีเมล",
+      "password": "รหัสผ่าน",
+      "passwordPlaceholder": "กรุณากรอกรหัสผ่าน",
+      "loginButton": "เข้าสู่ระบบ",
+      "registerButton": "สมัครสมาชิก",
+      "invalidEmail": "กรุณากรอกอีเมลที่ถูกต้อง",
+      "invalidPassword": "กรุณากรอกรหัสผ่าน",
+      "registrationSuccess": "ลงทะเบียนสำเร็จ",
+      "registrationFailure": "การลงทะเบียนล้มเหลว กรุณาลองอีกครั้ง",
+      "emailExists": "อีเมลนี้มีอยู่แล้ว",
+      "passwordMismatch": "รหัสผ่านไม่ตรงกัน",
+      "requiredField": "กรุณากรอกข้อมูลให้ครบ",
+      "firstName": "ชื่อ",
+      "lastName": "นามสกุล",
+      "firstNamePlaceholder": "กรุณากรอกชื่อ",
+      "lastNamePlaceholder": "กรุณากรอกนามสกุล",
+      "phoneNumber": "เบอร์โทรศัพท์",
+      "phoneNumberPlaceholder": "กรุณากรอกเบอร์โทรศัพท์",
+      "confirmPassword": "ยืนยันรหัสผ่าน",
+      "confirmPasswordPlaceholder": "กรุณายืนยันรหัสผ่าน",
+      "passwordMinLength": "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร"
+    }
+  }
+  
