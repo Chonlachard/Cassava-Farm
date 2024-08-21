@@ -22,7 +22,8 @@
     "phoneNumberPlaceholder": "กรุณากรอกเบอร์โทรศัพท์",
     "confirmPassword": "ยืนยันรหัสผ่าน",
     "confirmPasswordPlaceholder": "กรุณายืนยันรหัสผ่าน",
-    "passwordMinLength": "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร"
+    "passwordMinLength": "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร",
+    "loginFailure": "เข้าสู่ระบบล้มเหลว กรุณาตรวจสอบอีเมลและรหัสผ่าน"
   },
   "navbar": {
     "title": "มันสำปะหลัง",

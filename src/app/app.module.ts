@@ -10,6 +10,7 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { LoginComponent } from './login/login.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NavbarComponent } from './navbar/navbar.component';
+import { DashbordComponent } from './dashbord/dashbord.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -20,6 +21,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     AppComponent,
     LoginComponent,
     NavbarComponent,
+    DashbordComponent,
    
   ],
   imports: [
