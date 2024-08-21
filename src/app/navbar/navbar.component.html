@@ -1,0 +1,56 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+    <div class="container-fluid">
+      <a class="navbar-brand fw-bold fs-3" href="#">{{ 'navbar.title' | translate }}</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" routerLink="/dashboard">{{ 'navbar.dashboard' | translate }}</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="#">{{ 'navbar.landInfo' | translate }}</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="#">{{ 'navbar.harvest' | translate }}</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="#">{{ 'navbar.expenses' | translate }}</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="#">{{ 'navbar.summary' | translate }}</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="#">{{ 'navbar.contact' | translate }}</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="#">{{ 'navbar.report' | translate }}</a>
+          </li>
+        </ul>
+        <div class="dropdown ms-3">
+            <a class="nav-link dropdown-toggle" href="#" role="button" id="languageMenu" data-bs-toggle="dropdown"
+              aria-expanded="false">
+              <i class="bi bi-globe"></i> {{ 'navbar.language' | translate }}
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageMenu">
+              <li><a class="dropdown-item" (click)="setLanguage('th')">{{ 'navbar.thai' | translate }}</a></li>
+              <li><a class="dropdown-item" (click)="setLanguage('en')">{{ 'navbar.english' | translate }}</a></li>
+            </ul>
+          </div>
+        <div class="dropdown ms-3">
+          <a class="nav-link dropdown-toggle" href="#" role="button" id="userMenu" data-bs-toggle="dropdown"
+            aria-expanded="false">
+            <i class="bi bi-person-circle"></i> {{ userName }}
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+            <li><a class="dropdown-item" routerLink="/profile">{{ 'navbar.profile' | translate }}</a></li>
+            <li><a class="dropdown-item" href="#" (click)="logout()">{{ 'navbar.logout' | translate }}</a></li>
+          </ul>
+        </div>
+        
+      </div>
+    </div>
+  </nav>
+  

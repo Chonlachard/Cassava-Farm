@@ -1,6 +1,5 @@
 {
-    "WELCOME_MESSAGE": "Welcome to our application!",
-    "login": {
+  "login": {
     "title": "Login",
     "email": "Email",
     "emailPlaceholder": "Please enter your email",
@@ -24,7 +23,20 @@
     "confirmPassword": "Confirm Password",
     "confirmPasswordPlaceholder": "Please confirm your password",
     "passwordMinLength": "Password must be at least 6 characters long"
+  },
+  "navbar": {
+    "title": "Cassava",
+    "dashboard": "Dashboard",
+    "landInfo": "Land Info",
+    "harvest": "Harvest",
+    "expenses": "Expenses",
+    "summary": "Summary",
+    "contact": "Contact Info",
+    "report": "Report",
+    "profile": "Profile",
+    "logout": "Logout",
+    "language": "Language",
+    "thai": "Thai",
+    "english": "English"
   }
 }
-
-  
