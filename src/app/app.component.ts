@@ -9,6 +9,20 @@ import { TranslateService } from '@ngx-translate/core';
 export class AppComponent {
   title = 'Cassava';
   constructor(private translate: TranslateService,) {}
+  ngOnInit() {
+    const savedLanguage = localStorage.getItem('language');
+    if (savedLanguage) {
+      this.translate.use(savedLanguage);
+    } else {
+      this.translate.setDefaultLang('en');
+      this.translate.use('en');
+    }
+  }
+
+  changeLanguage(lang: string) {
+    this.translate.use(lang);
+    localStorage.setItem('language', lang);
+  }
 
   public selectLanguage(language: string) {
     this.translate.use(language);

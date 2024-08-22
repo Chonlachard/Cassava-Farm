@@ -15,10 +15,7 @@ export class NavbarComponent implements OnInit {
     private navbarService: NavbarService,
     private translate: TranslateService
   ) {
-    // กำหนดภาษาหลักที่ต้องการ
-    this.translate.setDefaultLang('en');
-    // กำหนดภาษาเริ่มต้นเป็นภาษาอังกฤษ
-    this.translate.use('en');
+   
   }
 
   ngOnInit(): void {
@@ -64,7 +61,7 @@ export class NavbarComponent implements OnInit {
     console.log('Logging out');
   };
 
-  setLanguage(language: string) {
-    this.translate.use(language);
+  setLanguage(lang: string) {
+    this.translate.use(lang);
   }
 }
