@@ -26,6 +26,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { AddWorkerComponent } from './worker-contact/add-worker/add-worker.component';
+import { MatDialogModule } from '@angular/material/dialog';
 
 
 export function HttpLoaderFactory(http: HttpClient) {
@@ -40,6 +42,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     DashbordComponent,
     ProfileComponent,
     WorkerContactComponent,
+    AddWorkerComponent,
   ],
   imports: [
     BrowserModule,
@@ -64,7 +67,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     MatInputModule,
     MatButtonModule,
     MatIconModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatDialogModule
   ],
   providers: [
     provideClientHydration(),

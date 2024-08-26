@@ -1,0 +1,22 @@
+/* add-worker.component.css */
+
+.worker-form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .full-width {
+    width: 100%;
+    margin-bottom: 16px;
+  }
+  
+  .skills-group {
+    margin-bottom: 16px;
+  }
+  
+  .skills-checkboxes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  

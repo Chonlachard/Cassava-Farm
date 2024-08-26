@@ -3,8 +3,9 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { WorkerContactService } from './worker-contact.service';
-
-declare var bootstrap: any;
+import { AddWorkerComponent } from './add-worker/add-worker.component';
+import { MatDialog } from '@angular/material/dialog';
+import { Worker } from '../../interfaces/worker.model'; // นำเข้า Worker Interface จาก src/interfaces
 
 @Component({
   selector: 'app-worker-contact',
@@ -14,20 +15,23 @@ declare var bootstrap: any;
 export class WorkerContactComponent implements OnInit {
   displayedColumns: string[] = ['worker_id', 'worker_name', 'phone', 'skills', 'actions'];
   availableSkills: string[] = ['Skill1', 'Skill2', 'Skill3'];
-  dataSource = new MatTableDataSource<any>([]);
+  dataSource = new MatTableDataSource<Worker>([]);
   userId: string = '';
-  showForm: boolean = false;
-  selectedWorker: any;
-  newWorker = { worker_name: '', phone: '', skills: [] as string[] };
+  selectedWorker: Worker | null = null; // ใช้ Worker Interface
+  newWorker: Worker = { worker_name: '', phone: '', skills: [], user_id: 0 }; // กำหนด skills เป็น array of string
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private workerService: WorkerContactService) { }
+  constructor(
+    private workerService: WorkerContactService,
+    public dialog: MatDialog
+  ) {}
 
   ngOnInit(): void {
     this.userId = localStorage.getItem('user_id') || '';
     if (this.userId) {
+      this.newWorker.user_id = parseInt(this.userId, 10);
       this.loadWorkers();
     } else {
       console.error('User ID is not set in localStorage.');
@@ -37,7 +41,7 @@ export class WorkerContactComponent implements OnInit {
   loadWorkers(): void {
     if (this.userId) {
       this.workerService.getWorkers(this.userId).subscribe({
-        next: (data) => {
+        next: (data: Worker[]) => {
           this.dataSource.data = data;
           this.dataSource.paginator = this.paginator;
           this.dataSource.sort = this.sort;
@@ -52,11 +56,10 @@ export class WorkerContactComponent implements OnInit {
   addWorker(): void {
     if (this.newWorker.worker_name) {
       this.workerService.createWorker(this.newWorker).subscribe({
-        next: (response) => {
+        next: (response: Worker) => {
           console.log('Worker added:', response);
           this.resetNewWorker();
-          this.loadWorkers();
-          this.closeModal();
+          this.loadWorkers(); // รีเฟรชข้อมูลหลังจากเพิ่มพนักงาน
         },
         error: (err) => this.handleError(err)
       });
@@ -65,13 +68,12 @@ export class WorkerContactComponent implements OnInit {
     }
   }
 
-  updateWorker(id: number): void {
+  updateWorker(): void {
     if (this.selectedWorker) {
-      this.workerService.updateWorker(id, this.selectedWorker).subscribe({
-        next: (response) => {
+      this.workerService.updateWorker(this.selectedWorker.worker_id!, this.selectedWorker).subscribe({
+        next: (response: Worker) => {
           console.log('Worker updated:', response);
-          this.loadWorkers();
-          this.closeModal();
+          this.loadWorkers(); // รีเฟรชข้อมูลหลังจากอัปเดตพนักงาน
         },
         error: (err) => this.handleError(err)
       });
@@ -83,9 +85,9 @@ export class WorkerContactComponent implements OnInit {
   deleteWorker(id: number): void {
     if (this.userId) {
       this.workerService.deleteWorker(id, this.userId).subscribe({
-        next: (response) => {
-          console.log('Worker deleted:', response);
-          this.loadWorkers();
+        next: () => {
+          console.log('Worker deleted');
+          this.loadWorkers(); // รีเฟรชข้อมูลหลังจากลบพนักงาน
         },
         error: (err) => this.handleError(err)
       });
@@ -94,43 +96,24 @@ export class WorkerContactComponent implements OnInit {
     }
   }
 
-  editWorker(worker: any): void {
-    this.selectedWorker = { ...worker };
+  editWorker(worker: Worker): void {
+    this.selectedWorker = { ...worker }; // ทำการสำเนา Worker ที่เลือก
     this.newWorker = {
       worker_name: this.selectedWorker.worker_name,
       phone: this.selectedWorker.phone,
-      skills: this.selectedWorker.skills || []
+      skills: Array.isArray(this.selectedWorker.skills) ? this.selectedWorker.skills : [], // ตรวจสอบว่า skills เป็น array
+      user_id: this.newWorker.user_id // ใช้ user_id ปัจจุบัน
     };
-    this.toggleForm();
+    this.openAddWorkerDialog(); // ใช้ Angular Material Dialog เพื่อเปิดฟอร์มแก้ไข
   }
 
   resetNewWorker(): void {
-    this.newWorker = { worker_name: '', phone: '', skills: [] };
+    this.newWorker = { worker_name: '', phone: '', skills: [], user_id: parseInt(this.userId, 10) };
+    this.selectedWorker = null;
   }
 
   handleError(error: any): void {
     console.error('An error occurred:', error);
-  }
-
-  toggleForm(): void {
-    this.showForm = !this.showForm;
-    const modalElement = document.getElementById('addWorkerModal');
-    if (modalElement) {
-      const modal = new bootstrap.Modal(modalElement);
-      if (this.showForm) {
-        modal.show();
-      } else {
-        modal.hide();
-      }
-    }
-  }
-
-  closeModal(): void {
-    const modalElement = document.getElementById('addWorkerModal');
-    if (modalElement) {
-      const modal = new bootstrap.Modal(modalElement);
-      modal.hide();
-    }
   }
 
   applyFilter(event: Event): void {
@@ -142,10 +125,27 @@ export class WorkerContactComponent implements OnInit {
   }
 
   onSkillChange(event: any, skill: string): void {
-    if (event.checked) {
-      this.newWorker.skills.push(skill);
-    } else {
-      this.newWorker.skills = this.newWorker.skills.filter(s => s !== skill);
+    // ตรวจสอบว่า skills เป็น array ก่อนที่จะใช้ push หรือ filter
+    if (Array.isArray(this.newWorker.skills)) {
+      if (event.checked) {
+        this.newWorker.skills.push(skill);
+      } else {
+        this.newWorker.skills = this.newWorker.skills.filter(s => s !== skill);
+      }
     }
+  }
+
+  openAddWorkerDialog(): void {
+    const dialogRef = this.dialog.open(AddWorkerComponent, {
+      width: '500px',
+      disableClose: false,
+      hasBackdrop: true
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadWorkers(); // รีเฟรชข้อมูลเมื่อ dialog ปิดลง
+      }
+    });
   }
 }

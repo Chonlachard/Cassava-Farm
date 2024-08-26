@@ -4,6 +4,7 @@ import { LoginComponent } from './login/login.component';
 import { DashbordComponent } from './dashbord/dashbord.component';
 import { ProfileComponent } from './profile/profile.component';
 import { WorkerContactComponent } from './worker-contact/worker-contact.component';
+import { AddWorkerComponent } from './worker-contact/add-worker/add-worker.component';
 
 
 const routes: Routes = [
@@ -11,6 +12,7 @@ const routes: Routes = [
   {path:'dashboard',component:DashbordComponent},
   { path: 'profile', component: ProfileComponent },
   {path:'workerContact',component:WorkerContactComponent},
+  {path:'AddWorker',component:AddWorkerComponent},
   { path: '', redirectTo: '/login', pathMatch: 'full' },
 ];
 
