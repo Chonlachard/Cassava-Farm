@@ -19,7 +19,6 @@ export class NavbarComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    debugger
     // สมมุติว่า userId จะได้รับจากบริการหรือแหล่งข้อมูลอื่น ๆ
     const userId = this.getUserId(); // ใช้ฟังก์ชันเพื่อดึง userId ที่ได้รับจากการล็อกอิน
     console.log('User ID from localStorage:', userId);

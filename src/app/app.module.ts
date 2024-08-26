@@ -12,6 +12,21 @@ import { ProfileComponent } from './profile/profile.component';
 
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+
+
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
+import { WorkerContactComponent } from './worker-contact/worker-contact.component';
+import { MatCardModule } from '@angular/material/card';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -24,6 +39,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     NavbarComponent,
     DashbordComponent,
     ProfileComponent,
+    WorkerContactComponent,
   ],
   imports: [
     BrowserModule,
@@ -39,9 +55,20 @@ export function HttpLoaderFactory(http: HttpClient) {
       defaultLanguage: 'en'
     }),
     AppRoutingModule,
+    BrowserAnimationsModule, // จำเป็นสำหรับ Angular Material
+
+    MatTableModule,          // สำหรับแสดงตาราง
+    MatPaginatorModule,      // สำหรับแบ่งหน้าในตาราง
+    MatSortModule ,           // สำหรับจัดเรียงข้อมูลในตาราง
+    MatCardModule,
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule,
+    MatCheckboxModule
   ],
   providers: [
-    provideClientHydration()
+    provideClientHydration(),
+    provideAnimationsAsync()
   ],
   bootstrap: [AppComponent]
 })

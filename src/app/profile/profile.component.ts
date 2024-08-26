@@ -5,6 +5,8 @@ import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { TranslateService } from '@ngx-translate/core'; // Import TranslateService
 
+
+
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
@@ -15,6 +17,7 @@ export class ProfileComponent implements OnInit {
   newPassword: string = '';
   confirmPassword: string = '';
   userId: string = ''; // ดึง userId จาก local storage หรือบริการที่เกี่ยวข้อง
+  
 
   constructor(
     private fb: FormBuilder,
