@@ -7,7 +7,6 @@ import { TranslateService } from '@ngx-translate/core';
   styleUrl: './app.component.css'
 })
 export class AppComponent {
-  title = 'Cassava';
   constructor(private translate: TranslateService,) {}
   ngOnInit() {
     const savedLanguage = localStorage.getItem('language');

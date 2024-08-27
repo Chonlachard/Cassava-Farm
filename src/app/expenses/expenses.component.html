@@ -25,7 +25,9 @@
                     </div>
                     <!-- ปุ่มเพิ่มข้อมูล -->
                     <div class="col-md-3 d-flex justify-content-end align-items-end">
-                        <button type="button" class="btn btn-success w-50ห">เพิ่มข้อมูล</button>
+                        <button type="button" class="btn btn-success" (click)="openAddExpense()">
+                            เพิ่ม
+                        </button>
                     </div>
                 </div>
             </form>
@@ -49,7 +51,7 @@
                     <!-- คอลัมน์ Amount -->
                     <ng-container matColumnDef="amount">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header> จำนวนเงิน </th>
-                        <td mat-cell *matCellDef="let expense"> {{expense.amount | currency:'THB':'symbol':'1.2-2'}}
+                        <td mat-cell *matCellDef="let expense"> {{expense.amount }}
                         </td>
                     </ng-container>
 
@@ -63,10 +65,10 @@
                     <ng-container matColumnDef="actions">
                         <th mat-header-cell *matHeaderCellDef> การจัดการ </th>
                         <td mat-cell *matCellDef="let expense">
-                            <button mat-icon-button color="primary" (click)="editExpense()" matTooltip="แก้ไข">
+                            <button mat-icon-button color="primary" (click)="editExpense(expense.expense_id)" matTooltip="แก้ไข">
                                 <mat-icon>edit</mat-icon>
                             </button>
-                            <button mat-icon-button color="warn" (click)="deleteExpense()" matTooltip="ลบ">
+                            <button mat-icon-button color="warn" (click)="deleteExpense(expense.expense_id)" matTooltip="ลบ">
                                 <mat-icon>delete</mat-icon>
                             </button>
                         </td>

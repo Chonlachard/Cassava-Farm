@@ -10,6 +10,7 @@ import { NavbarComponent } from './navbar/navbar.component';
 import { DashbordComponent } from './dashbord/dashbord.component';
 import { ProfileComponent } from './profile/profile.component';
 import { ExpensesComponent } from './expenses/expenses.component';
+import { AddexpensesComponent } from './expenses/addexpenses/addexpenses.component';
 
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
@@ -24,6 +25,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -37,6 +40,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     DashbordComponent,
     ProfileComponent,
     ExpensesComponent,
+    AddexpensesComponent,
   ],
   imports: [
     BrowserModule,
@@ -61,7 +65,9 @@ export function HttpLoaderFactory(http: HttpClient) {
     MatButtonModule,
     MatIconModule,
     MatCheckboxModule,
-    MatDialogModule
+    MatDialogModule,
+    MatSelectModule,         // สำหรับ dropdown
+    MatFormFieldModule      // สำหรับ mat-form-field
   ],
   providers: [],
   bootstrap: [AppComponent]

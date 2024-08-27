@@ -4,6 +4,7 @@ import { LoginComponent } from './login/login.component';
 import { DashbordComponent } from './dashbord/dashbord.component';
 import { ProfileComponent } from './profile/profile.component';
 import { ExpensesComponent } from './expenses/expenses.component';
+import { AddexpensesComponent } from './expenses/addexpenses/addexpenses.component';
 
 
 const routes: Routes = [
@@ -11,6 +12,7 @@ const routes: Routes = [
   {path:'dashboard',component:DashbordComponent},
   { path: 'profile', component: ProfileComponent },
   { path: 'expenses', component: ExpensesComponent },
+  { path: 'addexpenses', component: AddexpensesComponent },
   { path: '', redirectTo: '/login', pathMatch: 'full' },
 ];
 

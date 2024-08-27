@@ -1,6 +1,5 @@
 const express = require('express');
-const cors = require('cors'); // นำเข้าแพ็กเกจ cors
-const bodyParser = require('body-parser');
+const cors = require('cors');
 const dataRoutes = require('./routes/dataRoutes'); // ใช้เส้นทาง dataRoutes
 
 const app = express();
@@ -9,11 +8,13 @@ const app = express();
 app.use(cors());
 
 // ใช้ bodyParser สำหรับการจัดการข้อมูล JSON
-app.use(bodyParser.json());
+app.use(express.json()); // ใช้ express.json() แทน bodyParser.json()
 
 // ใช้เส้นทางสำหรับการลงทะเบียนและการเข้าสู่ระบบ
-app.use('/api',  require('./routes/dataRoutes')); // ใช้ '/api' เป็นพื้นฐานสำหรับเส้นทาง
+app.use('/api', dataRoutes); // ใช้ '/api' เป็นพื้นฐานสำหรับเส้นทาง
 
-app.listen(3000, () => {
-    console.log('Server is running on port 3000');
+const PORT = process.env.PORT || 3000; // ใช้ตัวแปรสภาพแวดล้อมสำหรับพอร์ต
+
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });

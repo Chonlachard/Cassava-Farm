@@ -32,6 +32,17 @@ router.get('/getExpenses', expensesController.getExpense);
 
 router.post('/addExpenses', expensesController.addExpense);
 
+// ใช้ query parameter สำหรับลบค่าใช้จ่าย
+router.delete('/expenses/:expense_id', expensesController.deleteExpense);
+
+// อัพเดตข้อมูลค่าใช้จ่าย
+router.put('/editExpenses', expensesController.updateExpense);
+
+// Route สำหรับดึงข้อมูลตาม expense_id
+router.get('/getExpenseEdit/:expense_id', expensesController.getExpenseEdit);
+
+
+
 
 
 module.exports = router;
