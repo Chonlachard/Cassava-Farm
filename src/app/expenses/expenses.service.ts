@@ -36,7 +36,6 @@ export class ExpensesService {
 
 
   addExpense(expense: Expense): Observable<any> { 
-    debugger
     return this.http.post<any>(`${this.apiUrl}/addExpenses`, expense);
   }
 

@@ -132,10 +132,10 @@ exports.updateExpense = async (req, res) => {
         return res.status(404).json({ message: 'ไม่พบข้อมูลค่าใช้จ่าย' });
       }
   
-      // แปลงวันที่จาก yyyy-mm-dd เป็น dd-mm-yyyy
+      // แปลงวันที่
       const formattedResult = {
         ...results[0],
-        expense_date: moment(results[0].expense_date).format('DD-MM-YYYY')
+        expense_date: moment(results[0].expense_date).format('YYYY-MM-DD')
       };
   
       // ส่งผลลัพธ์กลับไปในรูปแบบ JSON
