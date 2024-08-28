@@ -110,4 +110,10 @@ export class ExpensesComponent implements OnInit, AfterViewInit {
       }
     });
   }
+
+  clearSearch(){
+    this.startDate = '';
+    this.endDate = '';
+    this.loadExpenses();
+  }
 }
