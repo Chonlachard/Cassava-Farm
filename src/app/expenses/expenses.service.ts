@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
@@ -35,7 +35,7 @@ export class ExpensesService {
   }
 
 
-  addExpense(expense: Expense): Observable<any> { 
+  addExpense(expense: Expense): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/addExpenses`, expense);
   }
 
@@ -50,5 +50,13 @@ export class ExpensesService {
   updateExpense(expense: any): Observable<any> {
     debugger
     return this.http.put(`${this.apiUrl}/editExpenses`, expense);
+  }
+  getExpensesByDateRange(userId: string, startDate: string, endDate: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/expenses/date-range`, {
+      params: new HttpParams()
+        .set('user_id', userId)
+        .set('startDate', startDate)  // ใช้ 'startDate' ตามที่ API คาดหวัง
+        .set('endDate', endDate)      // ใช้ 'endDate' ตามที่ API คาดหวัง
+    });
   }
 }

@@ -41,6 +41,9 @@ router.put('/editExpenses', expensesController.updateExpense);
 // Route สำหรับดึงข้อมูลตาม expense_id
 router.get('/getExpenseEdit/:expense_id', expensesController.getExpenseEdit);
 
+// เพิ่ม Route สำหรับการค้นหาข้อมูลตามช่วงวันที่
+router.get('/expenses/date-range', expensesController.getExpensesByDateRange);
+
 
 
 

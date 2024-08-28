@@ -1,21 +1,25 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 import { ExpensesService } from './expenses.service';
 import { MatDialog } from '@angular/material/dialog';
 import { AddexpensesComponent } from './addexpenses/addexpenses.component';
 import Swal from 'sweetalert2';
+import { FormBuilder } from '@angular/forms';
 
 @Component({
   selector: 'app-expenses',
   templateUrl: './expenses.component.html',
-  styleUrls: ['./expenses.component.css'] // แก้ไขเป็น styleUrls
+  styleUrls: ['./expenses.component.css']
 })
-export class ExpensesComponent implements OnInit {
-  displayedColumns: string[] = ['expense_date', 'category', 'amount', 'details', 'actions']; // ปรับให้ตรงกับการกำหนดคอลัมน์
-  expenses: any[] = []; // ปรับประเภทตามโมเดลข้อมูลของคุณ
+export class ExpensesComponent implements OnInit, AfterViewInit {
+  displayedColumns: string[] = ['expense_date', 'category', 'amount', 'details', 'actions'];
+  dataSource = new MatTableDataSource<any>([]);
+  
+  @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
 
-  startDate: string = ''; // สำหรับกรองข้อมูลตามวันที่เริ่มต้น
-  endDate: string = '';   // สำหรับกรองข้อมูลตามวันที่สิ้นสุด
+  startDate: string = '';
+  endDate: string = '';
   userId: string = '';
 
   constructor(
@@ -32,10 +36,31 @@ export class ExpensesComponent implements OnInit {
     }
   }
 
+  ngAfterViewInit() {
+    if (this.paginator) {
+      this.dataSource.paginator = this.paginator;
+    }
+  }
+
   loadExpenses() {
     this.expensesService.getExpenses(this.userId).subscribe((res: any) => {
-      this.expenses = res;
+      this.dataSource.data = res;
     });
+  }
+
+  onSearch() {
+    if (this.startDate && this.endDate) {
+      this.expensesService.getExpensesByDateRange(this.userId, this.startDate, this.endDate).subscribe((res: any) => {
+        this.dataSource.data = res;
+        if (this.paginator) {
+          this.dataSource.paginator = this.paginator;
+        }
+      }, (error) => {
+        Swal.fire('เกิดข้อผิดพลาด!', 'ไม่สามารถค้นหาข้อมูลได้.', 'error');
+      });
+    } else {
+      Swal.fire('กรุณาระบุช่วงวันที่ให้ครบถ้วน');
+    }
   }
 
   openAddExpense(expenseId?: number): void {
@@ -74,7 +99,7 @@ export class ExpensesComponent implements OnInit {
             'success'
           );
           // รีเฟรชข้อมูลหลังจากลบสำเร็จ
-          this.ngOnInit(); // เรียก ngOnInit เพื่อโหลดข้อมูลใหม่
+          this.loadExpenses(); // เรียก loadExpenses เพื่อโหลดข้อมูลใหม่
         }, (error) => {
           Swal.fire(
             'เกิดข้อผิดพลาด!',
@@ -84,9 +109,5 @@ export class ExpensesComponent implements OnInit {
         });
       }
     });
-  }
-
-  onSearch() {
-    // ฟังก์ชันค้นหาข้อมูล
   }
 }

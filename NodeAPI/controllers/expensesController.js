@@ -1,4 +1,4 @@
-const moment = require('moment'); 
+const moment = require('moment');
 const db = require('../config/db'); // ใช้ db สำหรับเชื่อมต่อฐานข้อมูล
 
 // ฟังก์ชันสำหรับดึงข้อมูลค่าใช้จ่าย
@@ -32,7 +32,7 @@ exports.getExpense = async (req, res) => {
 exports.addExpense = async (req, res) => {
     const { user_id, expense_date, category, amount, details } = req.body;
 
-    if (!user_id || !expense_date || !category || !amount ) {
+    if (!user_id || !expense_date || !category || !amount) {
         return res.status(400).json({ message: 'กรุณากรอกข้อมูลให้ครบถ้วน' });
     }
 
@@ -90,62 +90,102 @@ exports.deleteExpense = async (req, res) => {
 
 exports.updateExpense = async (req, res) => {
     const { expense_id, user_id, expense_date, category, amount, details } = req.body;
-  
-    try {
-      // ตรวจสอบข้อมูลที่มีอยู่
-      const [rows] = await db.promise().query('SELECT * FROM expenses WHERE expense_id = ?', [expense_id]);
-  
-      if (rows.length === 0) {
-        return res.status(404).json({ message: 'ไม่พบข้อมูลค่าใช้จ่าย' });
-      }
-  
-      // อัพเดตข้อมูล
-      await db.promise().query(
-        `UPDATE expenses SET user_id = ?, expense_date = ?, category = ?, amount = ?, details = ? WHERE expense_id = ?`,
-        [user_id, expense_date, category, amount, details, expense_id]
-      );
-  
-      res.status(200).json({ message: 'อัพเดตข้อมูลค่าใช้จ่ายสำเร็จ' });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'เกิดข้อผิดพลาดในการอัพเดตข้อมูลค่าใช้จ่าย', error });
-    }
-  };
 
-  exports.getExpenseEdit = async (req, res) => {
+    try {
+        // ตรวจสอบข้อมูลที่มีอยู่
+        const [rows] = await db.promise().query('SELECT * FROM expenses WHERE expense_id = ?', [expense_id]);
+
+        if (rows.length === 0) {
+            return res.status(404).json({ message: 'ไม่พบข้อมูลค่าใช้จ่าย' });
+        }
+
+        // อัพเดตข้อมูล
+        await db.promise().query(
+            `UPDATE expenses SET user_id = ?, expense_date = ?, category = ?, amount = ?, details = ? WHERE expense_id = ?`,
+            [user_id, expense_date, category, amount, details, expense_id]
+        );
+
+        res.status(200).json({ message: 'อัพเดตข้อมูลค่าใช้จ่ายสำเร็จ' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'เกิดข้อผิดพลาดในการอัพเดตข้อมูลค่าใช้จ่าย', error });
+    }
+};
+
+exports.getExpenseEdit = async (req, res) => {
     const expenseId = req.params.expense_id;
-  
+
     // ตรวจสอบว่ามีการส่ง expense_id มาหรือไม่
     if (!expenseId) {
-      return res.status(400).json({ message: 'กรุณาระบุ expense_id' });
+        return res.status(400).json({ message: 'กรุณาระบุ expense_id' });
     }
-  
+
     const query = 'SELECT * FROM expenses WHERE expense_id = ?';
     db.query(query, [expenseId], (err, results) => {
-      if (err) {
-        console.error('Error executing query:', err.stack);
-        return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการดึงข้อมูลค่าใช้จ่าย' });
-      }
-  
-      // ตรวจสอบว่าพบข้อมูลหรือไม่
-      if (results.length === 0) {
-        return res.status(404).json({ message: 'ไม่พบข้อมูลค่าใช้จ่าย' });
-      }
-  
-      // แปลงวันที่
-      const formattedResult = {
-        ...results[0],
-        expense_date: moment(results[0].expense_date).format('YYYY-MM-DD')
-      };
-  
-      // ส่งผลลัพธ์กลับไปในรูปแบบ JSON
-      res.json(formattedResult);
-    });
-  };
-  
+        if (err) {
+            console.error('Error executing query:', err.stack);
+            return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการดึงข้อมูลค่าใช้จ่าย' });
+        }
 
-  
-  
+        // ตรวจสอบว่าพบข้อมูลหรือไม่
+        if (results.length === 0) {
+            return res.status(404).json({ message: 'ไม่พบข้อมูลค่าใช้จ่าย' });
+        }
+
+        // แปลงวันที่
+        const formattedResult = {
+            ...results[0],
+            expense_date: moment(results[0].expense_date).format('YYYY-MM-DD')
+        };
+
+        // ส่งผลลัพธ์กลับไปในรูปแบบ JSON
+        res.json(formattedResult);
+    });
+};
+
+// ฟังก์ชันสำหรับดึงข้อมูลค่าใช้จ่ายตามช่วงวันที่
+exports.getExpensesByDateRange = async (req, res) => {
+    const userId = req.query.user_id;
+    const startDate = req.query.startDate;
+    const endDate = req.query.endDate;
+    console.log(userId, startDate, endDate);
+
+    // ตรวจสอบว่ามีการส่งข้อมูลที่จำเป็นมาหรือไม่
+    if (!userId || !startDate || !endDate) {
+        return res.status(400).json({ message: 'กรุณาระบุ user_id, startDate, และ endDate' });
+    }
+
+    // ตรวจสอบรูปแบบของวันที่
+    if (!moment(startDate, 'YYYY-MM-DD', true).isValid() || !moment(endDate, 'YYYY-MM-DD', true).isValid()) {
+        return res.status(400).json({ message: 'รูปแบบวันที่ไม่ถูกต้อง' });
+    }
+
+    const query = `
+        SELECT * FROM expenses 
+        WHERE user_id = ? 
+        AND expense_date BETWEEN ? AND ? 
+        ORDER BY expense_date ASC`;
+
+    db.query(query, [userId, startDate, endDate], (err, results) => {
+        if (err) {
+            console.error('Error executing query:', err.stack);
+            return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการดึงข้อมูลค่าใช้จ่าย' });
+        }
+
+        // แปลงวันที่ในผลลัพธ์ให้เป็นรูปแบบ dd-mm-yyyy
+        const formattedResults = results.map(expense => {
+            return {
+                ...expense,
+                expense_date: moment(expense.expense_date).format('DD-MM-YYYY') // แปลงรูปแบบวันที่
+            };
+        });
+
+        res.json(formattedResults);
+    });
+};
+
+
+
 
 
 
