@@ -27,6 +27,8 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { CassavaPlantedAreaComponent } from './cassava-planted-area/cassava-planted-area.component';
+import { AddPlantedAreaComponent } from './cassava-planted-area/add-planted-area/add-planted-area.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -41,6 +43,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     ProfileComponent,
     ExpensesComponent,
     AddexpensesComponent,
+    CassavaPlantedAreaComponent,
+    AddPlantedAreaComponent,
   ],
   imports: [
     BrowserModule,

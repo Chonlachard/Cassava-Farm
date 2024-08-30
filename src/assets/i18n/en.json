@@ -28,7 +28,7 @@
   "navbar": {
     "title": "Cassava",
     "dashboard": "Dashboard",
-    "landInfo": "Land Info",
+    "landInfo": "Cassava Planted Area",
     "harvest": "Harvest",
     "expenses": "Expenses",
     "summary": "Summary",

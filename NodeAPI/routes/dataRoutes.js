@@ -1,4 +1,8 @@
 const express = require('express');
+const multer = require('multer'); // นำเข้า multer
+const fs = require('fs'); // นำเข้า fs
+const path = require('path'); // นำเข้า path
+
 const router = express.Router();
 
 const registerController = require('../controllers/registerController');
@@ -7,7 +11,25 @@ const profileController = require('../controllers/profileController');
 const userController = require('../controllers/getUser');
 
 const expensesController = require('../controllers/expensesController');
+const plotController = require('../controllers/plotsController');
 
+// การตั้งค่า Multer
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        const uploadDir = 'public/uploads/';
+        if (!fs.existsSync(uploadDir)) {
+            fs.mkdirSync(uploadDir, { recursive: true });
+        }
+        cb(null, uploadDir);
+    },
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + path.extname(file.originalname));
+    }
+});
+const upload = multer({ storage: storage });
+
+// Route สำหรับการอัปโหลด plot
+router.post('/addplots', upload.single('image'), plotController.handlePlotUpload);
 
 // เส้นทางสำหรับการดึงข้อมูลผู้ใช้
 router.get('/user', userController.user);
@@ -17,7 +39,6 @@ router.post('/register', registerController.register);
 
 // เส้นทางสำหรับการเข้าสู่ระบบ
 router.post('/login', loginController.login);
-
 
 // ดึงข้อมูลโปรไฟล์โดยใช้ query parameters
 router.get('/profileuser', profileController.getProfile);
@@ -43,9 +64,5 @@ router.get('/getExpenseEdit/:expense_id', expensesController.getExpenseEdit);
 
 // เพิ่ม Route สำหรับการค้นหาข้อมูลตามช่วงวันที่
 router.get('/expenses/date-range', expensesController.getExpensesByDateRange);
-
-
-
-
 
 module.exports = router;
