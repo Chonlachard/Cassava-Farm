@@ -31,7 +31,7 @@ export class CassavaPlantedAreaComponent implements OnInit {
 
 
   ngOnInit(): void {
-    throw new Error('Method not implemented.');
+    const userId = localStorage.getItem('userId') || '';
   }
 
   deleted(){}

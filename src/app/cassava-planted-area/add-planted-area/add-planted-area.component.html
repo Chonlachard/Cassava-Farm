@@ -1,1 +1,81 @@
-<p>add-planted-area works!</p>
+<div class="container mt-3">
+    <!-- Form Section -->
+    <div class="plantedArea-form-container mt-3">
+        <div class="form-card">
+            <h1 class="form-title">เพิ่มพื้นที่</h1>
+            <form [formGroup]="plantedAreaForm" (ngSubmit)="onSubmit()">
+
+                <!-- Search and Action Buttons -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <input [(ngModel)]="searchQuery" class="form-control" placeholder="Search location" />
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-primary" (click)="onSearchPlace()">Search</button>
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-danger" (click)="onClearPolygon()">Clear All</button>
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-success" (click)="onCurrentLocation()">Current Location</button>
+                    </div>
+                </div>
+
+                <!-- Google Map -->
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <google-map
+                            [center]="mapCenter"
+                            [zoom]="zoom"
+                            height="600px"
+                            width="100%"
+                            (mapClick)="onPolygonEdit($event)"
+                            (dragstart)="onDragStart()"
+                            (dragend)="onDragEnd()"
+                            [class.grabbing]="isDragging"
+                            class="google-map">
+
+                            <map-marker *ngIf="currentLocationMarker" [position]="currentLocationMarker"></map-marker>
+                            <map-polygon [paths]="polygonCoords" [options]="polygonOptions"></map-polygon>
+                        </google-map>
+                    </div>
+                </div>
+
+                <!-- Polygon Coordinates and Area Information -->
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <h5>Polygon Coordinates:</h5>
+                        <ul>
+                            <li *ngFor="let coord of polygonCoords">Lat: {{coord.lat}}, Lng: {{coord.lng}}</li>
+                        </ul>
+                    </div>
+                    <div class="col-12">
+                        <h5>พื้นที่ทั้งหมด: {{areaInRai}} ไร่ {{areaInNgan}} งาน</h5>
+                    </div>
+                </div>
+
+                <!-- Displaying Selected Coordinates -->
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <p *ngFor="let marker of markers; let i = index">พิกัดหมุดที่ {{ i + 1 }}: {{ marker.getPosition()?.lat() }}, {{ marker.getPosition()?.lng() }}</p>
+                    </div>
+                </div>
+
+                <!-- Plot Name and Area Input Fields -->
+                <div class="form-field">
+                    <label for="plot_name"><i class="fas fa-calendar"></i> วันที่</label>
+                    <input type="date" id="plot_name" formControlName="plot_name">
+                </div>
+                <div class="form-field">
+                    <label for="area_rai"><i class="fas fa-calendar"></i> พื้นที่ (ไร่)</label>
+                    <input type="text" id="area_rai" formControlName="area_rai" [value]="areaInRai" readonly>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" [disabled]="!plantedAreaForm.valid" class="submit-button">
+                    <i class="fas fa-save"></i> บันทึก
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
