@@ -1,5 +1,6 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { catchError, Observable, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -8,9 +9,22 @@ export class CassavaAreaServiceService {
 
   private apiUrl = 'http://localhost:3000/api';
 
-  constructor(
-    private http: HttpClient
-  ) { }
+  constructor(private http: HttpClient) { }
 
-  getCassavaArea() {}
+  savePlantedArea(data: any): Observable<any> {
+    debugger
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json' // กำหนด content type เป็น JSON
+    });
+
+    return this.http.post<any>(`${this.apiUrl}/addplots`, data, { headers })
+      .pipe(
+        catchError(this.handleError) // การจัดการข้อผิดพลาด
+      );
+  }
+
+  private handleError(error: HttpErrorResponse): Observable<never> {
+    console.error('An error occurred:', error.message);
+    return throwError(() => new Error('เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์'));
+  }
 }
