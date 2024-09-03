@@ -1,21 +1,22 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { CassavaAreaServiceService } from './cassava-area-service.service';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2'; // นำเข้า SweetAlert2
+import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-cassava-planted-area',
   templateUrl: './cassava-planted-area.component.html',
-  styleUrls: ['./cassava-planted-area.component.css']  // แก้ไขจาก 'styleUrl' เป็น 'styleUrls'
+  styleUrls: ['./cassava-planted-area.component.css']
 })
+export class CassavaPlantedAreaComponent implements OnInit, AfterViewInit {
 
-export class CassavaPlantedAreaComponent implements OnInit {
-
-  dataSource = new MatTableDataSource<any>([]);
   displayedColumns: string[] = ['plot_name', 'area_rai', 'imageUrl', 'actions'];
+  dataSource = new MatTableDataSource<any>([]);
+  @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
 
   userId: string = '';
 
@@ -36,9 +37,14 @@ export class CassavaPlantedAreaComponent implements OnInit {
     }
   }
 
+  ngAfterViewInit(): void {
+    if (this.paginator) {
+      this.dataSource.paginator = this.paginator;
+    }
+  }
+
   // ฟังก์ชันลบข้อมูล
   deleted(plotId: string) {
-    debugger
     Swal.fire({
       title: 'ยืนยันการลบ?',
       text: 'คุณแน่ใจว่าต้องการลบข้อมูลนี้หรือไม่?',
@@ -78,11 +84,14 @@ export class CassavaPlantedAreaComponent implements OnInit {
   // ฟังก์ชันโหลดข้อมูล
   loadPlots() {
     this.cassavaAreaService.getCassavaArea(this.userId).subscribe((res: any) => {
-      // แปลง area_rai เป็นจำนวนเต็ม
       this.dataSource.data = res.map((item: any) => ({
         ...item,
         area_rai: Math.round(item.area_rai)
       }));
+      // ตรวจสอบว่า paginator ถูกตั้งค่าเรียบร้อยแล้ว
+      if (this.paginator) {
+        this.dataSource.paginator = this.paginator;
+      }
     });
   }
 
