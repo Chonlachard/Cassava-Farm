@@ -29,24 +29,19 @@
                         <div class="col-md-6">
                             <div class="btn-group w-100">
                                 <button type="button" class="btn btn-primary" (click)="onSearchPlace()">ค้นหา</button>
-                                <button type="button" class="btn btn-danger" (click)="onClearPolygon()">เคลียร์ทั้งหมด</button>
-                                <button type="button" class="btn btn-success" (click)="onCurrentLocation()">ตำแหน่งปัจจุบัน</button>
+                                <button type="button" class="btn btn-danger"
+                                    (click)="onClearPolygon()">เคลียร์ทั้งหมด</button>
+                                <button type="button" class="btn btn-success"
+                                    (click)="onCurrentLocation()">ตำแหน่งปัจจุบัน</button>
                             </div>
                         </div>
                     </div>
 
                     <!-- Google Map -->
                     <div class="mb-3" #mapContainer>
-                        <google-map
-                            [center]="mapCenter"
-                            [zoom]="zoom"
-                            height="500px"
-                            width="100%"
-                            (mapClick)="onPolygonEdit($event)"
-                            (dragstart)="onDragStart()"
-                            (dragend)="onDragEnd()"
-                            [class.grabbing]="isDragging"
-                            class="google-map">
+                        <google-map [center]="mapCenter" [zoom]="zoom" height="500px" width="100%"
+                            (mapClick)="onPolygonEdit($event)" (dragstart)="onDragStart()" (dragend)="onDragEnd()"
+                            [class.grabbing]="isDragging" class="google-map">
                             <map-marker *ngIf="currentLocationMarker" [position]="currentLocationMarker"></map-marker>
                             <map-polygon [paths]="polygonCoords" [options]="polygonOptions"></map-polygon>
                         </google-map>
@@ -62,7 +57,8 @@
 
                     <!-- Displaying Selected Coordinates -->
                     <div class="mb-3">
-                        <p *ngFor="let marker of markers; let i = index">พิกัดหมุดที่ {{ i + 1 }}: {{ marker.getPosition()?.lat() }}, {{ marker.getPosition()?.lng() }}</p>
+                        <p *ngFor="let marker of markers; let i = index">พิกัดหมุดที่ {{ i + 1 }}: {{
+                            marker.getPosition()?.lat() }}, {{ marker.getPosition()?.lng() }}</p>
                     </div>
 
                     <!-- Submit Button -->

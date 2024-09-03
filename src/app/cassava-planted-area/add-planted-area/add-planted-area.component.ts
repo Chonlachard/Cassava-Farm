@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MapGeocoder } from '@angular/google-maps';
 import Swal from 'sweetalert2';
 import { CassavaAreaServiceService } from '../cassava-area-service.service';
-import html2canvas from 'html2canvas';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-add-planted-area',
@@ -34,11 +34,13 @@ export class AddPlantedAreaComponent implements OnInit {
   markers: google.maps.Marker[] = [];
   userId: string = '';
   existingPlotNames: string[] = [];
+  private staticMapsApiUrl = 'https://maps.googleapis.com/maps/api/staticmap';
 
   constructor(
     private fb: FormBuilder,
     private geocoder: MapGeocoder,
-    private plantedAreaService: CassavaAreaServiceService
+    private plantedAreaService: CassavaAreaServiceService,
+    private http: HttpClient
   ) {
     this.plantedAreaForm = this.fb.group({
       plot_name: [{ value: '', disabled: false }, Validators.required],
@@ -50,6 +52,29 @@ export class AddPlantedAreaComponent implements OnInit {
   ngOnInit(): void {
     this.userId = localStorage.getItem('userId') || '';
     this.generatePlotName();
+    this.initializeMap();
+  }
+
+  initializeMap(): void {
+    const mapOptions: google.maps.MapOptions = {
+      center: this.mapCenter,
+      zoom: this.zoom,
+      scrollwheel: false, // ปิดการซูมด้วย Scroll Wheel
+      zoomControl: true, // เปิดปุ่มซูม
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+
+    const map = new google.maps.Map(this.mapContainer.nativeElement, mapOptions);
+
+    // การสร้าง Polygon บนแผนที่
+    const polygon = new google.maps.Polygon(this.polygonOptions);
+    polygon.setMap(map);
+
+    // กำหนด listener สำหรับการแก้ไข polygon
+    google.maps.event.addListener(polygon, 'paths_changed', () => {
+      this.polygonCoords = polygon.getPath().getArray().map(latLng => latLng.toJSON());
+      this.calculateArea();
+    });
   }
 
   onPolygonEdit(event: google.maps.MapMouseEvent): void {
@@ -80,6 +105,7 @@ export class AddPlantedAreaComponent implements OnInit {
       if (result.results.length > 0) {
         this.mapCenter = result.results[0].geometry.location.toJSON();
         this.zoom = 15;
+        this.initializeMap(); // รีเซ็ตแผนที่เมื่อค้นหาสถานที่
       } else {
         this.showErrorAlert('ไม่พบสถานที่ตามที่ค้นหา');
       }
@@ -98,21 +124,21 @@ export class AddPlantedAreaComponent implements OnInit {
       this.showErrorAlert('กรุณากรอกข้อมูลให้ครบถ้วน');
       return;
     }
-
-    this.captureMapScreenshot().then((screenshotBase64) => {
+  
+    const latLng = new google.maps.LatLng(this.mapCenter.lat, this.mapCenter.lng);
+  
+    this.captureMapImage(latLng).then((imageUrl) => {
       const plotName = this.plantedAreaForm.get('plot_name')?.value || 'default-plot-name';
-
-      // สร้างชื่อไฟล์ที่ไม่ซ้ำกันโดยการเพิ่ม timestamp
       const timestamp = new Date().toISOString();
       const fileName = `${plotName}-${timestamp}.png`;
-
+  
       const data = {
         plot_name: plotName,
         latlngs: this.polygonCoords,
         user_id: this.userId,
-        fileData: `data:image/png;base64,${screenshotBase64}` // ส่ง Base64 string แทน Blob
+        fileData: imageUrl // ส่ง URL ของภาพแผนที่
       };
-
+  
       this.plantedAreaService.savePlantedArea(data).subscribe(
         response => {
           Swal.fire({
@@ -130,8 +156,8 @@ export class AddPlantedAreaComponent implements OnInit {
         }
       );
     }).catch(error => {
-      console.error('Error capturing screenshot:', error);
-      this.showErrorAlert('ไม่สามารถจับภาพหน้าจอได้');
+      console.error('Error capturing image:', error);
+      this.showErrorAlert('ไม่สามารถจับภาพแผนที่ได้');
     });
   }
   
@@ -149,6 +175,7 @@ export class AddPlantedAreaComponent implements OnInit {
           };
           this.zoom = 15;
           this.currentLocationMarker = this.mapCenter;
+          this.initializeMap(); // รีเซ็ตแผนที่เมื่อเปลี่ยนตำแหน่งปัจจุบัน
         },
         (error) => {
           console.error('Error getting current location', error);
@@ -199,12 +226,29 @@ export class AddPlantedAreaComponent implements OnInit {
     });
   }
 
-  private captureMapScreenshot(): Promise<string> {
-    return html2canvas(this.mapContainer.nativeElement).then(canvas => {
-      return canvas.toDataURL('image/png').split(',')[1]; // ส่งเฉพาะ Base64 ส่วนที่เป็นข้อมูล
-    }).catch(error => {
-      console.error('Error capturing screenshot:', error);
-      return '';
+  private captureMapImage(location: google.maps.LatLng): Promise<string> {
+    const lat = location.lat();
+    const lng = location.lng();
+    const zoom = this.zoom;
+    const imageSize = '1024x1024';
+    const mapType = 'satellite';
+    const scale = 2;
+
+    const mapImageUrl = `${this.staticMapsApiUrl}?center=${lat},${lng}&zoom=${zoom}&size=${imageSize}&maptype=${mapType}&scale=${scale}&markers=color:red%7Clabel:A%7C${lat},${lng}&key=AIzaSyA7tIt3Mr5T3bR9d4Po2K7QX3yyygHc-fI&callback=initMap`;
+
+    return new Promise((resolve, reject) => {
+        this.http.get(mapImageUrl, { responseType: 'blob' }).subscribe(
+            (blob: Blob) => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    const base64data = (reader.result as string).split(',')[1];
+                    resolve(`data:image/png;base64,${base64data}`);
+                };
+                reader.readAsDataURL(blob);
+            },
+            error => reject(error)
+        );
     });
-  }
+}
+
 }

@@ -7,8 +7,11 @@ const app = express();
 // เปิดใช้งาน CORS
 app.use(cors());
 
-// ใช้ bodyParser สำหรับการจัดการข้อมูล JSON
-app.use(express.json()); // ใช้ express.json() แทน bodyParser.json()
+// ใช้ express.json() กับ limit เพื่อกำหนดขนาดสูงสุดของ payload
+app.use(express.json({ limit: '10mb' })); // ปรับขนาดสูงสุดตามที่คุณต้องการ
+
+// ใช้ express.urlencoded() กับ limit เพื่อกำหนดขนาดสูงสุดของ form-data (ถ้าจำเป็น)
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
 // ใช้เส้นทางสำหรับการลงทะเบียนและการเข้าสู่ระบบ
 app.use('/api', dataRoutes); // ใช้ '/api' เป็นพื้นฐานสำหรับเส้นทาง
