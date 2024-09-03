@@ -33,6 +33,10 @@ export class CassavaAreaServiceService {
     return this.http.get(`${this.apiUrl}/getplots?user_id=${userId}`);
   }
 
+  // ฟังก์ชันลบข้อมูล
+  deletePlot(plotId: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/deleteplot/${plotId}`);
+  }
 
 
 

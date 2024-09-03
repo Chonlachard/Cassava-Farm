@@ -35,6 +35,9 @@ router.post('/addplots', upload.single('image'), plotController.handlePlotUpload
 // Route สำหรับการดึงข้อมูล plot
 router.get('/getplots',  getPlotController.getPlots);
 
+// Route สำหรับการลบ plot
+router.delete('/deleteplot/:plot_id', getPlotController.deletePlot);
+
 // เส้นทางสำหรับการดึงข้อมูลผู้ใช้
 router.get('/user', userController.user);
 
