@@ -19,6 +19,27 @@ function calculateAreaRai(latlngs) {
     return area / 1600; // แปลงเป็นไร่
 }
 
+exports.getPlots = async (req, res) => {
+    const userId = req.query.user_id;
+
+    // ตรวจสอบว่ามีการส่ง user_id มาหรือไม่
+    if (!userId) {
+        return res.status(400).json({ message: 'กรุณาระบุ user_id' });
+    }
+
+    const query = 'SELECT plot_name , area_rai , image_path FROM plots a LEFT JOIN plot_locations b on a.plot_id = b.plot_id  WHERE user_id = ?';
+    db.query(query, [userId], (err, results) => {
+        if (err) {
+            console.error('Error executing query:', err.stack);
+            return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการดึงข้อมูลแปลง' });
+        }
+        // ส่งผลลัพธ์กลับไปในรูปแบบ JSON
+        res.json(results);
+    });
+
+};
+
+
 // ฟังก์ชันจัดการการอัปโหลด plot
 async function handlePlotUpload(req, res) {
     const { user_id, plot_name, latlngs, fileData } = req.body;
@@ -92,3 +113,5 @@ async function handlePlotUpload(req, res) {
 }
 
 module.exports = { handlePlotUpload };
+
+

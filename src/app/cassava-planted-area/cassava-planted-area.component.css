@@ -77,3 +77,31 @@
   .mat-paginator {
     background-color: transparent;
   }
+
+
+  .plantedArea-table th.mat-header-cell,
+.plantedArea-table td.mat-cell {
+  white-space: nowrap; /* ป้องกันการตัดบรรทัด */
+}
+
+.plantedArea-table th.plot-name,
+.plantedArea-table td.plot-name {
+  width: 25%; /* กำหนดความกว้างของคอลัมน์ชื่อแปลง */
+}
+
+.plantedArea-table th.area-rai,
+.plantedArea-table td.area-rai {
+  width: 15%; /* กำหนดความกว้างของคอลัมน์ขนาด */
+}
+
+.plantedArea-table th.imageUrl,
+.plantedArea-table td.imageUrl {
+  width: 20%; /* กำหนดความกว้างของคอลัมน์รูปภาพ */
+  text-align: center; /* จัดกลางภาพ */
+}
+
+.plantedArea-table th.actions,
+.plantedArea-table td.actions {
+  width: 20%; /* กำหนดความกว้างของคอลัมน์การจัดการ */
+  text-align: center; /* จัดกลางปุ่ม */
+}

@@ -12,6 +12,7 @@ const userController = require('../controllers/getUser');
 
 const expensesController = require('../controllers/expensesController');
 const plotController = require('../controllers/plotsController');
+const getPlotController = require('../controllers/getPlotController');
 
 // การตั้งค่า Multer
 const storage = multer.diskStorage({
@@ -30,6 +31,9 @@ const upload = multer({ storage: storage });
 
 // Route สำหรับการอัปโหลด plot
 router.post('/addplots', upload.single('image'), plotController.handlePlotUpload);
+
+// Route สำหรับการดึงข้อมูล plot
+router.get('/getplots',  getPlotController.getPlots);
 
 // เส้นทางสำหรับการดึงข้อมูลผู้ใช้
 router.get('/user', userController.user);

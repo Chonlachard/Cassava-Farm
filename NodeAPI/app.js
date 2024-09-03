@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const dataRoutes = require('./routes/dataRoutes'); // ใช้เส้นทาง dataRoutes
 
 const app = express();
@@ -15,6 +16,12 @@ app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
 // ใช้เส้นทางสำหรับการลงทะเบียนและการเข้าสู่ระบบ
 app.use('/api', dataRoutes); // ใช้ '/api' เป็นพื้นฐานสำหรับเส้นทาง
+
+// เส้นทางสำหรับไฟล์ static (เช่น รูปภาพ, CSS, JS)
+app.use(express.static(path.join(__dirname, 'public'))); // เส้นทางสำหรับไฟล์ static
+
+// เส้นทางสำหรับไฟล์ที่อัปโหลด
+app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // เส้นทางสำหรับไฟล์ที่อัปโหลด
 
 const PORT = process.env.PORT || 3000; // ใช้ตัวแปรสภาพแวดล้อมสำหรับพอร์ต
 

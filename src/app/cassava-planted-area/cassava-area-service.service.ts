@@ -26,5 +26,14 @@ export class CassavaAreaServiceService {
   private handleError(error: HttpErrorResponse): Observable<never> {
     console.error('An error occurred:', error.message);
     return throwError(() => new Error('เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์'));
+
   }
+
+  getCassavaArea(userId: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/getplots?user_id=${userId}`);
+  }
+
+
+
+
 }

@@ -1,26 +1,22 @@
 import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { AddexpensesComponent } from '../expenses/addexpenses/addexpenses.component';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { CassavaAreaServiceService } from './cassava-area-service.service';
-import { AddPlantedAreaComponent } from './add-planted-area/add-planted-area.component';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-cassava-planted-area',
   templateUrl: './cassava-planted-area.component.html',
-  styleUrl: './cassava-planted-area.component.css'
+  styleUrls: ['./cassava-planted-area.component.css']  // แก้ไขจาก 'styleUrl' เป็น 'styleUrls'
 })
-
-
-
 
 export class CassavaPlantedAreaComponent implements OnInit {
 
   dataSource = new MatTableDataSource<any>([]);
-  displayedColumns: string[] = ['plot_name', 'area','image', 'actions'];
+  displayedColumns: string[] = ['plot_name', 'area_rai', 'imageUrl', 'actions'];
 
+  userId: string = '';
 
   constructor(
     private fb: FormBuilder,
@@ -29,33 +25,43 @@ export class CassavaPlantedAreaComponent implements OnInit {
     private router: Router
   ) { }
 
-
   ngOnInit(): void {
-    const userId = localStorage.getItem('userId') || '';
+    this.userId = localStorage.getItem('userId') || '';
+
+    if (this.userId) {
+      this.loadExpenses();
+    } else {
+      console.error('ไม่พบรหัสผู้ใช้');
+    }
   }
 
-  deleted(){}
-  edit(){}
-  loadExpenses(){
-    // this.cassavaAreaService.getCassavaArea().subscribe((res: any) => {
-    //   this.dataSource.data = res;
-    // }
+  deleted() {
+    // ติดตั้งฟังก์ชันลบที่นี่
   }
-  openAdd(){
+
+  edit() {
+    // ติดตั้งฟังก์ชันแก้ไขที่นี่
+  }
+
+  loadExpenses() {
+    this.cassavaAreaService.getCassavaArea(this.userId).subscribe((res: any) => {
+      // แปลง area_rai เป็นจำนวนเต็ม
+      this.dataSource.data = res.map((item: any) => ({
+        ...item,
+        area_rai: Math.round(item.area_rai)
+      }));
+    });
+  }
+
+  openAdd() {
     this.router.navigate(['/addPlantedArea']);
   }
-  // openAdd(expenseId?: number): void {
-  //   const dialogRef = this.dialog.open(AddPlantedAreaComponent, {
-  //     width: '600px',
-  //     data: expenseId ? { id: expenseId } : {}
-  //   });
 
-  //   dialogRef.afterClosed().subscribe(result => {
-  //     if (result) {
-  //       this.loadExpenses(); // รีเฟรชรายการหลังจากเพิ่ม/แก้ไขรายจ่ายใหม่
-  //     }
-  //   });
-  // }
-  onSearch(){}
-  viewDetails(){}
+  onSearch() {
+    // ติดตั้งฟังก์ชันค้นหาที่นี่
+  }
+
+  viewDetails() {
+    // ติดตั้งฟังก์ชันดูรายละเอียดที่นี่
+  }
 }
