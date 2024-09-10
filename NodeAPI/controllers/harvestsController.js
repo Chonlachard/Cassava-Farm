@@ -80,3 +80,25 @@ exports.getHarvests = async (req, res) => {
     }
 };
 
+exports.getSerch = (req, res) => {
+    const userId = req.query.user_id;
+
+    // ตรวจสอบว่ามีการส่ง user_id มาหรือไม่
+    if (!userId) {
+        return res.status(400).json({ message: 'กรุณาระบุ user_id' });
+    }
+
+    // คำสั่ง SQL สำหรับดึง plot_id และ plot_name โดยใช้ user_id
+    const query = 'SELECT plot_id as value, plot_name as text FROM plots WHERE user_id = ?';
+
+    // ทำการ query ฐานข้อมูล
+    db.query(query, [userId], (err, results) => {
+        if (err) {
+            console.error('Error executing query:', err.stack);
+            return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการดึงข้อมูลแปลง' });
+        }
+
+        // ส่งผลลัพธ์ในรูปแบบ JSON
+        res.json(results);
+    });
+};

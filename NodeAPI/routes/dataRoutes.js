@@ -35,6 +35,7 @@ router.post('/addharvest', harvestController.addHarvest);
 
 // เส้นทางสำหรับดึงข้อมูลการเก็บเกี่ยว
 router.get('/getharvests', harvestController.getHarvests);
+router.get('/getSerch', harvestController.getSerch);
 
 // Route สำหรับการอัปโหลด plot
 router.post('/addplots', upload.single('image'), plotController.handlePlotUpload);

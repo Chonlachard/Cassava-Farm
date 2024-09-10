@@ -1,0 +1,100 @@
+<app-navbar></app-navbar>
+<div class="container mt-4">
+    <mat-card class="harvests-card">
+        <mat-card-header>
+            <mat-card-title>การเก็บเกี่ยว</mat-card-title>
+        </mat-card-header>
+        <div class="container mt-4">
+            <form [formGroup]="searchForm" (ngSubmit)="onSearch()">
+                <div class="row align-items-end">
+                    <!-- Dropdown สำหรับการค้นหา -->
+                    <div class="col-md-5">
+                        <div class="form-group">
+                            <select formControlName="plot" id="plot" class="form-control">
+                                <option value="" disabled hidden>ค้นหาตามแปลง</option>
+                                <option *ngFor="let plot of plots" [value]="plot.value">{{ plot.text }}</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- ปุ่มค้นหา และ ปุ่มเคลียร์ -->
+                    <div class="col-md-5 d-flex align-items-end gap-2">
+                        <button type="submit" class="btn btn-primary w-50" [disabled]="!searchForm.valid">ค้นหา</button>
+                        <button type="button" class="btn btn-secondary w-50" (click)="clearSearch()">เคลียร์</button>
+                    </div>
+
+                    <!-- ปุ่มเพิ่มข้อมูล -->
+                    <div class="col-md-2 d-flex justify-content-end align-items-end">
+                        <button type="button" class="btn btn-success" (click)="openAdd()">เพิ่ม</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+
+
+        <mat-card-content>
+            <div class="table-container">
+                <table mat-table [dataSource]="dataSource" matSort class="harvests-table">
+                    <!-- คอลัมน์ Date -->
+                    <ng-container matColumnDef="harvest_date">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> วันที่ </th>
+                        <td mat-cell *matCellDef="let harvest">
+                            {{ harvest.harvest_date | date:'dd/MM/yyyy' }}
+                        </td>
+                    </ng-container>
+                    <!-- คอลัมน์ ชื่อแปลง -->
+                    <ng-container matColumnDef="plot_name">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> ชื่อแปลง </th>
+                        <td mat-cell *matCellDef="let harvest"> {{harvest.plot_name}} </td>
+                    </ng-container>
+                    <!-- คอลัมน์ บริษัทที่ขาย-->
+                    <ng-container matColumnDef="company_name">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> ชื่อบริษัทที่ขาย </th>
+                        <td mat-cell *matCellDef="let harvest"> {{harvest.company_name}} </td>
+                    </ng-container>
+                    <!-- คอลัมน์ น้ำหนักสุทธิ-->
+                    <ng-container matColumnDef="net_weight_kg">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> น้ำหนักสุทธิ </th>
+                        <td mat-cell *matCellDef="let harvest"> {{harvest.net_weight_kg}} </td>
+                    </ng-container>
+                    <!-- คอลัมน์ เปอร์เซ็นต์แป้ง-->
+                    <ng-container matColumnDef="starch_percentage">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> เปอร์เซ็นต์แป้ง </th>
+                        <td mat-cell *matCellDef="let harvest"> {{harvest.starch_percentage}} </td>
+                    </ng-container>
+                    <!-- คอลัมน์ ราคาขาย-->
+                    <ng-container matColumnDef="amount">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> ราคา </th>
+                        <td mat-cell *matCellDef="let harvest"> {{harvest.amount}} </td>
+                    </ng-container>
+                    <!-- คอลัมน์ Actions -->
+                    <ng-container matColumnDef="actions">
+                        <th mat-header-cell *matHeaderCellDef> การจัดการ </th>
+                        <td mat-cell *matCellDef="let expense">
+                            <button mat-icon-button color="primary" (click)="Edit()" matTooltip="แก้ไข">
+                                <mat-icon>edit</mat-icon>
+                            </button>
+                            <button mat-icon-button color="warn" (click)="Delete()" matTooltip="ลบ">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                        </td>
+                    </ng-container>
+
+                    <!-- แถวของตาราง -->
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+                </table>
+            </div>
+
+            <!-- ไม่มีข้อมูล -->
+            <div *ngIf="dataSource.data.length === 0" class="no-data">
+                <mat-icon>info</mat-icon>
+                <p>ไม่พบข้อมูลค่าใช้จ่าย</p>
+            </div>
+
+            <!-- Paginator -->
+            <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
+        </mat-card-content>
+    </mat-card>
+</div>
