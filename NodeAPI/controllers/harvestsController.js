@@ -48,3 +48,35 @@ exports.addHarvest = function (req, res) {
         });
     });
 };
+
+exports.getHarvests = async (req, res) => {
+    const userId = req.query.user_id;
+
+    if (!userId) {
+        return res.status(400).json({ message: 'กรุณาระบุ user_id' });
+    }
+
+    try {
+        const query = `
+            SELECT a.harvest_date,b.plot_name,a.company_name,a.net_weight_kg,a.starch_percentage,a.amount
+            FROM harvests a
+            LEFT JOIN plots b ON a.plot_id = b.plot_id
+            WHERE a.user_id = ?
+            ORDER BY a.harvest_date DESC`;
+
+        db.query(query, [userId], (err, results) => {
+            if (err) {
+                console.error('Error executing query:', err.stack);
+                return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการดึงข้อมูลการเก็บเกี่ยว' });
+            }
+
+            // ส่งผลลัพธ์ในรูปแบบ JSON
+            res.json(results);
+        });
+
+    } catch (error) {
+        console.error('Unexpected error:', error);
+        res.status(500).json({ message: 'เกิดข้อผิดพลาดที่ไม่คาดคิด' });
+    }
+};
+

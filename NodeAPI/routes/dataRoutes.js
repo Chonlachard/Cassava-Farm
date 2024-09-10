@@ -33,6 +33,9 @@ const upload = multer({ storage: storage });
 // เส้นทางสำหรับเพิ่มการเก็บเกี่ยว
 router.post('/addharvest', harvestController.addHarvest);
 
+// เส้นทางสำหรับดึงข้อมูลการเก็บเกี่ยว
+router.get('/getharvests', harvestController.getHarvests);
+
 // Route สำหรับการอัปโหลด plot
 router.post('/addplots', upload.single('image'), plotController.handlePlotUpload);
 
