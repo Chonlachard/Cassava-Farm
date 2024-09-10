@@ -13,6 +13,7 @@ const userController = require('../controllers/getUser');
 const expensesController = require('../controllers/expensesController');
 const plotController = require('../controllers/plotsController');
 const getPlotController = require('../controllers/getPlotController');
+const harvestController = require('../controllers/harvestsController');
 
 // การตั้งค่า Multer
 const storage = multer.diskStorage({
@@ -28,6 +29,9 @@ const storage = multer.diskStorage({
     }
 });
 const upload = multer({ storage: storage });
+
+// เส้นทางสำหรับเพิ่มการเก็บเกี่ยว
+router.post('/addharvest', harvestController.addHarvest);
 
 // Route สำหรับการอัปโหลด plot
 router.post('/addplots', upload.single('image'), plotController.handlePlotUpload);
