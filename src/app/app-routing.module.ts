@@ -8,6 +8,7 @@ import { AddexpensesComponent } from './expenses/addexpenses/addexpenses.compone
 import { CassavaPlantedAreaComponent } from './cassava-planted-area/cassava-planted-area.component';
 import { AddPlantedAreaComponent } from './cassava-planted-area/add-planted-area/add-planted-area.component';
 import { HarvestsComponent } from './harvests/harvests.component';
+import { AddHarvestComponent } from './harvests/add-harvest/add-harvest.component';
 
 
 const routes: Routes = [
@@ -19,6 +20,7 @@ const routes: Routes = [
   { path: 'cassavaPlantedArea', component: CassavaPlantedAreaComponent },
   { path: 'addPlantedArea', component: AddPlantedAreaComponent },
   { path: 'harvests', component: HarvestsComponent },
+  { path: 'addHarvests', component: AddHarvestComponent },
   { path: '', redirectTo: '/login', pathMatch: 'full' },
 ];
 

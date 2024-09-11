@@ -31,6 +31,7 @@ import { CassavaPlantedAreaComponent } from './cassava-planted-area/cassava-plan
 import { AddPlantedAreaComponent } from './cassava-planted-area/add-planted-area/add-planted-area.component';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { HarvestsComponent } from './harvests/harvests.component';
+import { AddHarvestComponent } from './harvests/add-harvest/add-harvest.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -48,6 +49,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     CassavaPlantedAreaComponent,
     AddPlantedAreaComponent,
     HarvestsComponent,
+    AddHarvestComponent,
   ],
   imports: [
     BrowserModule,

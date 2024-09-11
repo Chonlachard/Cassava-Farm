@@ -20,4 +20,8 @@ export class HarvestsService {
   getSerchPlot(userId: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/getSerch?user_id=${userId}`);
   }
+
+  addHarvest(formData: FormData): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/addharvest`, formData);
+  }
 }
