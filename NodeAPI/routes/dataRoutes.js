@@ -36,6 +36,10 @@ router.post('/addharvest', harvestController.addHarvest);
 // เส้นทางสำหรับดลบข้อมูลการเก็บเกี่ยว
 router.delete('/deleteharvest/:harvest_id', harvestController.deleteHarvest);
 
+router.get('/getEditHarvest/:harvest_id', harvestController.getUpdateHarvest);
+
+// เส้นทางสำหรับอัปเดตข้อมูลการเก็บเกี่ยว
+router.put('/updateharvest', harvestController.updateHarvest);
 // เส้นทางสำหรับดึงข้อมูลการเก็บเกี่ยว
 router.get('/getharvests', harvestController.getHarvests);
 router.get('/getSerch', harvestController.getSerch);

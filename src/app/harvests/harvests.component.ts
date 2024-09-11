@@ -69,9 +69,7 @@ export class HarvestsComponent implements OnInit, AfterViewInit {
     this.searchForm.reset();
   }
 
-  Edit() {
-    // Implement edit logic if needed
-  }
+ 
 
   DeleteHarest(harvestId: number): void {
     if (!harvestId) {
@@ -116,14 +114,18 @@ export class HarvestsComponent implements OnInit, AfterViewInit {
     });
   }
 
-  openAdd() {
+  openAdd(harvestId?: number): void {
     const dialogRef = this.dialog.open(AddHarvestComponent, {
       width: '500px',
-      data: { userId: this.userId }
+      data: { userId: this.userId, harvestId: harvestId } // ส่ง harvestId ไปยังคอมโพเนนต์
     });
-
+  
     dialogRef.afterClosed().subscribe(result => {
-      this.loadHarvests();
+      this.loadHarvests(); // โหลดข้อมูลหลังจากปิด Dialog
     });
+  }
+  
+  EditHarvest(harvestId: number): void{
+    this.openAdd(harvestId);
   }
 }

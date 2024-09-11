@@ -129,3 +129,65 @@ exports.deleteHarvest = async (req, res) => {
         res.status(500).json({ message: 'เกิดข้อผิดพลาดในการลบข้อมูลการเก็บเกี่ยว' });
     }
 };
+
+exports.updateHarvest = async (req, res) => {
+    const { harvest_id, plot_id, harvest_date, company_name, net_weight_kg, starch_percentage, amount } = req.body;
+    const image_path = req.file ? `/uploads/${req.file.filename}` : null;
+
+    // ตรวจสอบความครบถ้วนของข้อมูลที่จำเป็น
+    if (!harvest_id || !plot_id || !harvest_date || !company_name || !net_weight_kg || !starch_percentage || !amount) {
+        return res.status(400).json({ error: 'ข้อมูลบางอย่างขาดหายไป' });
+    }
+
+    try {
+        const [results] = await db.promise().query(
+            `UPDATE harvests
+             SET plot_id = ?, harvest_date = ?, company_name = ?, net_weight_kg = ?, starch_percentage = ?, amount = ?, image_path = ?
+             WHERE harvest_id = ?`,
+            [plot_id, harvest_date, company_name, net_weight_kg, starch_percentage, amount, image_path, harvest_id]
+        );
+
+        // ตรวจสอบว่ามีแถวที่ได้รับการอัปเดตหรือไม่
+        if (results.affectedRows > 0) {
+            res.status(200).json({ message: 'ข้อมูลการเก็บเกี่ยวถูกอัปเดตเรียบร้อยแล้ว' });
+        } else {
+            res.status(404).json({ error: 'ไม่พบข้อมูลการเก็บเกี่ยวที่ต้องการอัปเดต' });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'เกิดข้อผิดพลาดในการอัปเดตข้อมูลการเก็บเกี่ยว', error });
+    }
+};
+
+
+
+
+exports.getUpdateHarvest = async (req, res) => {
+    const harvestId = req.params.harvest_id;
+
+    // ตรวจสอบว่าได้ส่ง harvest_id หรือไม่
+    if (!harvestId) {
+        return res.status(400).json({ message: 'กรุณาระบุ harvest_id' });
+    }
+
+    const query = `
+    SELECT a.harvest_date, b.plot_name, a.company_name, a.net_weight_kg, a.starch_percentage, a.amount
+    FROM harvests a
+    LEFT JOIN plots b ON a.plot_id = b.plot_id
+    WHERE a.harvest_id = ?
+    `;
+
+    db.query(query, [harvestId], (err, results) => {
+        if (err) {
+            console.error('Error executing query:', err.stack);
+            return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการดึงข้อมูลการเก็บเกี่ยว' });
+        }
+        // ตรวจสอบว่าพบข้อมูลหรือไม่
+        if (results.length === 0) {
+            return res.status(404).json({ message: 'ไม่พบข้อมูลค่าใช้จ่าย' });
+        }
+        return res.status(200).json(results[0]);
+    })
+
+};
+

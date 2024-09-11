@@ -29,4 +29,12 @@ export class HarvestsService {
     debugger
     return this.http.delete<any>(`${this.apiUrl}/deleteharvest/${harvestId}`);
   }
+   // อัปเดตข้อมูลเก็บเกี่ยว
+   updateHarvest(harvestId: string, formData: FormData): Observable<any> {
+    return this.http.put(`${this.apiUrl}/update/${harvestId}`, formData); // ใช้ PUT สำหรับการอัปเดต
+  }
+
+  getHarvest(harvestId: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/getEditHarvest/${harvestId}`);
+  }
 }
