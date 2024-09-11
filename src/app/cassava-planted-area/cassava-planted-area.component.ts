@@ -4,8 +4,9 @@ import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { CassavaAreaServiceService } from './cassava-area-service.service';
 import { Router } from '@angular/router';
-import Swal from 'sweetalert2'; // นำเข้า SweetAlert2
+import Swal from 'sweetalert2'; // Import SweetAlert2
 import { MatPaginator } from '@angular/material/paginator';
+import { TranslateService } from '@ngx-translate/core'; // Import TranslateService
 
 @Component({
   selector: 'app-cassava-planted-area',
@@ -24,7 +25,8 @@ export class CassavaPlantedAreaComponent implements OnInit, AfterViewInit {
     private fb: FormBuilder,
     private cassavaAreaService: CassavaAreaServiceService,
     public dialog: MatDialog,
-    private router: Router
+    private router: Router,
+    private translate: TranslateService // Inject TranslateService
   ) { }
 
   ngOnInit(): void {
@@ -33,7 +35,7 @@ export class CassavaPlantedAreaComponent implements OnInit, AfterViewInit {
     if (this.userId) {
       this.loadPlots();
     } else {
-      console.error('ไม่พบรหัสผู้ใช้');
+      console.error(this.translate.instant('plot.noUserIdError'));
     }
   }
 
@@ -43,30 +45,30 @@ export class CassavaPlantedAreaComponent implements OnInit, AfterViewInit {
     }
   }
 
-  // ฟังก์ชันลบข้อมูล
+  // Function to delete data
   deleted(plotId: string) {
     Swal.fire({
-      title: 'ยืนยันการลบ?',
-      text: 'คุณแน่ใจว่าต้องการลบข้อมูลนี้หรือไม่?',
+      title: this.translate.instant('plot.confirmDeleteTitle'),
+      text: this.translate.instant('plot.confirmDeleteText'),
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonText: 'ใช่, ลบเลย!',
-      cancelButtonText: 'ยกเลิก'
+      confirmButtonText: this.translate.instant('plot.confirmButtonText'),
+      cancelButtonText: this.translate.instant('plot.cancelButtonText')
     }).then((result) => {
       if (result.isConfirmed) {
         this.cassavaAreaService.deletePlot(plotId).subscribe(
           response => {
             Swal.fire(
-              'ลบสำเร็จ!',
-              'ข้อมูลของคุณถูกลบเรียบร้อยแล้ว.',
+              this.translate.instant('plot.deleteSuccessTitle'),
+              this.translate.instant('plot.deleteSuccessText'),
               'success'
             );
-            this.loadPlots(); // โหลดข้อมูลใหม่หลังจากลบสำเร็จ
+            this.loadPlots(); // Reload data after successful deletion
           },
           error => {
             Swal.fire(
-              'ลบไม่สำเร็จ!',
-              'เกิดข้อผิดพลาดในการลบข้อมูล.',
+              this.translate.instant('plot.deleteErrorTitle'),
+              this.translate.instant('plot.deleteErrorText'),
               'error'
             );
             console.error('Error deleting plot:', error);
@@ -76,37 +78,39 @@ export class CassavaPlantedAreaComponent implements OnInit, AfterViewInit {
     });
   }
 
-  // ฟังก์ชันแก้ไขข้อมูล (ถ้าต้องการ)
+  // Function to edit data (if needed)
   edit() {
-    // ติดตั้งฟังก์ชันแก้ไขที่นี่
+    // Implement edit function here
   }
 
-  // ฟังก์ชันโหลดข้อมูล
+  // Function to load data
   loadPlots() {
     this.cassavaAreaService.getCassavaArea(this.userId).subscribe((res: any) => {
       this.dataSource.data = res.map((item: any) => ({
         ...item,
         area_rai: Math.round(item.area_rai)
       }));
-      // ตรวจสอบว่า paginator ถูกตั้งค่าเรียบร้อยแล้ว
+      // Ensure paginator is set after data load
       if (this.paginator) {
         this.dataSource.paginator = this.paginator;
       }
+    }, error => {
+      console.error(this.translate.instant('plot.loadDataError'), error);
     });
   }
 
-  // ฟังก์ชันเปิดหน้าฟอร์มเพิ่มข้อมูล
+  // Function to open add form
   openAdd() {
     this.router.navigate(['/addPlantedArea']);
   }
 
-  // ฟังก์ชันค้นหา (ถ้าต้องการ)
+  // Function to search (if needed)
   onSearch() {
-    // ติดตั้งฟังก์ชันค้นหาที่นี่
+    // Implement search function here
   }
 
-  // ฟังก์ชันดูรายละเอียด (ถ้าต้องการ)
+  // Function to view details (if needed)
   viewDetails() {
-    // ติดตั้งฟังก์ชันดูรายละเอียดที่นี่
+    // Implement view details function here
   }
 }

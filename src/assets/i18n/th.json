@@ -184,5 +184,27 @@
       "title": "ข้อมูลไม่ครบถ้วน!",
       "text": "กรุณากรอกข้อมูลให้ครบถ้วน!"
     }
+  },
+  "plot": {
+    "title": "รายการค่าใช้จ่าย",
+    "addButton": "เพิ่ม",
+    "plotNameHeader": "ชื่อแปลง",
+    "areaHeader": "ขนาด (ไร่)",
+    "imageHeader": "รูป",
+    "actionsHeader": "การจัดการ",
+    "noDataMessage": "ไม่พบข้อมูล",
+    "confirmDeleteTitle": "ยืนยันการลบ?",
+    "confirmDeleteText": "คุณแน่ใจว่าต้องการลบข้อมูลนี้หรือไม่?",
+    "confirmButtonText": "ใช่, ลบเลย!",
+    "cancelButtonText": "ยกเลิก",
+    "deleteSuccessTitle": "ลบสำเร็จ!",
+    "deleteSuccessText": "ข้อมูลของคุณถูกลบเรียบร้อยแล้ว.",
+    "deleteErrorTitle": "ลบไม่สำเร็จ!",
+    "deleteErrorText": "เกิดข้อผิดพลาดในการลบข้อมูล.",
+    "noUserIdError": "ไม่พบรหัสผู้ใช้",
+    "loadDataError": "เกิดข้อผิดพลาดในการโหลดข้อมูล",
+    "editButtonText": "แก้ไข",
+    "viewDetailsButtonText": "ดูรายละเอียด",
+    "addButtonText": "เพิ่มข้อมูลใหม่"
   }
 }

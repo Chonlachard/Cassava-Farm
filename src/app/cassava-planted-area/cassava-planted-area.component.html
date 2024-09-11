@@ -1,68 +1,70 @@
 <app-navbar></app-navbar>
 <div class="container mt-4">
-    <mat-card class="expense-card">
+    <mat-card class="plot-card">
       <mat-card-header>
-        <mat-card-title>รายการค่าใช้จ่าย</mat-card-title>
+        <mat-card-title>{{ 'plot.title' | translate }}</mat-card-title>
       </mat-card-header>
       <div class="container mt-4">
         <form (ngSubmit)="onSearch()" #searchForm="ngForm">
           <div class="row align-items-end">
-            <!-- ปุ่มเพิ่มข้อมูล -->
+            <!-- Add Button -->
             <div class="col-md-2 d-flex justify-content-end align-items-end">
               <button type="button" class="btn btn-success" (click)="openAdd()">
-                เพิ่ม
+                {{ 'plot.addButton' | translate }}
               </button>
             </div>
           </div>
         </form>
       </div>
       <mat-card-content>
-        <div class="table-responsive"> <!-- เพิ่มคลาส table-responsive -->
+        <div class="table-responsive">
           <table mat-table [dataSource]="dataSource" matSort class="table table-striped plantedArea-table">
-            <!-- คอลัมน์ plot_name -->
+            <!-- Plot Name Column -->
             <ng-container matColumnDef="plot_name">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header class="plot-name"> ชื่อแปลง </th>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header class="plot-name">{{ 'plot.plotNameHeader' | translate }}</th>
                 <td mat-cell *matCellDef="let plantedArea" class="plot-name"> {{plantedArea.plot_name}} </td>
-              </ng-container>
-              
-              <ng-container matColumnDef="area_rai">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header class="area-rai"> ขนาด </th>
+            </ng-container>
+            
+            <!-- Area Column -->
+            <ng-container matColumnDef="area_rai">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header class="area-rai">{{ 'plot.areaHeader' | translate }}</th>
                 <td mat-cell *matCellDef="let plantedArea" class="area-rai"> {{plantedArea.area_rai}} </td>
-              </ng-container>
-              
-              <ng-container matColumnDef="imageUrl">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header class="imageUrl"> รูป </th>
+            </ng-container>
+            
+            <!-- Image Column -->
+            <ng-container matColumnDef="imageUrl">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header class="imageUrl">{{ 'plot.imageHeader' | translate }}</th>
                 <td mat-cell *matCellDef="let plantedArea" class="imageUrl">
                   <img [src]="plantedArea.imageUrl" alt="Image" width="100">
                 </td>
-              </ng-container>
-              
-              <ng-container matColumnDef="actions">
-                <th mat-header-cell *matHeaderCellDef class="actions"> การจัดการ </th>
+            </ng-container>
+            
+            <!-- Actions Column -->
+            <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef class="actions">{{ 'plot.actionsHeader' | translate }}</th>
                 <td mat-cell *matCellDef="let plantedArea" class="actions">
-                  <button mat-icon-button color="primary" (click)="edit()" matTooltip="แก้ไข">
+                  <button mat-icon-button color="primary" (click)="edit()" matTooltip="{{ 'plot.editButton' | translate }}">
                     <mat-icon>edit</mat-icon>
                   </button>
-                  <button mat-icon-button color="warn" (click)="deleted(plantedArea.plot_id)" matTooltip="ลบ">
+                  <button mat-icon-button color="warn" (click)="deleted(plantedArea.plot_id)" matTooltip="{{ 'plot.deleteButton' | translate }}">
                     <mat-icon>delete</mat-icon>
                   </button>
-                  <button mat-icon-button (click)="viewDetails()" matTooltip="ดูรายละเอียด">
+                  <button mat-icon-button (click)="viewDetails()" matTooltip="{{ 'plot.viewDetailsButton' | translate }}">
                     <mat-icon>visibility</mat-icon>
                   </button>
                 </td>
-              </ng-container>
-              
-  
-            <!-- แถวของตาราง -->
+            </ng-container>
+            
+            <!-- Table Rows -->
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
           </table>
         </div>
   
-        <!-- ไม่มีข้อมูล -->
+        <!-- No Data Message -->
         <div *ngIf="dataSource.data.length === 0" class="no-data">
           <mat-icon>info</mat-icon>
-          <p>ไม่พบข้อมูลแปลง</p>
+          <p>{{ 'plot.noDataMessage' | translate }}</p>
         </div>
   
         <!-- Paginator -->
@@ -70,4 +72,3 @@
       </mat-card-content>
     </mat-card>
   </div>
-  

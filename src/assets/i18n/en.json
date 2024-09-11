@@ -184,5 +184,27 @@
       "title": "Incomplete Data!",
       "text": "Please fill in all required fields!"
     }
+  },
+  "plot": {
+    "title": "Expense List",
+    "addButton": "Add",
+    "plotNameHeader": "Plot Name",
+    "areaHeader": "Area (Rai)",
+    "imageHeader": "Image",
+    "actionsHeader": "Actions",
+    "noDataMessage": "No data found",
+    "confirmDeleteTitle": "Confirm Deletion",
+    "confirmDeleteText": "Are you sure you want to delete this data?",
+    "confirmButtonText": "Yes, delete it!",
+    "cancelButtonText": "Cancel",
+    "deleteSuccessTitle": "Deleted!",
+    "deleteSuccessText": "Your data has been deleted.",
+    "deleteErrorTitle": "Delete Failed!",
+    "deleteErrorText": "An error occurred while deleting the data.",
+    "noUserIdError": "User ID not found",
+    "loadDataError": "Error loading data",
+    "editButtonText": "Edit",
+    "viewDetailsButtonText": "View Details",
+    "addButtonText": "Add New"
   }
 }
