@@ -73,5 +73,116 @@
     "passwordLengthErrorText": "รหัสผ่านใหม่ต้องมีความยาวอย่างน้อย 6 ตัวอักษร.",
     "passwordMismatchErrorTitle": "ผิดพลาด!",
     "passwordMismatchErrorText": "รหัสผ่านและการยืนยันรหัสผ่านไม่ตรงกัน."
+  },
+  "harvest": {
+    "harvests": "ข้อมูลเก็บเกี่ยว",
+    "searchByPlot": "ค้นหาโดยแปลงที่ปลูก",
+    "search": "ค้นหา",
+    "clear": "ล้าง",
+    "add": "เพิ่ม",
+    "date": "วันที่",
+    "plotName": "ชื่อแปลงที่ปลูก",
+    "companyName": "ชื่อบริษัท",
+    "starchPercentage": "เปอร์เซ็นต์แป้ง",
+    "amount": "จำนวนเงิน",
+    "actions": "การดำเนินการ",
+    "edit": "แก้ไข",
+    "delete": "ลบ",
+    "noData": "ไม่พบข้อมูล",
+    "error": "ข้อผิดพลาด",
+    "confirmDeleteTitle": "ยืนยันการลบ",
+    "confirmDeleteText": "คุณแน่ใจหรือว่าต้องการลบข้อมูลเก็บเกี่ยวนี้?",
+    "confirm": "ใช่, ลบเลย!",
+    "cancel": "ยกเลิก",
+    "deleteSuccessTitle": "ลบเรียบร้อย!",
+    "deleteSuccessText": "ข้อมูลเก็บเกี่ยวถูกลบแล้ว",
+    "deleteErrorTitle": "ข้อผิดพลาด!",
+    "deleteErrorText": "ไม่สามารถลบข้อมูลเก็บเกี่ยวได้ กรุณาลองอีกครั้ง",
+    "formTitle": "เพิ่มข้อมูลเก็บเกี่ยว",
+    "harvestDate": "วันที่เก็บเกี่ยว",
+    "plot": "แปลงที่ปลูก",
+    "selectPlot": "เลือกแปลงที่ปลูก",
+    "netWeight": "น้ำหนักสุทธิ (กิโลกรัม)",
+    "image": "อัปโหลดรูปภาพ",
+    "save": "บันทึก"
+  },
+  "expense": {
+    "pageTitle": "รายการค่าใช้จ่าย",
+    "searchForm": {
+      "startDateLabel": "วันที่เริ่มต้น:",
+      "endDateLabel": "วันที่สิ้นสุด:",
+      "searchButton": "ค้นหา",
+      "clearButton": "เคลียร์",
+      "addButton": "เพิ่ม",
+      "dateRangeError": "กรุณาระบุช่วงวันที่ให้ครบถ้วน"
+    },
+    "table": {
+      "dateHeader": "วันที่",
+      "categoryHeader": "หมวดหมู่",
+      "amountHeader": "จำนวนเงิน",
+      "detailsHeader": "รายละเอียด",
+      "actionsHeader": "การจัดการ",
+      "editButtonTooltip": "แก้ไข",
+      "deleteButtonTooltip": "ลบ"
+    },
+    "form": {
+      "title": "เพิ่มรายจ่าย",
+      "dateLabel": "วันที่",
+      "categoryLabel": "หมวดหมู่",
+      "categoryPlaceholder": "เลือกหมวดหมู่",
+      "amountLabel": "จำนวนเงิน",
+      "detailsLabel": "รายละเอียด",
+      "saveButton": "บันทึก"
+    },
+    "categories": {
+      "hormone": "ค่าฮอโมน",
+      "fertilizer": "ค่าปุ๋ย",
+      "herbicide": "ค่ายาฆ่าหญ่า",
+      "labor": "ค่าแรงงาน",
+      "fuel": "ค่าน้ำมัน",
+      "seed": "ค่าพันธุ์มัน",
+      "equipmentRepair": "ค่าซ่อมอุปกรณ์",
+      "equipment": "ค่าอุปกรณ์",
+      "landRent": "ค่าเช่าที่ดิน",
+      "harvestCost": "ค่าขุด(ค่าเก็บเกี่ยว)",
+      "other": "อื่นๆ"
+    },
+    "noDataMessage": "ไม่พบข้อมูลค่าใช้จ่าย",
+    "errorTitle": "เกิดข้อผิดพลาด!",
+    "errorText": "ไม่สามารถดำเนินการตามคำขอได้ กรุณาลองอีกครั้ง",
+    "deleteConfirmationTitle": "คุณแน่ใจหรือไม่?",
+    "deleteConfirmationText": "คุณต้องการลบข้อมูลนี้จริง ๆ หรือไม่?",
+    "deleteConfirmationConfirm": "ใช่, ลบเลย!",
+    "deleteConfirmationCancel": "ยกเลิก",
+    "deleteSuccessTitle": "ลบข้อมูลแล้ว!",
+    "deleteSuccessText": "ข้อมูลค่าใช้จ่ายถูกลบเรียบร้อยแล้ว",
+    "errorLoading": {
+      "title": "เกิดข้อผิดพลาด!",
+      "text": "ไม่สามารถโหลดข้อมูลค่าใช้จ่ายได้."
+    },
+    "incompleteDataEdit": {
+      "title": "ข้อมูลไม่ครบถ้วน!",
+      "text": "กรุณาระบุ expense_id สำหรับการแก้ไข!"
+    },
+    "successEdit": {
+      "title": "สำเร็จ!",
+      "text": "แก้ไขรายจ่ายสำเร็จ!"
+    },
+    "errorEdit": {
+      "title": "เกิดข้อผิดพลาด!",
+      "text": "เกิดข้อผิดพลาดในการแก้ไขรายจ่าย กรุณาลองอีกครั้ง!"
+    },
+    "successAdd": {
+      "title": "สำเร็จ!",
+      "text": "เพิ่มรายจ่ายสำเร็จ!"
+    },
+    "errorAdd": {
+      "title": "เกิดข้อผิดพลาด!",
+      "text": "เกิดข้อผิดพลาดในการเพิ่มรายจ่าย กรุณาลองอีกครั้ง!"
+    },
+    "incompleteData": {
+      "title": "ข้อมูลไม่ครบถ้วน!",
+      "text": "กรุณากรอกข้อมูลให้ครบถ้วน!"
+    }
   }
 }

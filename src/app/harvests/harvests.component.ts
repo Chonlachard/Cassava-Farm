@@ -6,12 +6,12 @@ import { MatTableDataSource } from '@angular/material/table';
 import { HarvestsService } from './harvests.service';
 import { AddHarvestComponent } from './add-harvest/add-harvest.component';
 import Swal from 'sweetalert2';
-
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-harvests',
   templateUrl: './harvests.component.html',
-  styleUrls: ['./harvests.component.css'] // เปลี่ยนจาก styleUrl เป็น styleUrls
+  styleUrls: ['./harvests.component.css']
 })
 export class HarvestsComponent implements OnInit, AfterViewInit {
 
@@ -19,14 +19,15 @@ export class HarvestsComponent implements OnInit, AfterViewInit {
   dataSource = new MatTableDataSource<any>([]);
   userId: string = '';
   searchForm: FormGroup;
-  plots: any[] = []; // ตัวแปรสำหรับเก็บข้อมูล plot ที่ได้จากการค้นหา
+  plots: any[] = []; // Variable to store plot data
 
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
 
   constructor(
     private fb: FormBuilder,
     private harvestsService: HarvestsService,
-    public dialog: MatDialog // กำหนดให้ใช้ MatDialog
+    public dialog: MatDialog,
+    private translate: TranslateService // Inject TranslateService
   ) {
     this.searchForm = this.fb.group({
       plot: ['']
@@ -50,7 +51,7 @@ export class HarvestsComponent implements OnInit, AfterViewInit {
 
   loadSerchPlots() {
     this.harvestsService.getSerchPlot(this.userId).subscribe((res: any) => {
-      this.plots = res; // เก็บข้อมูล plot ในตัวแปร plots
+      this.plots = res;
     });
   }
 
@@ -73,37 +74,40 @@ export class HarvestsComponent implements OnInit, AfterViewInit {
   }
 
   DeleteHarest(harvestId: number): void {
-    debugger
     if (!harvestId) {
-      Swal.fire('ข้อผิดพลาด', 'ไม่พบข้อมูลการเก็บเกี่ยวที่จะลบ', 'error');
+      Swal.fire({
+        title: this.translate.instant('harvest.error'),
+        text: this.translate.instant('harvest.noData'),
+        icon: 'error'
+      });
       return;
     }
   
     Swal.fire({
-      title: 'ยืนยันการลบ',
-      text: 'คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลการเก็บเกี่ยวนี้?',
+      title: this.translate.instant('harvest.confirmDeleteTitle'),
+      text: this.translate.instant('harvest.confirmDeleteText'),
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
-      confirmButtonText: 'ใช่, ลบเลย!',
-      cancelButtonText: 'ยกเลิก'
+      confirmButtonText: this.translate.instant('harvest.confirm'),
+      cancelButtonText: this.translate.instant('harvest.cancel')
     }).then((result) => {
       if (result.isConfirmed) {
         this.harvestsService.deleteHarvest(harvestId).subscribe(
           response => {
             Swal.fire(
-              'ลบสำเร็จ!',
-              'ข้อมูลเก็บเกี่ยวถูกลบเรียบร้อยแล้ว.',
+              this.translate.instant('harvest.deleteSuccessTitle'),
+              this.translate.instant('harvest.deleteSuccessText'),
               'success'
             ).then(() => {
-              this.loadHarvests(); // รีเฟรชข้อมูลหลังจากการลบ
+              this.loadHarvests();
             });
           },
           error => {
             Swal.fire(
-              'เกิดข้อผิดพลาด!',
-              'ไม่สามารถลบข้อมูลเก็บเกี่ยวได้ กรุณาลองอีกครั้ง.',
+              this.translate.instant('harvest.deleteErrorTitle'),
+              this.translate.instant('harvest.deleteErrorText'),
               'error'
             );
           }
@@ -111,18 +115,14 @@ export class HarvestsComponent implements OnInit, AfterViewInit {
       }
     });
   }
-  
-
 
   openAdd() {
-    // เปิด AddHarvestComponent เป็น dialog
     const dialogRef = this.dialog.open(AddHarvestComponent, {
-      width: '500px', // กำหนดขนาด dialog
-      data: { userId: this.userId } // ส่งข้อมูลที่ต้องการให้กับ dialog
+      width: '500px',
+      data: { userId: this.userId }
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      // รีเฟรชข้อมูลหลังจาก dialog ปิด
       this.loadHarvests();
     });
   }

@@ -32,6 +32,7 @@ import { AddPlantedAreaComponent } from './cassava-planted-area/add-planted-area
 import { GoogleMapsModule } from '@angular/google-maps';
 import { HarvestsComponent } from './harvests/harvests.component';
 import { AddHarvestComponent } from './harvests/add-harvest/add-harvest.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -77,7 +78,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     MatDialogModule,
     MatSelectModule,         // สำหรับ dropdown
     MatFormFieldModule,      // สำหรับ mat-form-field
-    GoogleMapsModule
+    GoogleMapsModule,
+    MatTooltipModule
   ],
   providers: [],
   bootstrap: [AppComponent]

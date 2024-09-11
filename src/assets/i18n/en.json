@@ -73,5 +73,116 @@
     "passwordLengthErrorText": "The new password must be at least 6 characters long.",
     "passwordMismatchErrorTitle": "Error!",
     "passwordMismatchErrorText": "The new password and confirmation password do not match."
+  },
+  "harvest": {
+    "harvests": "Harvests",
+    "searchByPlot": "Search by Plot",
+    "search": "Search",
+    "clear": "Clear",
+    "add": "Add",
+    "date": "Date",
+    "plotName": "Plot Name",
+    "companyName": "Company Name",
+    "starchPercentage": "Starch Percentage",
+    "amount": "Amount",
+    "actions": "Actions",
+    "edit": "Edit",
+    "delete": "Delete",
+    "noData": "No data found",
+    "error": "Error",
+    "confirmDeleteTitle": "Confirm Delete",
+    "confirmDeleteText": "Are you sure you want to delete this harvest data?",
+    "confirm": "Yes, delete it!",
+    "cancel": "Cancel",
+    "deleteSuccessTitle": "Deleted!",
+    "deleteSuccessText": "Harvest data has been deleted.",
+    "deleteErrorTitle": "Error!",
+    "deleteErrorText": "Unable to delete harvest data. Please try again.",
+    "formTitle": "Add Harvest Data",
+    "harvestDate": "Harvest Date",
+    "plot": "Plot",
+    "selectPlot": "Select Plot",
+    "netWeight": "Net Weight (kg)",
+    "image": "Upload Image",
+    "save": "Save"
+  },
+  "expense": {
+    "pageTitle": "Expense List",
+    "searchForm": {
+      "startDateLabel": "Start Date:",
+      "endDateLabel": "End Date:",
+      "searchButton": "Search",
+      "clearButton": "Clear",
+      "addButton": "Add",
+      "dateRangeError": "Please specify both start and end dates."
+    },
+    "table": {
+      "dateHeader": "Date",
+      "categoryHeader": "Category",
+      "amountHeader": "Amount",
+      "detailsHeader": "Details",
+      "actionsHeader": "Actions",
+      "editButtonTooltip": "Edit",
+      "deleteButtonTooltip": "Delete"
+    },
+    "form": {
+      "title": "Add Expense",
+      "dateLabel": "Date",
+      "categoryLabel": "Category",
+      "categoryPlaceholder": "Select Category",
+      "amountLabel": "Amount",
+      "detailsLabel": "Details",
+      "saveButton": "Save"
+    },
+    "categories": {
+      "hormone": "Hormones",
+      "fertilizer": "Fertilizer",
+      "herbicide": "Herbicide",
+      "labor": "Labor",
+      "fuel": "Fuel",
+      "seed": "Seed",
+      "equipmentRepair": "Equipment Repair",
+      "equipment": "Equipment",
+      "landRent": "Land Rent",
+      "harvestCost": "Harvest Cost",
+      "other": "Other"
+    },
+    "noDataMessage": "No expense data found",
+    "errorTitle": "An Error Occurred!",
+    "errorText": "Unable to perform the requested operation. Please try again.",
+    "deleteConfirmationTitle": "Are you sure?",
+    "deleteConfirmationText": "Do you really want to delete this expense data?",
+    "deleteConfirmationConfirm": "Yes, delete it!",
+    "deleteConfirmationCancel": "Cancel",
+    "deleteSuccessTitle": "Deleted!",
+    "deleteSuccessText": "Expense data has been deleted.",
+    "errorLoading": {
+      "title": "Error!",
+      "text": "Unable to load expense data."
+    },
+    "incompleteDataEdit": {
+      "title": "Incomplete Data!",
+      "text": "Please provide an expense_id for editing!"
+    },
+    "successEdit": {
+      "title": "Success!",
+      "text": "Expense edited successfully!"
+    },
+    "errorEdit": {
+      "title": "Error!",
+      "text": "An error occurred while editing the expense. Please try again!"
+    },
+    "successAdd": {
+      "title": "Success!",
+      "text": "Expense added successfully!"
+    },
+    "errorAdd": {
+      "title": "Error!",
+      "text": "An error occurred while adding the expense. Please try again!"
+    },
+    "incompleteData": {
+      "title": "Incomplete Data!",
+      "text": "Please fill in all required fields!"
+    }
   }
 }

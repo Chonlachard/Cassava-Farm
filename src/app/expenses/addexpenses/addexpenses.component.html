@@ -1,38 +1,38 @@
 <div class="expense-form-container">
     <div class="form-card">
-        <h1 class="form-title">เพิ่มรายจ่าย</h1>
+        <h1 class="form-title">{{ 'expense.form.title' | translate }}</h1>
         <form [formGroup]="expenseForm" (ngSubmit)="onSubmit()">
             <div class="form-field">
-                <label for="expense_date"><i class="fas fa-calendar"></i> วันที่</label>
+                <label for="expense_date">
+                    <i class="fas fa-calendar"></i> {{ 'expense.form.dateLabel' | translate }}
+                </label>
                 <input type="date" id="expense_date" formControlName="expense_date">
             </div>
             <div class="form-field">
-                <label for="category"><i class="fas fa-tag"></i> หมวดหมู่</label>
+                <label for="category">
+                    <i class="fas fa-tag"></i> {{ 'expense.form.categoryLabel' | translate }}
+                </label>
                 <select id="category" formControlName="category">
-                    <option value="" disabled selected>เลือกหมวดหมู่</option>
-                    <option value="ค่าฮอโมน">ค่าฮอโมน</option>
-                    <option value="ค่าปุ๋ย">ค่าปุ๋ย</option>
-                    <option value="ค่ายาฆ่าหญ่า">ค่ายาฆ่าหญ่า</option>
-                    <option value="ต่าแรงงาน">ต่าแรงงาน</option>
-                    <option value="ค่าน้ำมัน">ค่าน้ำมัน</option>
-                    <option value="ค่าพันธุ์มัน">ค่าพันธุ์มัน</option>
-                    <option value="ค่าซ่อมอุปกรณ์">ค่าซ่อมอุปกรณ์</option>
-                    <option value="ค่าอุปกรณ์">ค่าอุปกรณ์</option>
-                    <option value="ค่าเช่าที่ดิน">ค่าเช่าที่ดิน</option>
-                    <option value="ค่าขุด(ค่าเก็บเกี่ยว)">ค่าขุด(ค่าเก็บเกี่ยว)</option>
-                    <option value="อื่นๆ">อื่นๆ</option>
+                    <option value="" disabled selected>{{ 'expense.form.categoryPlaceholder' | translate }}</option>
+                    <option *ngFor="let category of categories" [value]="category.value">
+                        {{ category.label | translate }}
+                    </option>
                 </select>
             </div>
             <div class="form-field">
-                <label for="amount"><i class="fas fa-money-bill-wave"></i> จำนวนเงิน</label>
+                <label for="amount">
+                    <i class="fas fa-money-bill-wave"></i> {{ 'expense.form.amountLabel' | translate }}
+                </label>
                 <input type="number" id="amount" formControlName="amount">
             </div>
             <div class="form-field">
-                <label for="details"><i class="fas fa-info-circle"></i> รายละเอียด</label>
+                <label for="details">
+                    <i class="fas fa-info-circle"></i> {{ 'expense.form.detailsLabel' | translate }}
+                </label>
                 <textarea id="details" formControlName="details" rows="3"></textarea>
             </div>
             <button type="submit" [disabled]="!expenseForm.valid" class="submit-button">
-                <i class="fas fa-save"></i> บันทึก
+                <i class="fas fa-save"></i> {{ 'expense.form.saveButton' | translate }}
             </button>
         </form>
     </div>

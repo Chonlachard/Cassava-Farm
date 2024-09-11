@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { AddexpensesComponent } from './addexpenses/addexpenses.component';
 import Swal from 'sweetalert2';
 import { FormBuilder } from '@angular/forms';
+import { TranslateService } from '@ngx-translate/core'; // Import TranslateService
 
 @Component({
   selector: 'app-expenses',
@@ -15,7 +16,7 @@ import { FormBuilder } from '@angular/forms';
 export class ExpensesComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = ['expense_date', 'category', 'amount', 'details', 'actions'];
   dataSource = new MatTableDataSource<any>([]);
-  
+
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
 
   startDate: string = '';
@@ -26,6 +27,7 @@ export class ExpensesComponent implements OnInit, AfterViewInit {
     private fb: FormBuilder,
     private expensesService: ExpensesService,
     public dialog: MatDialog,
+    private translate: TranslateService // Inject TranslateService
   ) { }
 
   ngOnInit() {
@@ -56,10 +58,14 @@ export class ExpensesComponent implements OnInit, AfterViewInit {
           this.dataSource.paginator = this.paginator;
         }
       }, (error) => {
-        Swal.fire('เกิดข้อผิดพลาด!', 'ไม่สามารถค้นหาข้อมูลได้.', 'error');
+        Swal.fire({
+          title: this.translate.instant('expense.errorTitle'),
+          text: this.translate.instant('expense.errorText'),
+          icon: 'error'
+        });
       });
     } else {
-      Swal.fire('กรุณาระบุช่วงวันที่ให้ครบถ้วน');
+      Swal.fire(this.translate.instant('expense.searchForm.dateRangeError'));
     }
   }
 
@@ -71,39 +77,38 @@ export class ExpensesComponent implements OnInit, AfterViewInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.loadExpenses(); // รีเฟรชรายการหลังจากเพิ่ม/แก้ไขรายจ่ายใหม่
+        this.loadExpenses(); // Refresh list after adding/editing expense
       }
     });
   }
 
   editExpense(expenseId: number): void {
-    this.openAddExpense(expenseId); // เปิดไดอะล็อกการแก้ไข
+    this.openAddExpense(expenseId); // Open dialog for editing
   }
 
   deleteExpense(expenseId: number): void {
     Swal.fire({
-      title: 'คุณแน่ใจหรือไม่?',
-      text: "คุณต้องการลบข้อมูลนี้จริง ๆ หรือไม่?",
+      title: this.translate.instant('expense.deleteConfirmationTitle'),
+      text: this.translate.instant('expense.deleteConfirmationText'),
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
-      confirmButtonText: 'ใช่, ลบเลย!',
-      cancelButtonText: 'ยกเลิก'
+      confirmButtonText: this.translate.instant('expense.deleteConfirmationConfirm'),
+      cancelButtonText: this.translate.instant('expense.deleteConfirmationCancel')
     }).then((result) => {
       if (result.isConfirmed) {
         this.expensesService.deleteExpense(expenseId).subscribe(() => {
           Swal.fire(
-            'ลบข้อมูลแล้ว!',
-            'ข้อมูลค่าใช้จ่ายถูกลบเรียบร้อยแล้ว.',
+            this.translate.instant('expense.deleteSuccessTitle'),
+            this.translate.instant('expense.deleteSuccessText'),
             'success'
           );
-          // รีเฟรชข้อมูลหลังจากลบสำเร็จ
-          this.loadExpenses(); // เรียก loadExpenses เพื่อโหลดข้อมูลใหม่
+          this.loadExpenses(); // Reload data after successful delete
         }, (error) => {
           Swal.fire(
-            'เกิดข้อผิดพลาด!',
-            'ไม่สามารถลบข้อมูลได้.',
+            this.translate.instant('expense.errorTitle'),
+            this.translate.instant('expense.errorText'),
             'error'
           );
         });

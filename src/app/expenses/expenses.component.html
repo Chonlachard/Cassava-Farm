@@ -2,33 +2,34 @@
 <div class="container mt-4">
     <mat-card class="expense-card">
         <mat-card-header>
-            <mat-card-title>รายการค่าใช้จ่าย</mat-card-title>
+            <mat-card-title>{{ 'expense.pageTitle' | translate }}</mat-card-title>
         </mat-card-header>
         <div class="container mt-4">
             <form (ngSubmit)="onSearch()" #searchForm="ngForm">
                 <div class="row align-items-end">
-                    <!-- ฟิลด์วันที่เริ่มต้น -->
+                    <!-- Start Date Field -->
                     <div class="col-md-3">
-                        <label for="startDate" class="form-label">วันที่เริ่มต้น:</label>
-                        <input type="date" class="form-control" id="startDate" [(ngModel)]="startDate" name="startDate"
-                            required>
+                        <label for="startDate" class="form-label">{{ 'expense.searchForm.startDateLabel' | translate }}</label>
+                        <input type="date" class="form-control" id="startDate" [(ngModel)]="startDate" name="startDate" required>
                     </div>
-                    <!-- ฟิลด์วันที่สิ้นสุด -->
+                    <!-- End Date Field -->
                     <div class="col-md-3">
-                        <label for="endDate" class="form-label">วันที่สิ้นสุด:</label>
-                        <input type="date" class="form-control" id="endDate" [(ngModel)]="endDate" name="endDate"
-                            required>
+                        <label for="endDate" class="form-label">{{ 'expense.searchForm.endDateLabel' | translate }}</label>
+                        <input type="date" class="form-control" id="endDate" [(ngModel)]="endDate" name="endDate" required>
                     </div>
-                    <!-- ปุ่มค้นหา และ ปุ่มเคลียร์ -->
+                    <!-- Search and Clear Buttons -->
                     <div class="col-md-4 d-flex align-items-end gap-2">
-                        <button type="submit" class="btn btn-primary w-50"
-                            [disabled]="!searchForm.form.valid">ค้นหา</button>
-                        <button type="button" class="btn btn-secondary w-45" (click)="clearSearch()">เคลียร์</button>
+                        <button type="submit" class="btn btn-primary w-50" [disabled]="!searchForm.form.valid">
+                            {{ 'expense.searchForm.searchButton' | translate }}
+                        </button>
+                        <button type="button" class="btn btn-secondary w-45" (click)="clearSearch()">
+                            {{ 'expense.searchForm.clearButton' | translate }}
+                        </button>
                     </div>
-                    <!-- ปุ่มเพิ่มข้อมูล -->
+                    <!-- Add Button -->
                     <div class="col-md-2 d-flex justify-content-end align-items-end">
                         <button type="button" class="btn btn-success" (click)="openAddExpense()">
-                            เพิ่ม
+                            {{ 'expense.searchForm.addButton' | translate }}
                         </button>
                     </div>
                 </div>
@@ -37,55 +38,53 @@
         <mat-card-content>
             <div class="table-container">
                 <table mat-table [dataSource]="dataSource" matSort class="expense-table">
-                    <!-- คอลัมน์ Date -->
+                    <!-- Date Column -->
                     <ng-container matColumnDef="expense_date">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header> วันที่ </th>
-                        <td mat-cell *matCellDef="let expense"> {{expense.expense_date}} </td>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'expense.table.dateHeader' | translate }}</th>
+                        <td mat-cell *matCellDef="let expense"> {{ expense.expense_date }} </td>
                     </ng-container>
 
-                    <!-- คอลัมน์ Category -->
+                    <!-- Category Column -->
                     <ng-container matColumnDef="category">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header> หมวดหมู่ </th>
-                        <td mat-cell *matCellDef="let expense"> {{expense.category}} </td>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'expense.table.categoryHeader' | translate }}</th>
+                        <td mat-cell *matCellDef="let expense"> {{ expense.category }} </td>
                     </ng-container>
 
-                    <!-- คอลัมน์ Amount -->
+                    <!-- Amount Column -->
                     <ng-container matColumnDef="amount">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header> จำนวนเงิน </th>
-                        <td mat-cell *matCellDef="let expense"> {{expense.amount}} </td>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'expense.table.amountHeader' | translate }}</th>
+                        <td mat-cell *matCellDef="let expense"> {{ expense.amount }} </td>
                     </ng-container>
 
-                    <!-- คอลัมน์ Detail -->
+                    <!-- Details Column -->
                     <ng-container matColumnDef="details">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header> รายละเอียด </th>
-                        <td mat-cell *matCellDef="let expense"> {{expense.details}} </td>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'expense.table.detailsHeader' | translate }}</th>
+                        <td mat-cell *matCellDef="let expense"> {{ expense.details }} </td>
                     </ng-container>
 
-                    <!-- คอลัมน์ Actions -->
+                    <!-- Actions Column -->
                     <ng-container matColumnDef="actions">
-                        <th mat-header-cell *matHeaderCellDef> การจัดการ </th>
+                        <th mat-header-cell *matHeaderCellDef>{{ 'expense.table.actionsHeader' | translate }}</th>
                         <td mat-cell *matCellDef="let expense">
-                            <button mat-icon-button color="primary" (click)="editExpense(expense.expense_id)"
-                                matTooltip="แก้ไข">
+                            <button mat-icon-button color="primary" (click)="editExpense(expense.expense_id)" matTooltip="{{ 'expense.table.editButtonTooltip' | translate }}">
                                 <mat-icon>edit</mat-icon>
                             </button>
-                            <button mat-icon-button color="warn" (click)="deleteExpense(expense.expense_id)"
-                                matTooltip="ลบ">
+                            <button mat-icon-button color="warn" (click)="deleteExpense(expense.expense_id)" matTooltip="{{ 'expense.table.deleteButtonTooltip' | translate }}">
                                 <mat-icon>delete</mat-icon>
                             </button>
                         </td>
                     </ng-container>
 
-                    <!-- แถวของตาราง -->
+                    <!-- Table Rows -->
                     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
                 </table>
             </div>
 
-            <!-- ไม่มีข้อมูล -->
+            <!-- No Data Message -->
             <div *ngIf="dataSource.data.length === 0" class="no-data">
                 <mat-icon>info</mat-icon>
-                <p>ไม่พบข้อมูลค่าใช้จ่าย</p>
+                <p>{{ 'expense.noDataMessage' | translate }}</p>
             </div>
 
             <!-- Paginator -->
