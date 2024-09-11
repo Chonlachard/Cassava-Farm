@@ -33,6 +33,9 @@ const upload = multer({ storage: storage });
 // เส้นทางสำหรับเพิ่มการเก็บเกี่ยว
 router.post('/addharvest', harvestController.addHarvest);
 
+// เส้นทางสำหรับดลบข้อมูลการเก็บเกี่ยว
+router.delete('/deleteharvest/:harvest_id', harvestController.deleteHarvest);
+
 // เส้นทางสำหรับดึงข้อมูลการเก็บเกี่ยว
 router.get('/getharvests', harvestController.getHarvests);
 router.get('/getSerch', harvestController.getSerch);

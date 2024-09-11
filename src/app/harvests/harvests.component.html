@@ -71,11 +71,11 @@
                     <!-- คอลัมน์ Actions -->
                     <ng-container matColumnDef="actions">
                         <th mat-header-cell *matHeaderCellDef> การจัดการ </th>
-                        <td mat-cell *matCellDef="let expense">
+                        <td mat-cell *matCellDef="let harvest">
                             <button mat-icon-button color="primary" (click)="Edit()" matTooltip="แก้ไข">
                                 <mat-icon>edit</mat-icon>
                             </button>
-                            <button mat-icon-button color="warn" (click)="Delete()" matTooltip="ลบ">
+                            <button mat-icon-button color="warn" (click)="DeleteHarest(harvest.harvest_id)" matTooltip="ลบ">
                                 <mat-icon>delete</mat-icon>
                             </button>
                         </td>

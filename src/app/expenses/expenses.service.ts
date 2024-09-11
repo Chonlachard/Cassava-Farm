@@ -48,7 +48,6 @@ export class ExpensesService {
   }
 
   updateExpense(expense: any): Observable<any> {
-    debugger
     return this.http.put(`${this.apiUrl}/editExpenses`, expense);
   }
   getExpensesByDateRange(userId: string, startDate: string, endDate: string): Observable<any> {

@@ -58,7 +58,7 @@ exports.getHarvests = async (req, res) => {
 
     try {
         const query = `
-            SELECT a.harvest_date,b.plot_name,a.company_name,a.net_weight_kg,a.starch_percentage,a.amount
+            SELECT a.harvest_id, a.harvest_date,b.plot_name,a.company_name,a.net_weight_kg,a.starch_percentage,a.amount
             FROM harvests a
             LEFT JOIN plots b ON a.plot_id = b.plot_id
             WHERE a.user_id = ?
@@ -101,4 +101,31 @@ exports.getSerch = (req, res) => {
         // ส่งผลลัพธ์ในรูปแบบ JSON
         res.json(results);
     });
+};
+
+exports.deleteHarvest = async (req, res) => {
+    const harvestId = req.params.harvest_id; // แก้เป็น 'harvest_id'
+
+    if (!harvestId) {
+        return res.status(400).json({ message: 'กรุณาระบุ harvest_id' });
+    }
+
+    const query = 'DELETE FROM harvests WHERE harvest_id = ?';
+    try {
+        db.query(query, [harvestId], (err, results) => {
+            if (err) {
+                console.error('Error executing query:', err.stack);
+                return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการลบข้อมูลการเก็บเกี่ยว' });
+            }
+
+            if (results.affectedRows === 0) {
+                return res.status(404).json({ message: 'ไม่พบข้อมูลการเก็บเกี่ยว' });
+            }
+
+            res.json({ message: 'ลบข้อมูลการเก็บเกี่ยวสำเร็จ' });
+        });
+    } catch (error) {
+        console.error('Unexpected error:', error);
+        res.status(500).json({ message: 'เกิดข้อผิดพลาดในการลบข้อมูลการเก็บเกี่ยว' });
+    }
 };

@@ -24,4 +24,9 @@ export class HarvestsService {
   addHarvest(formData: FormData): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/addharvest`, formData);
   }
+
+  deleteHarvest(harvestId: number): Observable<any> {
+    debugger
+    return this.http.delete<any>(`${this.apiUrl}/deleteharvest/${harvestId}`);
+  }
 }
