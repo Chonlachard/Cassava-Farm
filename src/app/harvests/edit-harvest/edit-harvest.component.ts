@@ -105,20 +105,9 @@ export class EditHarvestComponent implements OnInit {
       return;
     }
 
-    const formData = new FormData();
-    formData.append('user_id', this.userId);
-    formData.append('plot_id', this.harvestForm.get('plot_id')?.value);
-    formData.append('harvest_date', this.formatDate(this.harvestForm.get('harvest_date')?.value));
-    formData.append('company_name', this.harvestForm.get('company_name')?.value);
-    formData.append('net_weight_kg', this.harvestForm.get('net_weight_kg')?.value);
-    formData.append('starch_percentage', this.harvestForm.get('starch_percentage')?.value);
-    formData.append('amount', this.harvestForm.get('amount')?.value);
+    const formData = { ...this.harvestForm.getRawValue() };
 
-    if (this.harvestForm.get('image')?.value) {
-      formData.append('image', this.harvestForm.get('image')?.value);
-    }
-
-    this.harvestsService.updateHarvest(this.harvestForm.get('harvest_id')?.value, formData).subscribe(response => {
+    this.harvestsService.updateHarvest(formData).subscribe(response => {
       Swal.fire({
         title: 'สำเร็จ!',
         text: 'ข้อมูลเก็บเกี่ยวถูกแก้ไขเรียบร้อยแล้ว',

@@ -105,7 +105,12 @@
     "selectPlot": "Select Plot",
     "netWeight": "Net Weight (kg)",
     "image": "Upload Image",
-    "save": "Save"
+    "save": "Save",
+    "errorLoading": "An error occurred while loading harvest data!",
+    "errorLoadingPlots": "An error occurred while loading plots!",
+    "formInvalid": "The form data is invalid!",
+    "updateSuccess": "Harvest data updated successfully!",
+    "updateError": "An error occurred while updating harvest data!"
   },
   "expense": {
     "pageTitle": "Expense List",
