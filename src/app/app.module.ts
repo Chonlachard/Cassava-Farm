@@ -34,6 +34,9 @@ import { HarvestsComponent } from './harvests/harvests.component';
 import { AddHarvestComponent } from './harvests/add-harvest/add-harvest.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { EditHarvestComponent } from './harvests/edit-harvest/edit-harvest.component';
+import { WorkerComponent } from './worker/worker.component';
+import { AddWorkerComponent } from './worker/add-worker/add-worker.component';
+import { EditWorkerComponent } from './worker/edit-worker/edit-worker.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -53,6 +56,9 @@ export function HttpLoaderFactory(http: HttpClient) {
     HarvestsComponent,
     AddHarvestComponent,
     EditHarvestComponent,
+    WorkerComponent,
+    AddWorkerComponent,
+    EditWorkerComponent,
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,35 @@
+<div class="worker-form-container">
+    <div class="form-card">
+        <h1 class="form-title">เพิ่มข้อมูลติดต่อคนงาน</h1>
+        <form [formGroup]="workerForm" (ngSubmit)="onSubmit()">
+            <div class="form-field">
+                <label for="worker_name">
+                    <i class="fas fa-user"></i> ชื่อ-นามสกุล
+                </label>
+                <input type="text" id="worker_name" formControlName="worker_name" placeholder="กรุณากรอกชื่อ-นามสกุล" required>
+            </div>
+            <div class="form-field">
+                <label for="phone">
+                    <i class="fas fa-phone"></i> เบอร์โทรศัพท์
+                </label>
+                <input type="tel" id="phone" formControlName="phone" placeholder="กรุณากรอกเบอร์โทรศัพท์" required>
+            </div>
+            <div class="form-field">
+                <label for="skills">
+                    <i class="fas fa-tag"></i> ทักษะ
+                </label>
+                <select id="skills" formControlName="skills" required>
+                    <option value="" disabled selected>กรุณาเลือกทักษะ</option>
+                    <!-- ตัวอย่างตัวเลือก -->
+                    <option value="การเกษตร">การเกษตร</option>
+                    <option value="การเก็บเกี่ยว">การเก็บเกี่ยว</option>
+                    <option value="การปลูกพืช">การปลูกพืช</option>
+                    <!-- เพิ่มตัวเลือกอื่น ๆ ตามต้องการ -->
+                </select>
+            </div>
+            <button type="submit" [disabled]="!workerForm.valid" class="submit-button">
+                <i class="fas fa-save"></i> บันทึก
+            </button>
+        </form>
+    </div>
+</div>
