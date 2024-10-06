@@ -18,6 +18,7 @@ export class WorkerService {
   }
 
   addWorker(worker: any): Observable<any> {
+    debugger
     return this.http.post(`${this.apiUrl}/addWorker`, worker);
   }
 

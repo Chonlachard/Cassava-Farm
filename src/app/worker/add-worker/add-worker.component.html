@@ -18,15 +18,18 @@
                 <label for="skills">
                     <i class="fas fa-tag"></i> ทักษะ
                 </label>
-                <select id="skills" formControlName="skills" required>
-                    <option value="" disabled selected>กรุณาเลือกทักษะ</option>
-                    <!-- ตัวอย่างตัวเลือก -->
-                    <option value="การเกษตร">การเกษตร</option>
-                    <option value="การเก็บเกี่ยว">การเก็บเกี่ยว</option>
-                    <option value="การปลูกพืช">การปลูกพืช</option>
-                    <!-- เพิ่มตัวเลือกอื่น ๆ ตามต้องการ -->
-                </select>
+                <div formGroupName="skills">
+                    <div *ngFor="let skill of availableSkills">
+                        <input 
+                            type="checkbox" 
+                            [value]="skill" 
+                            (change)="onSkillChange($event)" 
+                            [checked]="workerForm.get('skills')?.value.includes(skill)">
+                        <label>{{ skill }}</label>
+                    </div>
+                </div>
             </div>
+            
             <button type="submit" [disabled]="!workerForm.valid" class="submit-button">
                 <i class="fas fa-save"></i> บันทึก
             </button>
