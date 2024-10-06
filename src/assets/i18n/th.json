@@ -76,6 +76,7 @@
   },
   "harvest": {
     "harvests": "ข้อมูลเก็บเกี่ยว",
+    "formEditTitle": "แก้ไขข้อมูลเก็บเกี่ยว",
     "searchByPlot": "ค้นหาโดยแปลงที่ปลูก",
     "search": "ค้นหา",
     "clear": "ล้าง",

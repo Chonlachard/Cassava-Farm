@@ -7,6 +7,7 @@ import { HarvestsService } from './harvests.service';
 import { AddHarvestComponent } from './add-harvest/add-harvest.component';
 import Swal from 'sweetalert2';
 import { TranslateService } from '@ngx-translate/core';
+import { EditHarvestComponent } from './edit-harvest/edit-harvest.component';
 
 @Component({
   selector: 'app-harvests',
@@ -114,10 +115,10 @@ export class HarvestsComponent implements OnInit, AfterViewInit {
     });
   }
 
-  openAdd(harvestId?: number): void {
+  openAdd(userId: string): void {
     const dialogRef = this.dialog.open(AddHarvestComponent, {
       width: '500px',
-      data: { userId: this.userId, harvestId: harvestId } // ส่ง harvestId ไปยังคอมโพเนนต์
+      data: { userId: userId } // ส่งแค่ userId ไปยังคอมโพเนนต์
     });
   
     dialogRef.afterClosed().subscribe(result => {
@@ -125,7 +126,15 @@ export class HarvestsComponent implements OnInit, AfterViewInit {
     });
   }
   
-  EditHarvest(harvestId: number): void{
-    this.openAdd(harvestId);
+  EditHarvest(harvestId: number): void {
+    const dialogRef = this.dialog.open(EditHarvestComponent, {
+      width: '500px',
+      data: { userId: this.userId, harvestId: harvestId } // ส่ง userId และ harvestId ไปยังคอมโพเนนต์
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      this.loadHarvests(); // โหลดข้อมูลหลังจากปิด Dialog
+    });
   }
+  
 }

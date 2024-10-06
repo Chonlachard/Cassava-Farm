@@ -76,6 +76,7 @@
   },
   "harvest": {
     "harvests": "Harvests",
+    "formEditTitle": "Edit Harvest",
     "searchByPlot": "Search by Plot",
     "search": "Search",
     "clear": "Clear",
