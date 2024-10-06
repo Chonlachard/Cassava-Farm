@@ -20,4 +20,8 @@ export class WorkerService {
   addWorker(worker: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/addWorker`, worker);
   }
+
+  deleteWorker(workerId: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/deleteWorker/${workerId}`);
+  }
 }

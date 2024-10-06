@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { AddWorkerComponent } from './add-worker/add-worker.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-worker',
@@ -55,5 +56,39 @@ export class WorkerComponent implements OnInit, AfterViewInit {
   }
   onSearch(){}
   Edit(){}
-  Delete(){}
+  Delete(workerId: string) {
+    Swal.fire({
+      title: 'คุณแน่ใจหรือไม่?',
+      text: 'คุณจะไม่สามารถกู้คืนข้อมูลนี้ได้!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'ใช่, ลบเลย!',
+      cancelButtonText: 'ยกเลิก'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.workerService.deleteWorker(workerId).subscribe(
+          response => {
+            console.log('ลบข้อมูลคนงานสำเร็จ:', response);
+            // แสดงข้อความยืนยันการลบ
+            Swal.fire(
+              'ลบสำเร็จ!',
+              'ข้อมูลคนงานถูกลบแล้ว.',
+              'success'
+            );
+            this.loadWorker(); // โหลดข้อมูลใหม่หลังจากลบ
+          },
+          error => {
+            console.error('เกิดข้อผิดพลาดในการลบข้อมูลคนงาน:', error);
+            Swal.fire(
+              'เกิดข้อผิดพลาด!',
+              'ไม่สามารถลบข้อมูลคนงานได้.',
+              'error'
+            );
+          }
+        );
+      }
+    });
+  }
 }

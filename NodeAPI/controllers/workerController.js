@@ -54,4 +54,35 @@ exports.addWorker = async (req, res) => {
     }
 };
 
+exports.deleteWorker = async (req, res) => {
+    const workerId = req.params.worker_id;
+
+    if (!workerId) {
+        return res.status(400).json({ message: 'กรุณาระบุ worker_id' });
+    }
+
+    const query = 'DELETE FROM workers WHERE worker_id = ?';
+    try {
+        const result = await new Promise((resolve, reject) => {
+            db.query(query, [workerId], (err, results) => {
+                if (err) {
+                    console.error('Database query error:', err);
+                    reject(err);
+                } else {
+                    resolve(results);
+                }
+            });
+        });
+
+        if (result.affectedRows === 0) {
+            // ไม่มีข้อมูลที่ตรงกับ expense_id
+            return res.status(404).json({ message: 'ไม่พบข้อมูลคนงานที่ต้องการลบ' });
+        }
+
+        res.json({ message: 'ลบข้อมูลคนงานสำเร็จ' });
+    } catch (err) {
+        console.error('Error executing query:', err.stack);
+        res.status(500).json({ message: 'เกิดข้อผิดพลาดในการลบข้อมูลคนงาน' });
+    }
+};
 
