@@ -28,4 +28,8 @@ export class WorkerService {
   getWorkerById(workerId: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/getEditWorker/${workerId}`);
   }
+
+  updateWorker(worker: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/editWorker`, worker);
+  }
 }

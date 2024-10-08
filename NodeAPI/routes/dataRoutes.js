@@ -36,6 +36,7 @@ router.post('/addWorker' , workerController.addWorker)
 router.delete('/deleteWorker/:worker_id' , workerController.deleteWorker)
 
 router.get('/getEditWorker/:worker_id', workerController.getUpdateWorker);
+router.put('/editWorker', workerController.editWorker);
 
 // เส้นทางสำหรับเพิ่มการเก็บเกี่ยว
 router.post('/addharvest', harvestController.addHarvest);

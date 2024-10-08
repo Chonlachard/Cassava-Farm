@@ -118,3 +118,37 @@ exports.getUpdateWorker = async (req, res) => {
         res.status(500).json({ message: 'เกิดข้อผิดพลาดในการดึงข้อมูลพนักงาน' });
     }
 };
+
+
+exports.editWorker = async (req, res) => {
+
+    const { worker_id, user_id, worker_name, phone, skills } = req.body;
+
+    try {
+        // ตรวจสอบว่ามี worker_id หรือไม่
+        if (!worker_id) {
+            return res.status(400).json({ message: 'worker_id ต้องระบุ' });
+        }
+
+        // ดึงข้อมูลพนักงานจากฐานข้อมูล
+        const [rows] = await db.promise().query('SELECT * FROM workers WHERE worker_id = ?', [worker_id]);
+
+        // หากไม่พบข้อมูลพนักงาน
+        if (rows.length === 0) {
+            return res.status(404).json({ message: 'ไม่พบข้อมูลพนักงาน' });
+        }
+
+        // คำสั่ง SQL สำหรับการอัปเดตข้อมูลพนักงาน
+        const query = 'UPDATE workers SET user_id = ?, worker_name = ?, phone = ?, skills = ? WHERE worker_id = ?';
+
+        // เรียกใช้งานคำสั่ง SQL และส่งค่าต่าง ๆ
+        await db.promise().query(query, [user_id, worker_name, phone, JSON.stringify(skills), worker_id]);
+
+        // ส่งผลลัพธ์กลับไปยัง client
+        res.json({ message: 'อัปเดตข้อมูลพนักงานสำเร็จ' });
+    } catch (error) {
+        console.error('เกิดข้อผิดพลาดในการอัปเดตข้อมูลพนักงาน:', error);
+        res.status(500).json({ message: 'เกิดข้อผิดพลาดในการอัปเดตข้อมูล' });
+    }
+};
+

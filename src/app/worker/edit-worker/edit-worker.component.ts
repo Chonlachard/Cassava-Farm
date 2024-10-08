@@ -18,7 +18,7 @@ export class EditWorkerComponent implements OnInit {
     private fb: FormBuilder,
     private workerService: WorkerService,
     public dialogRef: MatDialogRef<EditWorkerComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any // รับข้อมูล worker_id ที่ถูกส่งมาจาก Edit
+    @Inject(MAT_DIALOG_DATA) public data: any // รับข้อมูล workerId ที่ถูกส่งมาจาก Edit
   ) {
     this.workerForm = this.fb.group({
       worker_id: [''], // ID ของคนงาน
@@ -30,10 +30,10 @@ export class EditWorkerComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    debugger
     this.userId = localStorage.getItem('userId') || '';
     this.workerForm.patchValue({ user_id: this.userId });
-    if (this.data && this.data.workerId) {  // ใช้ workerId จาก data
+
+    if (this.data && this.data.workerId) { // ใช้ workerId จาก data
       this.loadWorkerData(this.data.workerId); // โหลดข้อมูลคนงานเมื่อมี worker_id ถูกส่งมา
     }
   }
@@ -60,42 +60,46 @@ export class EditWorkerComponent implements OnInit {
   }
 
   onSubmit(): void {
-  //  if  (this.workerForm.valid) {
-  //     const formData = {
-  //       ...this.workerForm.value,
-  //       user_id: this.workerForm.get('user_id')?.value // เพิ่ม user_id ที่ปิดการแก้ไข
-  //     };
-
-  //     this.workerService.updateWorker(formData).subscribe(
-  //       response => {
-  //         console.log('แก้ไขข้อมูลคนงานสำเร็จ:', response);
-  //         Swal.fire({
-  //           icon: 'success',
-  //           title: 'สำเร็จ!',
-  //           text: 'ข้อมูลคนงานถูกแก้ไขแล้ว!',
-  //           confirmButtonText: 'ตกลง'
-  //         });
-  //         this.dialogRef.close(true); // ปิด dialog และส่งผลลัพธ์กลับไปยัง component หลัก
-  //       },
-  //       error => {
-  //         console.error('เกิดข้อผิดพลาดในการแก้ไขข้อมูลคนงาน:', error);
-  //         Swal.fire({
-  //           icon: 'error',
-  //           title: 'เกิดข้อผิดพลาด!',
-  //           text: 'ไม่สามารถแก้ไขข้อมูลคนงานได้!',
-  //           confirmButtonText: 'ตกลง'
-  //         });
-  //       }
-  //     );
-  //   } else {
-  //     Swal.fire({
-  //       icon: 'warning',
-  //       title: 'ข้อมูลไม่ถูกต้อง!',
-  //       text: 'กรุณาตรวจสอบข้อมูลในฟอร์มให้ครบถ้วน.',
-  //       confirmButtonText: 'ตกลง'
-  //     });
-  //   }
+    if (this.workerForm.valid) {
+      const formData = {
+        ...this.workerForm.value,
+        user_id: this.workerForm.get('user_id')?.value, // เพิ่ม user_id ที่ปิดการแก้ไข
+        skills: this.workerForm.get('skills')?.value || [] // ตรวจสอบว่า skills เป็น array
+      };
+  
+      console.log('ข้อมูลที่จะส่งไปยัง API:', formData);
+  
+      this.workerService.updateWorker(formData).subscribe(
+        response => {
+          console.log('แก้ไขข้อมูลคนงานสำเร็จ:', response);
+          Swal.fire({
+            icon: 'success',
+            title: 'สำเร็จ!',
+            text: 'ข้อมูลคนงานถูกแก้ไขแล้ว!',
+            confirmButtonText: 'ตกลง'
+          });
+          this.dialogRef.close(true); // ปิด dialog และส่งผลลัพธ์กลับไปยัง component หลัก
+        },
+        error => {
+          console.error('เกิดข้อผิดพลาดในการแก้ไขข้อมูลคนงาน:', error);
+          Swal.fire({
+            icon: 'error',
+            title: 'เกิดข้อผิดพลาด!',
+            text: 'ไม่สามารถแก้ไขข้อมูลคนงานได้!',
+            confirmButtonText: 'ตกลง'
+          });
+        }
+      );
+    } else {
+      Swal.fire({
+        icon: 'warning',
+        title: 'ข้อมูลไม่ถูกต้อง!',
+        text: 'กรุณาตรวจสอบข้อมูลในฟอร์มให้ครบถ้วน.',
+        confirmButtonText: 'ตกลง'
+      });
+    }
   }
+  
 
   onSkillChange(event: Event): void {
     const checkbox = event.target as HTMLInputElement;
