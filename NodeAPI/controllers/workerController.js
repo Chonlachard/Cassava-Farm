@@ -86,3 +86,35 @@ exports.deleteWorker = async (req, res) => {
     }
 };
 
+exports.getUpdateWorker = async (req, res) => {
+    const workerId = req.params.worker_id;
+
+    // ตรวจสอบว่ามีการส่ง worker_id มาหรือไม่
+    if (!workerId) {
+        return res.status(400).json({ message: 'กรุณาระบุ worker_id' });
+    }
+
+    // คำสั่ง SQL สำหรับดึงข้อมูลพนักงานตาม worker_id
+    const query = 'SELECT * FROM workers WHERE worker_id = ?';
+
+    // เรียกใช้คำสั่ง SQL
+    try {
+        db.query(query, [workerId], (err, results) => {
+            if (err) {
+                console.error('Database query error:', err.stack);
+                return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการดึงข้อมูลพนักงาน' });
+            }
+
+            // ตรวจสอบว่ามีผลลัพธ์หรือไม่
+            if (results.length === 0) {
+                return res.status(404).json({ message: 'ไม่พบข้อมูลพนักงาน' });
+            }
+
+            // ส่งผลลัพธ์กลับไปในรูปแบบ JSON
+            res.json(results[0]); // ใช้ results[0] เนื่องจากต้องการส่งข้อมูลพนักงานคนเดียว
+        });
+    } catch (err) {
+        console.error('Error executing query:', err.stack);
+        res.status(500).json({ message: 'เกิดข้อผิดพลาดในการดึงข้อมูลพนักงาน' });
+    }
+};

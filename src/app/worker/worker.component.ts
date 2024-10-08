@@ -7,6 +7,7 @@ import { AddWorkerComponent } from './add-worker/add-worker.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import Swal from 'sweetalert2';
+import { EditWorkerComponent } from './edit-worker/edit-worker.component';
 
 @Component({
   selector: 'app-worker',
@@ -55,7 +56,24 @@ export class WorkerComponent implements OnInit, AfterViewInit {
     });
   }
   onSearch(){}
-  Edit(){}
+  Edit(workerId: string): void { // เปลี่ยนเป็น string เพื่อความสอดคล้อง
+    const dialogRef = this.dialog.open(EditWorkerComponent, {
+      width: '600px',
+      data: { userId: this.userId, workerId: workerId } // ส่งข้อมูล userId และ workerId ไปยัง EditWorkerComponent
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadWorker(); // โหลดข้อมูลใหม่หลังจากมีการแก้ไข
+      } else {
+        console.log('การแก้ไขถูกยกเลิก'); // แสดงข้อความเมื่อการแก้ไขถูกยกเลิก
+      }
+    });
+  }
+  
+  
+  
+  
   Delete(workerId: string) {
     Swal.fire({
       title: 'คุณแน่ใจหรือไม่?',

@@ -1,1 +1,38 @@
-<p>edit-worker works!</p>
+<div class="worker-form-container">
+    <div class="form-card">
+        <h1 class="form-title">แก้ไขข้อมูลติดต่อคนงาน</h1>
+        <form [formGroup]="workerForm" (ngSubmit)="onSubmit()">
+            <div class="form-field">
+                <label for="worker_name">
+                    <i class="fas fa-user"></i> ชื่อ-นามสกุล
+                </label>
+                <input type="text" id="worker_name" formControlName="worker_name" placeholder="กรุณากรอกชื่อ-นามสกุล" required>
+            </div>
+
+            <div class="form-field">
+                <label for="phone">
+                    <i class="fas fa-phone"></i> เบอร์โทรศัพท์
+                </label>
+                <input type="tel" id="phone" formControlName="phone" placeholder="กรุณากรอกเบอร์โทรศัพท์" required>
+            </div>
+
+            <div class="form-field">
+                <label>ทักษะ</label>
+                <div class="skills-container">
+                    <div *ngFor="let skill of availableSkills" class="skill-item">
+                        <input 
+                            type="checkbox" 
+                            [value]="skill" 
+                            (change)="onSkillChange($event)" 
+                            [checked]="workerForm.get('skills')?.value.includes(skill)">
+                        <label>{{ skill }}</label>
+                    </div>
+                </div>
+            </div>
+            
+            <button type="submit" [disabled]="!workerForm.valid" class="submit-button">
+                <i class="fas fa-save"></i> บันทึก
+            </button>
+        </form>
+    </div>
+</div>
