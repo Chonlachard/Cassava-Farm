@@ -66,6 +66,7 @@ exports.availableYears = async (req, res) => {
 
 
 // ฟังก์ชัน financialData
+
 exports.financialData = (req, res) => {
     const { year, user_id } = req.query;
 
@@ -103,17 +104,29 @@ exports.financialData = (req, res) => {
                 const month = i + 1;
                 const incomeData = incomeRows.find(i => i.month === month) || { income: 0 };
                 const expenseData = expensesRows.find(e => e.month === month) || { expenses: 0 };
+                const income = Number(incomeData.income) || 0;
+                const expenses = Number(expenseData.expenses) || 0;
+                const profit = income - expenses;
                 return {
                     month,
-                    income: Number(incomeData.income) || 0,
-                    expenses: Number(expenseData.expenses) || 0
+                    income,
+                    expenses,
+                    profit
                 };
             });
 
             const totalIncome = incomeRows.reduce((sum, i) => sum + Number(i.income || 0), 0);
             const totalExpenses = expensesRows.reduce((sum, e) => sum + Number(e.expenses || 0), 0);
+            const totalProfit = totalIncome - totalExpenses;
 
-            res.json({ totalIncome, totalExpenses, incomeExpenses });
+            const summary = {
+                totalIncome,
+                totalExpenses,
+                totalProfit,
+                status: totalProfit > 0 ? 'กำไร' : totalProfit < 0 ? 'ขาดทุน' : 'เท่าทุน'
+            };
+
+            res.json({ summary, incomeExpenses });
         });
     });
 };
