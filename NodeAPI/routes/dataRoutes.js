@@ -34,7 +34,8 @@ const upload = multer({ storage: storage });
 
 //dashboard
 router.get('/getPlotAnalytics', dashbordController.getPlotAnalytics);
-
+router.get('/availableYears', dashbordController.availableYears);
+router.get('/financialData', dashbordController.financialData);
 
 
 
