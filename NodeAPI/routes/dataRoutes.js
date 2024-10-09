@@ -15,6 +15,8 @@ const plotController = require('../controllers/plotsController');
 const getPlotController = require('../controllers/getPlotController');
 const harvestController = require('../controllers/harvestsController');
 const workerController = require('../controllers/workerController')
+const dashbordController = require('../controllers/dashbordController')
+
 // การตั้งค่า Multer
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -29,6 +31,12 @@ const storage = multer.diskStorage({
     }
 });
 const upload = multer({ storage: storage });
+
+//dashboard
+router.get('/getPlotAnalytics', dashbordController.getPlotAnalytics);
+
+
+
 
 //Worker
 router.get('/getWorkers',workerController.getWorker)

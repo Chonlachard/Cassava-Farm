@@ -1,1 +1,21 @@
 <app-navbar></app-navbar>
+
+<!-- dashboard.component.html -->
+<div class="dashboard">
+    <h1 style="text-align: center;">วิเคราะห์รายรับและรายจ่าย</h1>
+  
+    <div class="stats-container">
+      <div class="stat-card">
+        <h3>จำนวนแปลง</h3>
+        <p>{{ totalPlots }}</p>
+      </div>
+      <div class="stat-card">
+        <h3>พื้นที่รวม</h3>
+        <p>{{ totalArea }} ไร่</p>
+      </div>
+      <div class="stat-card">
+        <h3>ผลผลิตรวม</h3>
+        <p>{{ totalProduction }} กิโลกรัม</p>
+      </div>
+    </div>
+  </div>
