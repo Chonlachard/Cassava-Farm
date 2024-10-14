@@ -1,21 +1,50 @@
 <app-navbar></app-navbar>
 
-<!-- dashboard.component.html -->
-<div class="dashboard">
-    <h1 style="text-align: center;">วิเคราะห์รายรับและรายจ่าย</h1>
-  
-    <div class="stats-container">
-      <div class="stat-card">
-        <h3>จำนวนแปลง</h3>
-        <p>{{ totalPlots }}</p>
+<div class="card" style="max-width: 1000px; margin: auto;">
+  <div class="card-body">
+    <h2 class="card-title">สถิติการเกษตร</h2>
+    <div class="summary-grid">
+      <div>
+        <div class="summary-item-label">จำนวนแปลง</div>
+        <div class="summary-item-value">{{ totalPlots }}</div>
       </div>
-      <div class="stat-card">
-        <h3>พื้นที่รวม</h3>
-        <p>{{ totalArea }} ไร่</p>
+      <div>
+        <div class="summary-item-label">พื้นที่ทั้งหมด (ไร่)</div>
+        <div class="summary-item-value">{{ totalArea }}</div>
       </div>
-      <div class="stat-card">
-        <h3>ผลผลิตรวม</h3>
-        <p>{{ totalProduction }} กิโลกรัม</p>
+      <div>
+        <div class="summary-item-label">ผลผลิตทั้งหมด (ตัน)</div>
+        <div class="summary-item-value">{{ totalProduction }}</div>
       </div>
     </div>
   </div>
+</div>
+
+<div class="card" style="max-width: 1000px; margin: auto; margin-top: 20px;">
+  <div class="card-body">
+    <h2 class="card-title">ข้อมูลการเงิน</h2>
+    <div class="summary-grid">
+      <div>
+        <div class="summary-item-label">รายรับทั้งหมด</div>
+        <div class="summary-item-value income">฿{{ totalIncome | number }}</div>
+      </div>
+      <div>
+        <div class="summary-item-label">รายจ่ายทั้งหมด</div>
+        <div class="summary-item-value expense">฿{{ totalExpenses | number }}</div>
+      </div>
+      <div>
+        <div class="summary-item-label">กำไร/ขาดทุนสุทธิ</div>
+        <div class="summary-item-value profit">฿{{ netProfit | number }}</div>
+      </div>
+    </div>
+    <div class="year-selector">
+      <h2>เลือกปีที่ต้องการวิเคราะห์</h2>
+      <select [(ngModel)]="selectedYear" (ngModelChange)="onYearChange($event)">
+        <option *ngFor="let year of availableYears" [value]="year">{{ year }}</option>
+      </select>
+    </div>
+
+
+
+  </div>
+</div>
