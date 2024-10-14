@@ -46,6 +46,7 @@ export class DashbordComponent implements OnInit {
       this.totalIncome = data.summary.totalIncome || 0; // ตรวจสอบว่ามีค่าเป็นศูนย์
       this.totalExpenses = data.summary.totalExpenses || 0; // ตรวจสอบว่ามีค่าเป็นศูนย์
       this.netProfit = data.summary.totalProfit || 0; // ตรวจสอบว่ามีค่าเป็นศูนย์
+      
     });
   }
 
