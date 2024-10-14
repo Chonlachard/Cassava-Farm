@@ -37,7 +37,9 @@ import { EditHarvestComponent } from './harvests/edit-harvest/edit-harvest.compo
 import { WorkerComponent } from './worker/worker.component';
 import { AddWorkerComponent } from './worker/add-worker/add-worker.component';
 import { EditWorkerComponent } from './worker/edit-worker/edit-worker.component';
-import { BaseChartDirective } from 'ng2-charts';
+import { BaseChartDirective  } from 'ng2-charts';
+import { CommonModule } from '@angular/common';
+import { NgApexchartsModule } from "ng-apexcharts";
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
@@ -62,8 +64,10 @@ export function HttpLoaderFactory(http: HttpClient) {
   ],
   imports: [
     BrowserModule,
+    NgApexchartsModule,
     HttpClientModule,
     BaseChartDirective,
+    CommonModule,
     FormsModule,
     ReactiveFormsModule,
     TranslateModule.forRoot({

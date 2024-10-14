@@ -1,6 +1,27 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { DashbordService } from './dashbord.service';
+import {
+  ApexAxisChartSeries,
+  ApexChart,
+  ApexDataLabels,
+  ApexPlotOptions,
+  ApexYAxis,
+  ApexXAxis,
+  ApexTooltip,
+  ApexLegend
+} from 'ng-apexcharts';
+
+export type ChartOptions = {
+  series: ApexAxisChartSeries;
+  chart: ApexChart;
+  dataLabels: ApexDataLabels;
+  plotOptions: ApexPlotOptions;
+  yaxis: ApexYAxis;
+  xaxis: ApexXAxis;
+  tooltip: ApexTooltip;
+  legend: ApexLegend;
+};
 
 @Component({
   selector: 'app-dashbord',
@@ -17,6 +38,50 @@ export class DashbordComponent implements OnInit {
   userId: string = '';
   selectedYear: number = new Date().getFullYear(); // ปีที่เลือกสำหรับการเงิน
   availableYears: number[] = [];
+
+  // ตัวแปรสำหรับกราฟ
+  public chartOptions: ChartOptions = {
+    series: [
+      {
+        name: 'รายรับ',
+        data: [],
+      },
+      {
+        name: 'รายจ่าย',
+        data: [],
+      },
+    ],
+    chart: {
+      type: 'bar',
+      height: 350,
+    },
+    dataLabels: {
+      enabled: true, // เปิดการแสดงป้ายชื่อข้อมูล
+    },
+    plotOptions: {
+      bar: {
+        horizontal: false, // ตั้งค่าว่ากราฟเป็นแบบแนวนอนหรือแนวตั้ง
+        columnWidth: '55%',
+      },
+    },
+    xaxis: {
+      categories: [], // จะถูกตั้งค่าใน updateChartData
+    },
+    yaxis: {
+      title: {
+        text: 'Amount (thousands)',
+      },
+    },
+    tooltip: {
+      shared: true,
+      intersect: false,
+    },
+    legend: {
+      position: 'top',
+      horizontalAlign: 'center',
+      floating: true,
+    },
+  };
 
   constructor(
     private fb: FormBuilder,
@@ -47,6 +112,8 @@ export class DashbordComponent implements OnInit {
       this.totalExpenses = data.summary.totalExpenses || 0; // ตรวจสอบว่ามีค่าเป็นศูนย์
       this.netProfit = data.summary.totalProfit || 0; // ตรวจสอบว่ามีค่าเป็นศูนย์
       
+      // อัปเดตข้อมูลกราฟ
+      this.updateChartData(data.incomeExpenses);
     });
   }
 
@@ -55,4 +122,33 @@ export class DashbordComponent implements OnInit {
     this.selectedYear = +year; // แปลงเป็น number
     this.fetchFinancialData(this.selectedYear);
   }
+
+  // ฟังก์ชันอัปเดตข้อมูลกราฟ
+  updateChartData(data: any[]): void {
+    const monthNames = [
+        'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
+        'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
+    ];
+
+    if (data && data.length > 0) {
+        this.chartOptions.series[0].data = Array(12).fill(0);
+        this.chartOptions.series[1].data = Array(12).fill(0);
+
+        data.forEach(item => {
+            const monthIndex = monthNames.indexOf(item.month); // ใช้ชื่อเดือนในการหาตำแหน่ง
+            if (monthIndex >= 0) {
+                this.chartOptions.series[0].data[monthIndex] = item.income || 0; // รายรับ
+                this.chartOptions.series[1].data[monthIndex] = item.expenses || 0; // รายจ่าย
+            }
+        });
+
+        this.chartOptions.xaxis.categories = monthNames; // ตั้งชื่อเดือนทั้งหมด
+    } else {
+        // กรณีไม่มีข้อมูล
+        this.chartOptions.series[0].data = Array(12).fill(0);
+        this.chartOptions.series[1].data = Array(12).fill(0);
+        this.chartOptions.xaxis.categories = monthNames; // ตั้งชื่อเดือนทั้งหมด
+    }
+}
+
 }

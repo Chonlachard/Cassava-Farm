@@ -88,6 +88,12 @@ exports.financialData = (req, res) => {
         GROUP BY MONTH(expense_date)
     `;
 
+    // อาเรย์ชื่อเดือน
+    const monthNames = [
+        'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
+        'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
+    ];
+
     db.query(queryIncome, [year, user_id], (err, incomeRows) => {
         if (err) {
             console.error('Error fetching income data:', err);
@@ -108,7 +114,7 @@ exports.financialData = (req, res) => {
                 const expenses = Number(expenseData.expenses) || 0;
                 const profit = income - expenses;
                 return {
-                    month,
+                    month: monthNames[month - 1], // ใช้ชื่อเดือนแทนตัวเลข
                     income,
                     expenses,
                     profit
@@ -130,4 +136,5 @@ exports.financialData = (req, res) => {
         });
     });
 };
+
 
