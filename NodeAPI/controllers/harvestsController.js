@@ -191,3 +191,29 @@ exports.getUpdateHarvest = async (req, res) => {
 
 };
 
+exports.getHarvestImage = (req, res) => {
+    const baseUrl = 'http://localhost:3000';  // กำหนด baseUrl
+    const harvestId = req.params.harvest_id;
+
+    if (!harvestId) {
+        return res.status(400).json({ message: 'กรุณาระบุ harvest_id' });
+    }
+
+    const query = 'SELECT image_path FROM harvests WHERE harvest_id = ?';
+
+    // ดึง path ของรูปภาพจากฐานข้อมูล
+    db.query(query, [harvestId], (err, results) => {
+        if (err) {
+            console.error('Error executing query:', err.stack);
+            return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการดึงข้อมูลรูปภาพ' });
+        }
+
+        if (results.length === 0) {
+            return res.status(404).json({ message: 'ไม่พบรูปภาพสำหรับ harvest_id นี้' });
+        }
+
+        const imageUrl = `${baseUrl}${results[0].image_path}`;
+        res.json({ imageUrl });
+    });
+};
+

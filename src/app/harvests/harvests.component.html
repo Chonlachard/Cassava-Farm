@@ -76,6 +76,9 @@
                             <button mat-icon-button color="warn" (click)="DeleteHarest(harvest.harvest_id)" matTooltip="{{ 'harvest.delete' | translate }}">
                                 <mat-icon>delete</mat-icon>
                             </button>
+                            <button mat-icon-button (click)="viewDetails(harvest.harvest_id)" matTooltip="{{ 'plot.viewDetailsButton' | translate }}">
+                                <mat-icon>visibility</mat-icon>
+                              </button>
                         </td>
                     </ng-container>
 
@@ -95,4 +98,24 @@
             <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
         </mat-card-content>
     </mat-card>
+
+    <!-- Modal สำหรับแสดงภาพ -->
+    <div class="image-modal" 
+    [ngClass]="{'show': showModal}" 
+    [style.display]="showModal ? 'block' : 'none'" 
+    (click)="closeModal()">
+   
+   <div class="modal-container" (click)="$event.stopPropagation()">
+       <!-- ปุ่มปิดด้านบนขวา -->
+       <button class="close-button" (click)="closeModal()">
+           <span>&times;</span>
+       </button>
+       
+       <!-- รูปภาพ -->
+       <div class="image-container">
+           <img [src]="imageUrl" [alt]="'harvest.imageDetails' | translate">
+       </div>
+   </div>
+</div>
+
 </div>

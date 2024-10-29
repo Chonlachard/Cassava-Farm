@@ -38,4 +38,7 @@ export class HarvestsService {
   getHarvest(harvestId: number): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/getEditHarvest/${harvestId}`);
   }
+  getHarvestImage(harvestId: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/getHarvestImage/${harvestId}`);
+}
 }

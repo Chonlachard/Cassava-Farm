@@ -21,6 +21,8 @@ export class HarvestsComponent implements OnInit, AfterViewInit {
   userId: string = '';
   searchForm: FormGroup;
   plots: any[] = []; // Variable to store plot data
+  showModal: boolean = false;
+  imageUrl: string = '';
 
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
 
@@ -136,5 +138,32 @@ export class HarvestsComponent implements OnInit, AfterViewInit {
       this.loadHarvests(); // โหลดข้อมูลหลังจากปิด Dialog
     });
   }
+  viewDetails(harvestId: number): void {
+    this.harvestsService.getHarvestImage(harvestId).subscribe((res: any) => {
+        if (res.imageUrl) {
+            this.imageUrl = res.imageUrl; // ตั้งค่า URL ของภาพ
+            this.showModal = true; // แสดง modal
+        } else {
+            Swal.fire({
+                title: this.translate.instant('harvest.error'),
+                text: this.translate.instant('harvest.noImageFound'), // Ensure you have this translation
+                icon: 'error'
+            });
+        }
+    }, error => {
+        Swal.fire({
+            title: this.translate.instant('harvest.error'),
+            text: this.translate.instant('harvest.fetchError'), // Ensure you have this translation
+            icon: 'error'
+        });
+    });
+}
+
+  
+  closeModal() {
+    this.showModal = false; // ปิด modal
+    this.imageUrl = ''; // รีเซ็ต URL ของภาพ
+  }
+
   
 }

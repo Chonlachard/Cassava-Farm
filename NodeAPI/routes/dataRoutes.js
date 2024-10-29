@@ -50,6 +50,8 @@ router.put('/editWorker', workerController.editWorker);
 // เส้นทางสำหรับเพิ่มการเก็บเกี่ยว
 router.post('/addharvest', harvestController.addHarvest);
 
+router.get('/getHarvestImage/:harvest_id', harvestController.getHarvestImage);
+
 // เส้นทางสำหรับดลบข้อมูลการเก็บเกี่ยว
 router.delete('/deleteharvest/:harvest_id', harvestController.deleteHarvest);
 
