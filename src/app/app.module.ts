@@ -40,6 +40,7 @@ import { EditWorkerComponent } from './worker/edit-worker/edit-worker.component'
 import { BaseChartDirective  } from 'ng2-charts';
 import { CommonModule } from '@angular/common';
 import { NgApexchartsModule } from "ng-apexcharts";
+import { EditExpensesComponent } from './expenses/edit-expenses/edit-expenses.component';
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
@@ -61,6 +62,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     WorkerComponent,
     AddWorkerComponent,
     EditWorkerComponent,
+    EditExpensesComponent,
   ],
   imports: [
     BrowserModule,
@@ -92,7 +94,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     MatSelectModule,         // สำหรับ dropdown
     MatFormFieldModule,      // สำหรับ mat-form-field
     GoogleMapsModule,
-    MatTooltipModule
+    MatTooltipModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

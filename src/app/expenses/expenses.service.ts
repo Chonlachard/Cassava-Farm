@@ -48,6 +48,7 @@ export class ExpensesService {
   }
 
   updateExpense(expense: any): Observable<any> {
+    debugger
     return this.http.put(`${this.apiUrl}/editExpenses`, expense);
   }
   getExpensesByDateRange(userId: string, startDate: string, endDate: string): Observable<any> {
@@ -57,5 +58,10 @@ export class ExpensesService {
         .set('startDate', startDate)  // ใช้ 'startDate' ตามที่ API คาดหวัง
         .set('endDate', endDate)      // ใช้ 'endDate' ตามที่ API คาดหวัง
     });
+  }
+
+
+  getDeopPlot(userId: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/getDeopdowplot?user_id=${userId}`);
   }
 }

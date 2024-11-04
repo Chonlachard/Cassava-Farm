@@ -10,7 +10,10 @@ exports.getExpense = async (req, res) => {
         return res.status(400).json({ message: 'กรุณาระบุ user_id' });
     }
 
-    const query = 'SELECT * FROM expenses WHERE user_id = ?';
+    const query = `SELECT a.expense_id, a.expense_date,b.plot_name , a.category ,a.amount , a.details
+                    FROM expenses a
+                    LEFT JOIN plots b on a.plot_id = b.plot_id
+                    WHERE a.user_id = ?`;
     db.query(query, [userId], (err, results) => {
         if (err) {
             console.error('Error executing query:', err.stack);
@@ -30,16 +33,17 @@ exports.getExpense = async (req, res) => {
 
 // ฟังก์ชันสำหรับเพิ่มข้อมูลค่าใช้จ่าย
 exports.addExpense = async (req, res) => {
-    const { user_id, expense_date, category, amount, details } = req.body;
+    const { user_id, plot_id, expense_date, category, amount, details } = req.body;
 
-    if (!user_id || !expense_date || !category || !amount) {
+    // ตรวจสอบให้แน่ใจว่าข้อมูลที่จำเป็นมีค่าทุกตัว
+    if (!user_id || !plot_id || !expense_date || !category || !amount) {
         return res.status(400).json({ message: 'กรุณากรอกข้อมูลให้ครบถ้วน' });
     }
 
-    const query = 'INSERT INTO expenses (user_id, expense_date, category, amount, details) VALUES (?, ?, ?, ?, ?)';
+    const query = 'INSERT INTO expenses (user_id, plot_id, expense_date, category, amount, details) VALUES (?, ?, ?, ?, ?, ?)';
     try {
         await new Promise((resolve, reject) => {
-            db.query(query, [user_id, expense_date, category, amount, details], (err, results) => {
+            db.query(query, [user_id, plot_id, expense_date, category, amount, details], (err, results) => {
                 if (err) {
                     console.error('Database query error:', err); // เพิ่มการพิมพ์ข้อผิดพลาดที่เกิดขึ้น
                     reject(err);
@@ -54,6 +58,7 @@ exports.addExpense = async (req, res) => {
         res.status(500).json({ message: 'เกิดข้อผิดพลาดในการเพิ่มข้อมูลค่าใช้จ่าย' });
     }
 };
+
 
 // ฟังก์ชันสำหรับแก้ไขข้อมูลค่าใช้จ่าย
 exports.deleteExpense = async (req, res) => {
@@ -89,7 +94,7 @@ exports.deleteExpense = async (req, res) => {
 };
 
 exports.updateExpense = async (req, res) => {
-    const { expense_id, user_id, expense_date, category, amount, details } = req.body;
+    const { expense_id, user_id,plot_id, expense_date, category, amount, details } = req.body;
 
     try {
         // ตรวจสอบข้อมูลที่มีอยู่
@@ -101,8 +106,8 @@ exports.updateExpense = async (req, res) => {
 
         // อัพเดตข้อมูล
         await db.promise().query(
-            `UPDATE expenses SET user_id = ?, expense_date = ?, category = ?, amount = ?, details = ? WHERE expense_id = ?`,
-            [user_id, expense_date, category, amount, details, expense_id]
+            `UPDATE expenses SET user_id = ?,plot_id = ?, expense_date = ?, category = ?, amount = ?, details = ? WHERE expense_id = ?`,
+            [user_id,plot_id, expense_date, category, amount, details, expense_id]
         );
 
         res.status(200).json({ message: 'อัพเดตข้อมูลค่าใช้จ่ายสำเร็จ' });
@@ -120,7 +125,10 @@ exports.getExpenseEdit = async (req, res) => {
         return res.status(400).json({ message: 'กรุณาระบุ expense_id' });
     }
 
-    const query = 'SELECT * FROM expenses WHERE expense_id = ?';
+    const query = `SELECT a.expense_id, a.expense_date,b.plot_name , a.category ,a.amount , a.details
+                    FROM expenses a
+                    LEFT JOIN plots b on a.plot_id = b.plot_id
+                    WHERE a.expense_id = ?`;
     db.query(query, [expenseId], (err, results) => {
         if (err) {
             console.error('Error executing query:', err.stack);
@@ -183,6 +191,26 @@ exports.getExpensesByDateRange = async (req, res) => {
         res.json(formattedResults);
     });
 };
+
+
+exports.getDeopdowplot = async (req, res) => {
+    const userId = req.query.user_id;
+
+    // ตรวจสอบว่ามีการส่ง user_id มาหรือไม่
+    if (!userId) {
+        return res.status(400).json({ message: 'กรุณาระบุ user_id' });
+    }
+
+    const query = 'SELECT plot_id , plot_name  FROM plots WHERE user_id = ?';
+    db.query(query, [userId], (err, results) => {
+        if (err) {
+            console.error('Error executing query:', err.stack);
+            return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการดึงข้อมูลแปลง' });
+        }
+
+        res.json(results);
+    });
+}
 
 
 

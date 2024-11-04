@@ -1,4 +1,4 @@
-.worker-form-container {
+.expense-form-container {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -102,15 +102,3 @@ input:focus, select:focus, textarea:focus {
     align-items: center;
     font-size: 16px;
   }
-  .skills-container {
-    display: flex;
-    flex-wrap: nowrap; /* ป้องกันการขึ้นบรรทัดใหม่ เพื่อให้อยู่ในแถวเดียว */
-    gap: 16px; /* เพิ่มช่องว่างระหว่างแต่ละทักษะ */
-    overflow-x: auto; /* เพิ่มการเลื่อนแนวนอน ถ้าทักษะล้นพื้นที่ */
-}
-
-.skill-item {
-    display: flex;
-    align-items: center; /* จัดตำแหน่ง checkbox และ label ให้อยู่ตรงกลางในแนวตั้ง */
-    white-space: nowrap; /* ป้องกันการตัดบรรทัดในแต่ละ item */
-}

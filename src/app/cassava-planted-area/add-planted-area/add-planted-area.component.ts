@@ -95,46 +95,46 @@ export class AddPlantedAreaComponent implements OnInit {
 
   onCurrentLocation(): void {
     if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                this.mapCenter = {
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude
-                };
-                this.zoom = 15;
-                // this.updateMap(); // อัปเดตตำแหน่งแผนที่
-            },
-            (error) => {
-                console.error('Error getting current location', error);
-                this.showErrorAlert('ไม่สามารถระบุตำแหน่งปัจจุบันได้');
-            }
-        );
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          this.mapCenter = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          };
+          this.zoom = 15;
+          // this.updateMap(); // อัปเดตตำแหน่งแผนที่
+        },
+        (error) => {
+          console.error('Error getting current location', error);
+          this.showErrorAlert('ไม่สามารถระบุตำแหน่งปัจจุบันได้');
+        }
+      );
     } else {
-        this.showErrorAlert('เบราว์เซอร์ของคุณไม่รองรับการระบุตำแหน่ง');
+      this.showErrorAlert('เบราว์เซอร์ของคุณไม่รองรับการระบุตำแหน่ง');
     }
-}
+  }
 
-onSearchPlace(): void {
+  onSearchPlace(): void {
     const searchQuery = this.plantedAreaForm.get('searchQuery')?.value;
 
     if (!searchQuery) {
-        this.showErrorAlert('โปรดระบุที่อยู่ในการค้นหา');
-        return;
+      this.showErrorAlert('โปรดระบุที่อยู่ในการค้นหา');
+      return;
     }
 
     this.geocoder.geocode({ address: searchQuery }).subscribe((result) => {
-        if (result.results.length > 0) {
-            this.mapCenter = result.results[0].geometry.location.toJSON();
-            this.zoom = 15;
-            // this.updateMap(); // อัปเดตตำแหน่งแผนที่
-        } else {
-            this.showErrorAlert('ไม่พบสถานที่ตามที่ค้นหา');
-        }
+      if (result.results.length > 0) {
+        this.mapCenter = result.results[0].geometry.location.toJSON();
+        this.zoom = 15;
+        // this.updateMap(); // อัปเดตตำแหน่งแผนที่
+      } else {
+        this.showErrorAlert('ไม่พบสถานที่ตามที่ค้นหา');
+      }
     }, error => {
-        console.error('Error during geocoding:', error);
-        this.showErrorAlert('เกิดข้อผิดพลาดในการค้นหา');
+      console.error('Error during geocoding:', error);
+      this.showErrorAlert('เกิดข้อผิดพลาดในการค้นหา');
     });
-}
+  }
 
 
   onDragStart(): void {
@@ -143,8 +143,8 @@ onSearchPlace(): void {
 
   onSubmit(): void {
     if (this.plantedAreaForm.invalid) {
-        this.showErrorAlert('กรุณากรอกข้อมูลให้ครบถ้วน');
-        return;
+      this.showErrorAlert('กรุณากรอกข้อมูลให้ครบถ้วน');
+      return;
     }
 
     const latLng = new google.maps.LatLng(this.mapCenter.lat, this.mapCenter.lng);
@@ -153,45 +153,45 @@ onSearchPlace(): void {
     const polygonLatLngs = this.polygonCoords.map(coord => new google.maps.LatLng(coord.lat, coord.lng));
 
     this.captureMapImage(latLng, polygonLatLngs).then((imageUrl) => {
-        const plotName = this.plantedAreaForm.get('plot_name')?.value || 'default-plot-name';
-        const timestamp = new Date().toISOString();
-        const fileName = `${plotName}-${timestamp}.png`;
+      const plotName = this.plantedAreaForm.get('plot_name')?.value || 'default-plot-name';
+      const timestamp = new Date().toISOString();
+      const fileName = `${plotName}-${timestamp}.png`;
 
-        const data = {
-            plot_name: plotName,
-            latlngs: this.polygonCoords,
-            user_id: this.userId,
-            fileData: imageUrl // ส่ง URL ของภาพแผนที่
-        };
+      const data = {
+        plot_name: plotName,
+        latlngs: this.polygonCoords,
+        user_id: this.userId,
+        fileData: imageUrl // ส่ง URL ของภาพแผนที่
+      };
 
-        this.plantedAreaService.savePlantedArea(data).subscribe(
-            response => {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'สำเร็จ',
-                    text: 'ข้อมูลถูกบันทึกเรียบร้อยแล้ว'
-                });
-                this.plantedAreaForm.reset();
-                this.onClearPolygon();
-                this.generatePlotName();
-            },
-            error => {
-                console.error('Error:', error);
-                this.showErrorAlert('ไม่สามารถบันทึกข้อมูลได้');
-            }
-        );
+      this.plantedAreaService.savePlantedArea(data).subscribe(
+        response => {
+          Swal.fire({
+            icon: 'success',
+            title: 'สำเร็จ',
+            text: 'ข้อมูลถูกบันทึกเรียบร้อยแล้ว'
+          });
+          this.plantedAreaForm.reset();
+          this.onClearPolygon();
+          this.generatePlotName();
+        },
+        error => {
+          console.error('Error:', error);
+          this.showErrorAlert('ไม่สามารถบันทึกข้อมูลได้');
+        }
+      );
     }).catch(error => {
-        console.error('Error capturing image:', error);
-        this.showErrorAlert('ไม่สามารถจับภาพแผนที่ได้');
+      console.error('Error capturing image:', error);
+      this.showErrorAlert('ไม่สามารถจับภาพแผนที่ได้');
     });
-}
+  }
 
-  
+
   onDragEnd(): void {
     this.isDragging = false;
   }
 
- 
+
 
   calculateArea(): void {
     if (this.polygonCoords.length < 3) {
@@ -247,19 +247,19 @@ onSearchPlace(): void {
     const mapImageUrl = `${this.staticMapsApiUrl}?center=${lat},${lng}&zoom=${zoom}&size=${imageSize}&maptype=${mapType}&scale=${scale}&path=color:0xFF0000%7Cweight:2%7C${polygonPath}&markers=color:red%7Clabel:A%7C${lat},${lng}&key=AIzaSyA7tIt3Mr5T3bR9d4Po2K7QX3yyygHc-fI&callback=initMap`;
 
     return new Promise((resolve, reject) => {
-        this.http.get(mapImageUrl, { responseType: 'blob' }).subscribe(
-            (blob: Blob) => {
-                const reader = new FileReader();
-                reader.onloadend = () => {
-                    const base64data = (reader.result as string).split(',')[1];
-                    resolve(`data:image/png;base64,${base64data}`);
-                };
-                reader.readAsDataURL(blob);
-            },
-            error => reject(error)
-        );
+      this.http.get(mapImageUrl, { responseType: 'blob' }).subscribe(
+        (blob: Blob) => {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            const base64data = (reader.result as string).split(',')[1];
+            resolve(`data:image/png;base64,${base64data}`);
+          };
+          reader.readAsDataURL(blob);
+        },
+        error => reject(error)
+      );
     });
-}
+  }
 
 
 }

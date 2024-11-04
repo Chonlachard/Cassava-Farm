@@ -92,6 +92,8 @@ router.post('/change-password', profileController.changePassword);
 
 router.get('/getExpenses', expensesController.getExpense);
 
+router.get('/getDeopdowplot', expensesController.getDeopdowplot);
+
 router.post('/addExpenses', expensesController.addExpense);
 
 // ใช้ query parameter สำหรับลบค่าใช้จ่าย

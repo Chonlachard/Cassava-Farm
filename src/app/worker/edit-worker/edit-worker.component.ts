@@ -11,7 +11,7 @@ import Swal from 'sweetalert2'; // ใช้สำหรับแสดงกา
 })
 export class EditWorkerComponent implements OnInit {
   workerForm: FormGroup;
-  availableSkills: string[] = ['การเกษตร', 'การเก็บเกี่ยว', 'การปลูกพืช']; // ทักษะที่สามารถเลือกได้
+  availableSkills: string[] = ['คนขุด', 'ฉีดยา', 'ตัดต้น']; // ทักษะที่สามารถเลือกได้
   userId: string = '';
 
   constructor(

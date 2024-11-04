@@ -13,7 +13,9 @@ const storage = multer.diskStorage({
         cb(null, uploadDir);
     },
     filename: function (req, file, cb) {
-        cb(null, Date.now() + path.extname(file.originalname));
+        // ใช้ชื่อไฟล์ที่ถูกอัปโหลดพร้อมกับนามสกุล
+        const originalName = file.originalname;
+        cb(null, originalName); // กำหนดชื่อไฟล์เป็นชื่อที่อัปโหลด
     }
 });
 const upload = multer({ storage: storage });
@@ -132,7 +134,12 @@ exports.deleteHarvest = async (req, res) => {
 
 exports.updateHarvest = async (req, res) => {
     const { harvest_id, plot_id, harvest_date, company_name, net_weight_kg, starch_percentage, amount } = req.body;
-    const image_path = req.file ? `/uploads/${req.file.filename}` : null;
+    let image_path = null;
+
+    // ตรวจสอบว่ามีไฟล์อัปโหลดใหม่หรือไม่
+    if (req.file) {
+        image_path = `/uploads/${req.file.filename}`; // ใช้ชื่อไฟล์ใหม่ที่อัปโหลด
+    }
 
     // ตรวจสอบความครบถ้วนของข้อมูลที่จำเป็น
     if (!harvest_id || !plot_id || !harvest_date || !company_name || !net_weight_kg || !starch_percentage || !amount) {
@@ -142,9 +149,18 @@ exports.updateHarvest = async (req, res) => {
     try {
         const [results] = await db.promise().query(
             `UPDATE harvests
-             SET plot_id = ?, harvest_date = ?, company_name = ?, net_weight_kg = ?, starch_percentage = ?, amount = ?, image_path = ?
+             SET plot_id = ?, harvest_date = ?, company_name = ?, net_weight_kg = ?, starch_percentage = ?, amount = ?${image_path ? ', image_path = ?' : ''}
              WHERE harvest_id = ?`,
-            [plot_id, harvest_date, company_name, net_weight_kg, starch_percentage, amount, image_path, harvest_id]
+            [
+                plot_id, 
+                harvest_date, 
+                company_name, 
+                net_weight_kg, 
+                starch_percentage, 
+                amount,
+                ...(image_path ? [image_path] : []), // ถ้ามี image_path ให้เพิ่มไปในพารามิเตอร์
+                harvest_id
+            ]
         );
 
         // ตรวจสอบว่ามีแถวที่ได้รับการอัปเดตหรือไม่
@@ -162,6 +178,7 @@ exports.updateHarvest = async (req, res) => {
 
 
 
+
 exports.getUpdateHarvest = async (req, res) => {
     const harvestId = req.params.harvest_id;
 
@@ -171,7 +188,7 @@ exports.getUpdateHarvest = async (req, res) => {
     }
 
     const query = `
-    SELECT a.harvest_id , a.harvest_date, b.plot_name, a.company_name, a.net_weight_kg, a.starch_percentage, a.amount
+    SELECT a.harvest_id , a.harvest_date, b.plot_name, a.company_name, a.net_weight_kg, a.starch_percentage, a.amount , a.image_path
     FROM harvests a
     LEFT JOIN plots b ON a.plot_id = b.plot_id
     WHERE a.harvest_id = ?

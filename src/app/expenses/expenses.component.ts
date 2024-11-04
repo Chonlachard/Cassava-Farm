@@ -7,6 +7,7 @@ import { AddexpensesComponent } from './addexpenses/addexpenses.component';
 import Swal from 'sweetalert2';
 import { FormBuilder } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core'; // Import TranslateService
+import { EditExpensesComponent } from './edit-expenses/edit-expenses.component';
 
 @Component({
   selector: 'app-expenses',
@@ -14,7 +15,7 @@ import { TranslateService } from '@ngx-translate/core'; // Import TranslateServi
   styleUrls: ['./expenses.component.css']
 })
 export class ExpensesComponent implements OnInit, AfterViewInit {
-  displayedColumns: string[] = ['expense_date', 'category', 'amount', 'details', 'actions'];
+  displayedColumns: string[] = ['expense_date','plot_name', 'category', 'amount', 'details', 'actions'];
   dataSource = new MatTableDataSource<any>([]);
 
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
@@ -71,20 +72,31 @@ export class ExpensesComponent implements OnInit, AfterViewInit {
 
   openAddExpense(expenseId?: number): void {
     const dialogRef = this.dialog.open(AddexpensesComponent, {
-      width: '600px',
-      data: expenseId ? { id: expenseId } : {}
+        width: '600px',
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.loadExpenses(); // Refresh list after adding/editing expense
-      }
+        if (result) {
+            this.loadExpenses(); // Refresh list after adding/editing expense
+        }
     });
-  }
+}
 
-  editExpense(expenseId: number): void {
-    this.openAddExpense(expenseId); // Open dialog for editing
-  }
+
+editExpense(expenseId: number): void {
+  debugger
+  const dialogRef = this.dialog.open(EditExpensesComponent, {
+    width: '600px',
+    data: { id: expenseId } // ส่ง expenseId ไปยัง dialog
+  });
+
+  dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+          this.loadExpenses(); // Refresh list after adding/editing expense
+      }
+  });
+}
+
 
   deleteExpense(expenseId: number): void {
     Swal.fire({
@@ -116,7 +128,7 @@ export class ExpensesComponent implements OnInit, AfterViewInit {
     });
   }
 
-  clearSearch(){
+  clearSearch() {
     this.startDate = '';
     this.endDate = '';
     this.loadExpenses();

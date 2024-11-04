@@ -6,13 +6,14 @@ import Swal from 'sweetalert2';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
-  selector: 'app-addexpenses',
-  templateUrl: './addexpenses.component.html',
-  styleUrls: ['./addexpenses.component.css']
+  selector: 'app-editexpenses',
+ templateUrl: './edit-expenses.component.html',
+  styleUrls: ['./edit-expenses.component.css']
 })
-export class AddexpensesComponent implements OnInit {
+export class EditExpensesComponent implements OnInit {
 
   expenseForm: FormGroup;
+  expenseId! : number;
   plots: any[] = [];
   categories = [
     { value: 'ค่าฮอโมน', label: 'expense.categories.hormone' },
@@ -32,12 +33,14 @@ export class AddexpensesComponent implements OnInit {
     private transactionService: ExpensesService,
     private fb: FormBuilder,
     private translate: TranslateService,
-    private dialogRef: MatDialogRef<AddexpensesComponent>,
+    private dialogRef: MatDialogRef<EditExpensesComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.expenseForm = this.fb.group({
+      expense_id: [''], // ID ของค่าใช้จ่าย
       user_id: [{ value: '', disabled: true }, Validators.required],
       plot_id: ['', Validators.required],
-      expense_date: [new Date().toISOString().substring(0, 10), Validators.required], // ตั้งค่าวันที่เริ่มต้น
+      expense_date: ['', Validators.required],
       category: ['', Validators.required],
       amount: ['', [Validators.required, Validators.min(0)]],
       details: ['']
@@ -45,9 +48,28 @@ export class AddexpensesComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.expenseId = this.data.id; // กำหนด ID ของค่าใช้จ่าย
+    this.fetchExpense();
     const userId = localStorage.getItem('userId') || '';
     this.expenseForm.patchValue({ user_id: userId });
     this.fetchPlots();
+  }
+
+  fetchExpense(): void {
+    this.transactionService.getExpense(this.expenseId).subscribe((expense: any) => {
+      console.log('Fetched Expense Data:', expense);
+      this.expenseForm.patchValue(expense);
+    }, error => {
+      this.translate.get('expense.errorLoading').subscribe(translations => {
+        Swal.fire({
+          icon: 'error',
+          title: translations.title,
+          text: translations.text,
+          timer: 3000,
+          timerProgressBar: true,
+        });
+      });
+    });
   }
 
   fetchPlots(): void {
@@ -69,45 +91,33 @@ export class AddexpensesComponent implements OnInit {
 
   onSubmit() {
     if (this.expenseForm.valid) {
-        const formData = { ...this.expenseForm.getRawValue() };
-        this.transactionService.addExpense(formData).subscribe(
-            () => {
-                this.translate.get('expense.successAdd').subscribe(translations => {
-                    Swal.fire({
-                        icon: 'success',
-                        title: translations.title,
-                        text: translations.text,
-                        timer: 3000,
-                        timerProgressBar: true,
-                    }).then(() => {
-                        // ปิด dialog เมื่อแสดงผลการแจ้งเตือนเสร็จสิ้น
-                        this.dialogRef.close(true); // ส่งค่า true กลับไปเพื่อแจ้งว่ามีการเพิ่มข้อมูลสำเร็จ
-                    });
-                });
-            },
-            () => {
-                this.translate.get('expense.errorAdd').subscribe(translations => {
-                    Swal.fire({
-                        icon: 'error',
-                        title: translations.title,
-                        text: translations.text,
-                        timer: 3000,
-                        timerProgressBar: true,
-                    });
-                    // ไม่ปิด dialog ถ้ามีข้อผิดพลาดในการเพิ่ม
-                });
-            }
-        );
-    } else {
-        this.translate.get('expense.incompleteData').subscribe(translations => {
+      const formData = { ...this.expenseForm.getRawValue(), expense_id: this.expenseId }; // ส่ง ID ค่าใช้จ่ายในการอัพเดต
+      this.transactionService.updateExpense(formData).subscribe(
+        () => {
+          this.translate.get('expense.successEdit').subscribe(translations => {
             Swal.fire({
-                icon: 'warning',
-                title: translations.title,
-                text: translations.text,
-                timer: 3000,
-                timerProgressBar: true,
+              icon: 'success',
+              title: translations.title,
+              text: translations.text,
+              timer: 3000,
+              timerProgressBar: true,
+            }).then(() => {
+              this.dialogRef.close(true); // ปิด dialog และส่งค่ากลับว่า edit สำเร็จ
             });
-        });
+          });
+        },
+        () => {
+          this.translate.get('expense.errorEdit').subscribe(translations => {
+            Swal.fire({
+              icon: 'error',
+              title: translations.title,
+              text: translations.text,
+              timer: 3000,
+              timerProgressBar: true,
+            });
+          });
+        }
+      );
     }
   }
 }

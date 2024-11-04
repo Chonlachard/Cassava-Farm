@@ -39,7 +39,7 @@ export class WorkerComponent implements OnInit, AfterViewInit {
       this.dataSource.paginator = this.paginator;
     }
   }
-  loadWorker(){
+  loadWorker() {
     this.workerService.getWorker(this.userId).subscribe((res: any) => {
       this.dataSource.data = res;
     });
@@ -55,13 +55,15 @@ export class WorkerComponent implements OnInit, AfterViewInit {
       }
     });
   }
-  onSearch(){}
+  onSearch() { }
+
+
   Edit(workerId: string): void { // เปลี่ยนเป็น string เพื่อความสอดคล้อง
     const dialogRef = this.dialog.open(EditWorkerComponent, {
       width: '600px',
       data: { userId: this.userId, workerId: workerId } // ส่งข้อมูล userId และ workerId ไปยัง EditWorkerComponent
     });
-  
+
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.loadWorker(); // โหลดข้อมูลใหม่หลังจากมีการแก้ไข
@@ -70,10 +72,10 @@ export class WorkerComponent implements OnInit, AfterViewInit {
       }
     });
   }
-  
-  
-  
-  
+
+
+
+
   Delete(workerId: string) {
     Swal.fire({
       title: 'คุณแน่ใจหรือไม่?',
@@ -94,8 +96,10 @@ export class WorkerComponent implements OnInit, AfterViewInit {
               'ลบสำเร็จ!',
               'ข้อมูลคนงานถูกลบแล้ว.',
               'success'
-            );
-            this.loadWorker(); // โหลดข้อมูลใหม่หลังจากลบ
+            ).then(() => {
+              // รีเฟรชหน้าอัตโนมัติ
+              location.reload();
+            });
           },
           error => {
             console.error('เกิดข้อผิดพลาดในการลบข้อมูลคนงาน:', error);
