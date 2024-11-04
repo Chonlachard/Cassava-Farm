@@ -136,34 +136,58 @@ exports.updateHarvest = async (req, res) => {
     const { harvest_id, plot_id, harvest_date, company_name, net_weight_kg, starch_percentage, amount } = req.body;
     let image_path = null;
 
-    // ตรวจสอบว่ามีไฟล์อัปโหลดใหม่หรือไม่
-    if (req.file) {
-        image_path = `/uploads/${req.file.filename}`; // ใช้ชื่อไฟล์ใหม่ที่อัปโหลด
-    }
-
-    // ตรวจสอบความครบถ้วนของข้อมูลที่จำเป็น
-    if (!harvest_id || !plot_id || !harvest_date || !company_name || !net_weight_kg || !starch_percentage || !amount) {
-        return res.status(400).json({ error: 'ข้อมูลบางอย่างขาดหายไป' });
-    }
-
     try {
-        const [results] = await db.promise().query(
-            `UPDATE harvests
-             SET plot_id = ?, harvest_date = ?, company_name = ?, net_weight_kg = ?, starch_percentage = ?, amount = ?${image_path ? ', image_path = ?' : ''}
-             WHERE harvest_id = ?`,
-            [
-                plot_id, 
-                harvest_date, 
-                company_name, 
-                net_weight_kg, 
-                starch_percentage, 
-                amount,
-                ...(image_path ? [image_path] : []), // ถ้ามี image_path ให้เพิ่มไปในพารามิเตอร์
-                harvest_id
-            ]
-        );
+        // ดึงข้อมูลไฟล์เก่าจากฐานข้อมูล
+        const [oldData] = await db.promise().query('SELECT image_path FROM harvests WHERE harvest_id = ?', [harvest_id]);
 
-        // ตรวจสอบว่ามีแถวที่ได้รับการอัปเดตหรือไม่
+        // ตรวจสอบว่ามีไฟล์อัปโหลดใหม่หรือไม่
+        if (req.file) {
+            // ลบไฟล์เก่าถ้ามี
+            if (oldData.length > 0 && oldData[0].image_path) {
+                const oldFilePath = path.join(__dirname, '..', 'public', oldData[0].image_path);
+                if (fs.existsSync(oldFilePath)) {
+                    fs.unlinkSync(oldFilePath); // ลบไฟล์เก่า
+                }
+            }
+            image_path = `/uploads/${req.file.filename}`; // ใช้ชื่อไฟล์ใหม่ที่อัปโหลด
+        } else {
+            // ใช้ไฟล์เดิมถ้าไม่มีการอัปโหลดไฟล์ใหม่
+            if (oldData.length > 0) {
+                image_path = oldData[0].image_path; // เก็บไฟล์ภาพเก่า
+            }
+        }
+
+        // ตรวจสอบความครบถ้วนของข้อมูลที่จำเป็น
+        if (!harvest_id || !plot_id || !harvest_date || !company_name || !net_weight_kg || !starch_percentage || !amount) {
+            return res.status(400).json({ error: 'ข้อมูลบางอย่างขาดหายไป' });
+        }
+
+        const sql = `
+            UPDATE harvests
+            SET 
+                plot_id = ?, 
+                harvest_date = ?, 
+                company_name = ?, 
+                net_weight_kg = ?, 
+                starch_percentage = ?, 
+                amount = ?,
+                image_path = ?
+            WHERE harvest_id = ?
+        `;
+
+        const params = [
+            plot_id, 
+            harvest_date, 
+            company_name, 
+            net_weight_kg, 
+            starch_percentage, 
+            amount,
+            image_path, // เพิ่ม image_path ในพารามิเตอร์
+            harvest_id
+        ];
+
+        const [results] = await db.promise().query(sql, params);
+
         if (results.affectedRows > 0) {
             res.status(200).json({ message: 'ข้อมูลการเก็บเกี่ยวถูกอัปเดตเรียบร้อยแล้ว' });
         } else {
@@ -171,9 +195,10 @@ exports.updateHarvest = async (req, res) => {
         }
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'เกิดข้อผิดพลาดในการอัปเดตข้อมูลการเก็บเกี่ยว', error });
+        res.status(500).json({ message: 'เกิดข้อผิดพลาดในการอัปเดตข้อมูลการเก็บเกี่ยว', error: error.message });
     }
 };
+
 
 
 
