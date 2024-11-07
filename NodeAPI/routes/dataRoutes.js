@@ -16,7 +16,7 @@ const getPlotController = require('../controllers/getPlotController');
 const harvestController = require('../controllers/harvestsController');
 const workerController = require('../controllers/workerController')
 const dashbordController = require('../controllers/dashbordController')
-const { sendOTP, verifyOTP ,changePassword} = require('../controllers/passwordController');
+const { sendOTP, verifyOTP ,changePassword,resendOTP} = require('../controllers/passwordController');
 
 // การตั้งค่า Multer
 const storage = multer.diskStorage({
@@ -45,6 +45,8 @@ router.post('/sendOTP', sendOTP);
 // เส้นทางสำหรับตรวจสอบ OTP
 router.post('/verify-otp', verifyOTP);
 router.post('/change-password', changePassword);
+
+router.post('/resendOtp',resendOTP)
 
 
 //Worker

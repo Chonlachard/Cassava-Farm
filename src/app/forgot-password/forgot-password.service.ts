@@ -36,6 +36,11 @@ export class ForgotPasswordService {
   }
 
 
+   // ฟังก์ชันสำหรับส่ง OTP ใหม่
+   resendOtp(email: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/resendOtp`, { email });
+  }
+
 
   private handleError(error: any) {
     console.error('เกิดข้อผิดพลาด:', error);

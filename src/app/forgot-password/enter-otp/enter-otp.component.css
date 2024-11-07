@@ -1,0 +1,53 @@
+.form-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    background-color: #f8f9fa;
+}
+
+.card {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: none;
+    border-radius: 10px;
+}
+
+.card-header {
+    background-color: #fff;
+    border-bottom: 1px solid rgba(0,0,0,.125);
+    border-radius: 10px 10px 0 0 !important;
+}
+
+.form-control:focus {
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+    border-color: #80bdff;
+}
+
+.btn-primary {
+    padding: 10px;
+    width: 100%;
+    margin-top: 20px;
+}
+
+/* สไตล์สำหรับ input OTP */
+.otp-input {
+    letter-spacing: 2px;
+    font-size: 1.2rem;
+    text-align: center;
+}
+
+/* เพิ่ม timer สำหรับ resend OTP */
+.resend-timer {
+    text-align: center;
+    margin-top: 15px;
+    color: #6c757d;
+}
+
+.resend-link {
+    color: #007bff;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.resend-link:hover {
+    text-decoration: underline;
+}

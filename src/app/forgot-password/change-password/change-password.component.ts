@@ -16,6 +16,9 @@ export class ChangePasswordComponent implements OnInit {
   confirmPassword: string = '';
   errorMessage: string = '';
 
+  showPassword: boolean = false;
+  showConfirmPassword: boolean = false;
+
   constructor(
     private router: Router,
     private translate: TranslateService, // Inject TranslateService
