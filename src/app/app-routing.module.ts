@@ -13,6 +13,8 @@ import { EditHarvestComponent } from './harvests/edit-harvest/edit-harvest.compo
 import { WorkerComponent } from './worker/worker.component';
 import { AddWorkerComponent } from './worker/add-worker/add-worker.component';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
+import { EnterOtpComponent } from './forgot-password/enter-otp/enter-otp.component';
+import { ChangePasswordComponent } from './forgot-password/change-password/change-password.component';
 
 
 const routes: Routes = [
@@ -30,6 +32,8 @@ const routes: Routes = [
   {path: 'addWorker',component:AddWorkerComponent},
   {path: 'editWorker',component:EditHarvestComponent},
   {path: 'forgotPassword', component: ForgotPasswordComponent},
+  { path: 'enter-otp', component: EnterOtpComponent },
+  { path: 'change-password', component: ChangePasswordComponent },
   { path: '', redirectTo: '/login', pathMatch: 'full' },
 ];
 

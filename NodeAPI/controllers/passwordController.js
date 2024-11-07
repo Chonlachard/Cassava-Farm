@@ -1,6 +1,11 @@
 const db = require('../config/db'); // ใช้ db สำหรับเชื่อมต่อฐานข้อมูล
 const nodemailer = require("nodemailer");
 const cron = require('node-cron');
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
+
+
+
 
 // สร้าง OTP แบบสุ่ม 6 หลัก
 function generateOTP() {
@@ -15,6 +20,37 @@ const transporter = nodemailer.createTransport({
       pass: 'rdbf xnlg jgmt kwxf',         // รหัสผ่านอีเมล
     },
 });
+
+exports.changePassword = async (req, res) => {
+  const { email, newPassword } = req.body;
+
+  // ตรวจสอบว่า email และ newPassword ถูกส่งมาหรือไม่
+  if (!email || !newPassword) {
+    return res.status(400).json({ message: 'กรุณากรอกข้อมูลให้ครบถ้วน' });
+  }
+
+  try {
+    // เข้ารหัสรหัสผ่านใหม่
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // ตรวจสอบว่า email นี้มีอยู่ในฐานข้อมูล
+    const result = await db.execute('SELECT * FROM users WHERE email = ?', [email]);
+
+    // ตรวจสอบว่า result มีข้อมูลผู้ใช้หรือไม่
+    if (result.length === 0) {
+      return res.status(404).json({ message: 'ไม่พบผู้ใช้งานที่มี email นี้' });
+    }
+
+    // อัปเดตรหัสผ่านใหม่ในฐานข้อมูล
+    await db.execute('UPDATE users SET password = ? WHERE email = ?', [hashedPassword, email]);
+
+    // ส่งข้อความตอบกลับสำเร็จ
+    res.json({ message: 'เปลี่ยนรหัสผ่านเรียบร้อยแล้ว' });
+  } catch (error) {
+    console.error('เกิดข้อผิดพลาด:', error);
+    res.status(500).json({ message: 'เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง' });
+  }
+};
 
 // ฟังก์ชันสำหรับส่ง OTP
 exports.sendOTP = (req, res) => {

@@ -42,6 +42,8 @@ import { CommonModule } from '@angular/common';
 import { NgApexchartsModule } from "ng-apexcharts";
 import { EditExpensesComponent } from './expenses/edit-expenses/edit-expenses.component';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
+import { EnterOtpComponent } from './forgot-password/enter-otp/enter-otp.component';
+import { ChangePasswordComponent } from './forgot-password/change-password/change-password.component';
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
@@ -65,6 +67,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     EditWorkerComponent,
     EditExpensesComponent,
     ForgotPasswordComponent,
+    EnterOtpComponent,
+    ChangePasswordComponent,
   ],
   imports: [
     BrowserModule,
