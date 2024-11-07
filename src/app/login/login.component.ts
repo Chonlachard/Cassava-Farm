@@ -141,4 +141,8 @@ export class LoginComponent implements OnInit {
   togglePasswordVisibility() {
     this.hidePassword = !this.hidePassword;
   }
+
+  forgotPassword() {
+    this.router.navigate(['/forgotPassword']);
+  }
 }

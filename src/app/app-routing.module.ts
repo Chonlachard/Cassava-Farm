@@ -12,6 +12,7 @@ import { AddHarvestComponent } from './harvests/add-harvest/add-harvest.componen
 import { EditHarvestComponent } from './harvests/edit-harvest/edit-harvest.component';
 import { WorkerComponent } from './worker/worker.component';
 import { AddWorkerComponent } from './worker/add-worker/add-worker.component';
+import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 
 
 const routes: Routes = [
@@ -28,6 +29,7 @@ const routes: Routes = [
   {path: 'worker',component:WorkerComponent},
   {path: 'addWorker',component:AddWorkerComponent},
   {path: 'editWorker',component:EditHarvestComponent},
+  {path: 'forgotPassword', component: ForgotPasswordComponent},
   { path: '', redirectTo: '/login', pathMatch: 'full' },
 ];
 

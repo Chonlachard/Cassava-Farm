@@ -110,9 +110,9 @@ exports.verifyOTP = (req, res) => {
 cron.schedule('* * * * *', () => {
     db.query('UPDATE users SET otp = ?, otpExpire = ? WHERE otpExpire < NOW()', ['0', null], (error) => {
       if (error) {
-        console.error("ไม่สามารถรีเซ็ต OTP ที่หมดอายุได้", error);
+
       } else {
-        console.log('OTP ที่หมดอายุถูกรีเซ็ตแล้ว');
+   
       }
     });
 });

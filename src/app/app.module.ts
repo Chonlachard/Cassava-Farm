@@ -41,6 +41,7 @@ import { BaseChartDirective  } from 'ng2-charts';
 import { CommonModule } from '@angular/common';
 import { NgApexchartsModule } from "ng-apexcharts";
 import { EditExpensesComponent } from './expenses/edit-expenses/edit-expenses.component';
+import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
@@ -63,6 +64,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     AddWorkerComponent,
     EditWorkerComponent,
     EditExpensesComponent,
+    ForgotPasswordComponent,
   ],
   imports: [
     BrowserModule,
