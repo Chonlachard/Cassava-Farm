@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import Swal from 'sweetalert2'; // Import SweetAlert2
 import { MatPaginator } from '@angular/material/paginator';
 import { TranslateService } from '@ngx-translate/core'; // Import TranslateService
+import { AddPlantedAreaComponent } from './add-planted-area/add-planted-area.component';
 
 @Component({
   selector: 'app-cassava-planted-area',
@@ -100,9 +101,23 @@ export class CassavaPlantedAreaComponent implements OnInit, AfterViewInit {
   }
 
   // Function to open add form
-  openAdd() {
-    this.router.navigate(['/addPlantedArea']);
-  }
+openAdd() {
+  const dialogRef = this.dialog.open(AddPlantedAreaComponent, {
+    width: '90%',   // กำหนดความกว้างให้เต็มหน้าจอ
+    height: '90%',  // กำหนดความสูงให้เต็มหน้าจอ
+    maxWidth: '100vw', // กำหนดขนาดกว้างสูงสุดเป็น 100% ของหน้าจอ
+    maxHeight: '100vh' // กำหนดขนาดสูงสุดเป็น 100% ของหน้าจอ
+  });
+
+  dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+          // เรียกฟังก์ชันเพื่อโหลดข้อมูลใหม่หลังจากเพิ่ม/แก้ไข
+          this.loadPlots();
+      }
+  });
+}
+
+
 
   // Function to search (if needed)
   onSearch() {

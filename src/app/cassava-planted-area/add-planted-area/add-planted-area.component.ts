@@ -4,6 +4,7 @@ import { MapGeocoder } from '@angular/google-maps';
 import Swal from 'sweetalert2';
 import { CassavaAreaServiceService } from '../cassava-area-service.service';
 import { HttpClient } from '@angular/common/http';
+import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-add-planted-area',
@@ -40,7 +41,8 @@ export class AddPlantedAreaComponent implements OnInit {
     private fb: FormBuilder,
     private geocoder: MapGeocoder,
     private plantedAreaService: CassavaAreaServiceService,
-    private http: HttpClient
+    private http: HttpClient,
+    private dialogRef: MatDialogRef<AddPlantedAreaComponent>
   ) {
     this.plantedAreaForm = this.fb.group({
       plot_name: [{ value: '', disabled: false }, Validators.required],
@@ -146,23 +148,23 @@ export class AddPlantedAreaComponent implements OnInit {
       this.showErrorAlert('กรุณากรอกข้อมูลให้ครบถ้วน');
       return;
     }
-  
+
     // แปลงพิกัดพอลิกอนจาก LatLngLiteral[] เป็น LatLng[]
     const polygonLatLngs = this.polygonCoords.map(coord => new google.maps.LatLng(coord.lat, coord.lng));
-  
+
     // ส่งข้อมูลพอลิกอนและภาพแผนที่ไปที่ captureMapImage
     this.captureMapImage(polygonLatLngs).then((imageUrl) => {
       const plotName = this.plantedAreaForm.get('plot_name')?.value || 'default-plot-name';
       const timestamp = new Date().toISOString();
       const fileName = `${plotName}-${timestamp}.png`;
-  
+
       const data = {
         plot_name: plotName,
         latlngs: this.polygonCoords,
         user_id: this.userId,
         fileData: imageUrl // ส่ง URL ของภาพแผนที่
       };
-  
+
       this.plantedAreaService.savePlantedArea(data).subscribe(
         response => {
           Swal.fire({
@@ -170,6 +172,10 @@ export class AddPlantedAreaComponent implements OnInit {
             title: 'สำเร็จ',
             text: 'ข้อมูลถูกบันทึกเรียบร้อยแล้ว'
           });
+          
+          // ปิด dialog หลังจากบันทึกข้อมูลสำเร็จ
+          this.dialogRef.close(true);
+
           this.plantedAreaForm.reset();
           this.onClearPolygon();
           this.generatePlotName();
@@ -183,7 +189,8 @@ export class AddPlantedAreaComponent implements OnInit {
       console.error('Error capturing image:', error);
       this.showErrorAlert('ไม่สามารถจับภาพแผนที่ได้');
     });
-  }
+}
+
   
   onDragEnd(): void {
     this.isDragging = false;
