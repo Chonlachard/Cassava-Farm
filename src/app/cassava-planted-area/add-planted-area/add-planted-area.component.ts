@@ -146,24 +146,23 @@ export class AddPlantedAreaComponent implements OnInit {
       this.showErrorAlert('กรุณากรอกข้อมูลให้ครบถ้วน');
       return;
     }
-
-    const latLng = new google.maps.LatLng(this.mapCenter.lat, this.mapCenter.lng);
-
+  
     // แปลงพิกัดพอลิกอนจาก LatLngLiteral[] เป็น LatLng[]
     const polygonLatLngs = this.polygonCoords.map(coord => new google.maps.LatLng(coord.lat, coord.lng));
-
-    this.captureMapImage(latLng, polygonLatLngs).then((imageUrl) => {
+  
+    // ส่งข้อมูลพอลิกอนและภาพแผนที่ไปที่ captureMapImage
+    this.captureMapImage(polygonLatLngs).then((imageUrl) => {
       const plotName = this.plantedAreaForm.get('plot_name')?.value || 'default-plot-name';
       const timestamp = new Date().toISOString();
       const fileName = `${plotName}-${timestamp}.png`;
-
+  
       const data = {
         plot_name: plotName,
         latlngs: this.polygonCoords,
         user_id: this.userId,
         fileData: imageUrl // ส่ง URL ของภาพแผนที่
       };
-
+  
       this.plantedAreaService.savePlantedArea(data).subscribe(
         response => {
           Swal.fire({
@@ -185,8 +184,7 @@ export class AddPlantedAreaComponent implements OnInit {
       this.showErrorAlert('ไม่สามารถจับภาพแผนที่ได้');
     });
   }
-
-
+  
   onDragEnd(): void {
     this.isDragging = false;
   }
@@ -232,20 +230,25 @@ export class AddPlantedAreaComponent implements OnInit {
     });
   }
 
-  private captureMapImage(location: google.maps.LatLng, polygonCoords: google.maps.LatLng[]): Promise<string> {
-    const lat = location.lat();
-    const lng = location.lng();
+  private captureMapImage(polygonCoords: google.maps.LatLng[]): Promise<string> {
+    // คำนวณค่ากึ่งกลางของพอลิกอน
+    const center = this.calculatePolygonCenter(polygonCoords);
+  
+    const lat = center.lat();
+    const lng = center.lng();
     const zoom = this.zoom;
     const imageSize = '1024x1024';
     const mapType = 'satellite';
     const scale = 2;
-
+  
     // แปลงพิกัดของพอลิกอนเป็นรูปแบบสตริงสำหรับการร้องขอ API
     const polygonPath = polygonCoords.map(coord => `${coord.lat()},${coord.lng()}`).join('|');
-
+  
     // สร้าง URL ของภาพแผนที่ที่รวมพอลิกอน
-    const mapImageUrl = `${this.staticMapsApiUrl}?center=${lat},${lng}&zoom=15&size=${imageSize}&maptype=${mapType}&scale=${scale}&path=color:0xFF0000%7Cweight:2%7C${polygonPath}&key=AIzaSyA7tIt3Mr5T3bR9d4Po2K7QX3yyygHc-fI&callback=initMap`;
+    const mapImageUrl = `${this.staticMapsApiUrl}?center=${lat},${lng}&zoom=${zoom}&size=${imageSize}&maptype=${mapType}&scale=${scale}&path=color:0xFF0000%7Cweight:2%7C${polygonPath}&key=AIzaSyA7tIt3Mr5T3bR9d4Po2K7QX3yyygHc-fI&callback=initMap`;
+  
     console.log('Map image URL:', mapImageUrl);
+  
     return new Promise((resolve, reject) => {
       this.http.get(mapImageUrl, { responseType: 'blob' }).subscribe(
         (blob: Blob) => {
@@ -256,10 +259,34 @@ export class AddPlantedAreaComponent implements OnInit {
           };
           reader.readAsDataURL(blob);
         },
-        error => reject(error)
+        error => {
+          console.error('Error fetching map image:', error);
+          reject('ไม่สามารถจับภาพแผนที่ได้');
+        }
       );
     });
   }
+  
+  // คำนวณค่ากึ่งกลางของพอลิกอน
+  private calculatePolygonCenter(polygonCoords: google.maps.LatLng[]): google.maps.LatLng {
+    let sumLat = 0;
+    let sumLng = 0;
+  
+    // คำนวณผลรวมของละติจูดและลองจิจูดทั้งหมด
+    polygonCoords.forEach(coord => {
+      sumLat += coord.lat();
+      sumLng += coord.lng();
+    });
+  
+    // คำนวณค่าเฉลี่ยของละติจูดและลองจิจูด
+    const centerLat = sumLat / polygonCoords.length;
+    const centerLng = sumLng / polygonCoords.length;
+  
+    // คืนค่าจุดกึ่งกลางในรูปแบบ LatLng
+    return new google.maps.LatLng(centerLat, centerLng);
+  }
+  
+  
 
 
 }
