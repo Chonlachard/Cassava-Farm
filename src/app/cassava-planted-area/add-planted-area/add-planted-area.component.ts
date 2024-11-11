@@ -241,8 +241,11 @@ export class AddPlantedAreaComponent implements OnInit {
     const mapType = 'satellite';
     const scale = 2;
   
+    // เพิ่มจุดแรกในตำแหน่งสุดท้ายของพิกัดเพื่อให้เส้นเชื่อมจุดสุดท้ายกับจุดแรก
+    const closedPolygonCoords = [...polygonCoords, polygonCoords[0]];
+  
     // แปลงพิกัดของพอลิกอนเป็นรูปแบบสตริงสำหรับการร้องขอ API
-    const polygonPath = polygonCoords.map(coord => `${coord.lat()},${coord.lng()}`).join('|');
+    const polygonPath = closedPolygonCoords.map(coord => `${coord.lat()},${coord.lng()}`).join('|');
   
     // สร้าง URL ของภาพแผนที่ที่รวมพอลิกอน
     const mapImageUrl = `${this.staticMapsApiUrl}?center=${lat},${lng}&zoom=${zoom}&size=${imageSize}&maptype=${mapType}&scale=${scale}&path=color:0xFF0000%7Cweight:2%7C${polygonPath}&key=AIzaSyA7tIt3Mr5T3bR9d4Po2K7QX3yyygHc-fI&callback=initMap`;
@@ -266,6 +269,8 @@ export class AddPlantedAreaComponent implements OnInit {
       );
     });
   }
+  
+
   
   // คำนวณค่ากึ่งกลางของพอลิกอน
   private calculatePolygonCenter(polygonCoords: google.maps.LatLng[]): google.maps.LatLng {
