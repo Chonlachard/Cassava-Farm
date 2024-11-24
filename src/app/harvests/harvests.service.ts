@@ -22,6 +22,7 @@ export class HarvestsService {
   }
 
   addHarvest(formData: FormData): Observable<any> {
+    debugger
     return this.http.post<any>(`${this.apiUrl}/addharvest`, formData);
   }
 

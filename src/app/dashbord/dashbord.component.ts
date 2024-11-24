@@ -1,27 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { DashbordService } from './dashbord.service';
-import {
-  ApexAxisChartSeries,
-  ApexChart,
-  ApexDataLabels,
-  ApexPlotOptions,
-  ApexYAxis,
-  ApexXAxis,
-  ApexTooltip,
-  ApexLegend
-} from 'ng-apexcharts';
-
-export type ChartOptions = {
-  series: ApexAxisChartSeries;
-  chart: ApexChart;
-  dataLabels: ApexDataLabels;
-  plotOptions: ApexPlotOptions;
-  yaxis: ApexYAxis;
-  xaxis: ApexXAxis;
-  tooltip: ApexTooltip;
-  legend: ApexLegend;
-};
+import { Chart } from 'chart.js'; // นำเข้า Chart.js
 
 @Component({
   selector: 'app-dashbord',
@@ -40,48 +20,7 @@ export class DashbordComponent implements OnInit {
   availableYears: number[] = [];
 
   // ตัวแปรสำหรับกราฟ
-  public chartOptions: ChartOptions = {
-    series: [
-      {
-        name: 'รายรับ',
-        data: [],
-      },
-      {
-        name: 'รายจ่าย',
-        data: [],
-      },
-    ],
-    chart: {
-      type: 'bar',
-      height: 350,
-    },
-    dataLabels: {
-      enabled: true, // เปิดการแสดงป้ายชื่อข้อมูล
-    },
-    plotOptions: {
-      bar: {
-        horizontal: false, // ตั้งค่าว่ากราฟเป็นแบบแนวนอนหรือแนวตั้ง
-        columnWidth: '55%',
-      },
-    },
-    xaxis: {
-      categories: [], // จะถูกตั้งค่าใน updateChartData
-    },
-    yaxis: {
-      title: {
-        text: 'Amount (thousands)',
-      },
-    },
-    tooltip: {
-      shared: true,
-      intersect: false,
-    },
-    legend: {
-      position: 'top',
-      horizontalAlign: 'center',
-      floating: true,
-    },
-  };
+  public chart: any;
 
   constructor(
     private fb: FormBuilder,
@@ -108,9 +47,9 @@ export class DashbordComponent implements OnInit {
   // ฟังก์ชันดึงข้อมูลการเงิน
   fetchFinancialData(year: number) {
     this.dashbordService.financialData(year, this.userId).subscribe(data => {
-      this.totalIncome = data.summary.totalIncome || 0; // ตรวจสอบว่ามีค่าเป็นศูนย์
-      this.totalExpenses = data.summary.totalExpenses || 0; // ตรวจสอบว่ามีค่าเป็นศูนย์
-      this.netProfit = data.summary.totalProfit || 0; // ตรวจสอบว่ามีค่าเป็นศูนย์
+      this.totalIncome = data.summary.totalIncome || 0;
+      this.totalExpenses = data.summary.totalExpenses || 0;
+      this.netProfit = data.summary.totalProfit || 0;
       
       // อัปเดตข้อมูลกราฟ
       this.updateChartData(data.incomeExpenses);
@@ -130,25 +69,76 @@ export class DashbordComponent implements OnInit {
         'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
     ];
 
-    if (data && data.length > 0) {
-        this.chartOptions.series[0].data = Array(12).fill(0);
-        this.chartOptions.series[1].data = Array(12).fill(0);
+    const incomeData = Array(12).fill(0);
+    const expensesData = Array(12).fill(0);
 
+    if (data && data.length > 0) {
         data.forEach(item => {
-            const monthIndex = monthNames.indexOf(item.month); // ใช้ชื่อเดือนในการหาตำแหน่ง
+            const monthIndex = monthNames.indexOf(item.month);
             if (monthIndex >= 0) {
-                this.chartOptions.series[0].data[monthIndex] = item.income || 0; // รายรับ
-                this.chartOptions.series[1].data[monthIndex] = item.expenses || 0; // รายจ่าย
+                incomeData[monthIndex] = item.income || 0;
+                expensesData[monthIndex] = item.expenses || 0;
             }
         });
-
-        this.chartOptions.xaxis.categories = monthNames; // ตั้งชื่อเดือนทั้งหมด
-    } else {
-        // กรณีไม่มีข้อมูล
-        this.chartOptions.series[0].data = Array(12).fill(0);
-        this.chartOptions.series[1].data = Array(12).fill(0);
-        this.chartOptions.xaxis.categories = monthNames; // ตั้งชื่อเดือนทั้งหมด
     }
-}
 
+    // กรณีไม่มีข้อมูล
+    this.createChart(monthNames, incomeData, expensesData);
+  }
+
+  // ฟังก์ชันสร้างกราฟ
+  createChart(monthNames: string[], incomeData: number[], expensesData: number[]): void {
+    if (this.chart) {
+      this.chart.destroy(); // ทำลายกราฟเก่า
+    }
+
+    this.chart = new Chart('canvas', {
+      type: 'bar',
+      data: {
+        labels: monthNames, // เดือนที่จะแสดงในแกน X
+        datasets: [
+          {
+            label: 'รายรับ',
+            data: incomeData, // ข้อมูลรายรับ
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 1,
+          },
+          {
+            label: 'รายจ่าย',
+            data: expensesData, // ข้อมูลรายจ่าย
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 1,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'เดือน',
+            },
+          },
+          y: {
+            title: {
+              display: true,
+              text: 'Amount (thousands)',
+            },
+            beginAtZero: true,
+          },
+        },
+        plugins: {
+          legend: {
+            position: 'top',
+            labels: {
+              boxWidth: 20,
+            },
+          },
+        },
+      },
+    });
+  }
 }

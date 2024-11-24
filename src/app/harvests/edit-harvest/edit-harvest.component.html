@@ -1,13 +1,16 @@
 <div class="harvest-form-container">
     <div class="form-card">
-        <h1 class="form-title">{{ 'harvest.formEditTitle' | translate }}</h1>
+        <h1 class="form-title">{{ 'harvest.formTitle' | translate }}</h1>
         <form [formGroup]="harvestForm" (ngSubmit)="onSubmit()">
+            <!-- วันที่เก็บเกี่ยว -->
             <div class="form-field">
                 <label for="harvest_date">
                     <i class="fas fa-calendar"></i> {{ 'harvest.harvestDate' | translate }}
                 </label>
                 <input type="date" id="harvest_date" formControlName="harvest_date">
             </div>
+            
+            <!-- แปลง -->
             <div class="form-field">
                 <label for="plot">
                     <i class="fas fa-map-marker-alt"></i> {{ 'harvest.plot' | translate }}
@@ -17,36 +20,88 @@
                     <option *ngFor="let plot of plots" [value]="plot.value">{{ plot.text }}</option>
                 </select>
             </div>
+
+            <!-- ชื่อบริษัท -->
             <div class="form-field">
                 <label for="company_name">
                     <i class="fas fa-building"></i> {{ 'harvest.companyName' | translate }}
                 </label>
                 <input type="text" id="company_name" formControlName="company_name">
             </div>
+
+            <!-- น้ำหนักเข้าโรงงาน -->
+            <div class="form-field">
+                <label for="weight_in">
+                    <i class="fas fa-balance-scale"></i> น้ำหนักเข้าโรงงาน
+                </label>
+                <input type="number" id="weight_in" formControlName="weight_in">
+            </div>
+
+            <!-- น้ำหนักออกโรงงาน -->
+            <div class="form-field">
+                <label for="weight_out">
+                    <i class="fas fa-balance-scale"></i> น้ำหนักออกโรงงาน
+                </label>
+                <input type="number" id="weight_out" formControlName="weight_out">
+            </div>
+
+            <!-- น้ำหนักสินค้า -->
+            <div class="form-field">
+                <label for="weight_product">
+                    <i class="fas fa-box"></i> น้ำหนักสินค้า
+                </label>
+                <input type="number" id="weight_product" formControlName="weight_product">
+            </div>
+
+            <!-- น้ำหนักหัก -->
+            <div class="form-field">
+                <label for="weight_deduct">
+                    <i class="fas fa-minus-circle"></i> น้ำหนักหัก
+                </label>
+                <input type="number" id="weight_deduct" formControlName="weight_deduct">
+            </div>
+
+            <!-- น้ำหนักสุทธิ -->
             <div class="form-field">
                 <label for="net_weight_kg">
                     <i class="fas fa-weight"></i> {{ 'harvest.netWeight' | translate }}
                 </label>
                 <input type="number" id="net_weight_kg" formControlName="net_weight_kg">
             </div>
+
+            <!-- เปอร์เซ็นต์แป้ง -->
             <div class="form-field">
                 <label for="starch_percentage">
-                    <i class="fas fa-info-circle"></i> {{ 'harvest.starchPercentage' | translate }}
+                    <i class="fas fa-percentage"></i> {{ 'harvest.starchPercentage' | translate }}
                 </label>
                 <input type="number" id="starch_percentage" formControlName="starch_percentage" min="0" max="100">
             </div>
+
+            <!-- ราคา/กก. -->
+            <div class="form-field">
+                <label for="price">
+                    <i class="fas fa-dollar-sign"></i> ราคา/กก.
+                </label>
+                <input type="number" id="price" formControlName="price" step="0.01">
+            </div>
+
+            <!-- จำนวนเงิน -->
             <div class="form-field">
                 <label for="amount">
                     <i class="fas fa-money-bill-wave"></i> {{ 'harvest.amount' | translate }}
                 </label>
                 <input type="number" id="amount" formControlName="amount">
             </div>
+
+            <!-- อัปโหลดรูปภาพ -->
             <div class="form-field">
                 <label for="image">
                     <i class="fas fa-image"></i> {{ 'harvest.image' | translate }}
                 </label>
                 <input type="file" id="image" (change)="onFileSelect($event)">
             </div>
+
+            <!-- ปุ่มบันทึก -->
             <button type="submit" [disabled]="!harvestForm.valid" class="submit-button">
                 <i class="fas fa-save"></i> {{ 'harvest.save' | translate }}
             </button>

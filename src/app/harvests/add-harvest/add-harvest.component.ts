@@ -25,10 +25,15 @@ export class AddHarvestComponent implements OnInit {
       plot_id: [''],
       harvest_date: [''],
       company_name: [''],
+      weight_in: [''],
+      weight_out: [''],
+      weight_product: [''],
+      weight_deduct: [''],
       net_weight_kg: [''],
       starch_percentage: [''],
-      image: [null],
-      amount: ['']
+      price: [''],
+      amount: [''],
+      image: [null]
     });
   }
 
@@ -64,6 +69,7 @@ export class AddHarvestComponent implements OnInit {
   }
 
   onSubmit(): void {
+    debugger;
     if (this.harvestForm.invalid) {
       Swal.fire({
         title: 'ข้อผิดพลาด!',
@@ -73,38 +79,48 @@ export class AddHarvestComponent implements OnInit {
       });
       return;
     }
-
+  
     const formData = new FormData();
-    formData.append('user_id', this.userId);
+  
+    formData.append('user_id', this.userId); // สมมติว่า userId ถูกดึงจาก session หรือ auth service
     formData.append('plot_id', this.harvestForm.get('plot_id')?.value);
     formData.append('harvest_date', this.formatDate(this.harvestForm.get('harvest_date')?.value));
     formData.append('company_name', this.harvestForm.get('company_name')?.value);
+    formData.append('weight_in', this.harvestForm.get('weight_in')?.value);
+    formData.append('weight_out', this.harvestForm.get('weight_out')?.value);
+    formData.append('weight_product', this.harvestForm.get('weight_product')?.value);
+    formData.append('weight_deduct', this.harvestForm.get('weight_deduct')?.value);
     formData.append('net_weight_kg', this.harvestForm.get('net_weight_kg')?.value);
     formData.append('starch_percentage', this.harvestForm.get('starch_percentage')?.value);
+    formData.append('price', this.harvestForm.get('price')?.value);
     formData.append('amount', this.harvestForm.get('amount')?.value);
-
+  
     if (this.harvestForm.get('image')?.value) {
       formData.append('image', this.harvestForm.get('image')?.value);
     }
-
-    this.harvestsService.addHarvest(formData).subscribe(response => {
-      Swal.fire({
-        title: 'สำเร็จ!',
-        text: 'ข้อมูลเก็บเกี่ยวถูกเพิ่มเรียบร้อยแล้ว',
-        icon: 'success',
-        confirmButtonText: 'ตกลง'
-      }).then(() => {
-        this.dialogRef.close();
-      });
-    }, error => {
-      Swal.fire({
-        title: 'ข้อผิดพลาด!',
-        text: 'ไม่สามารถเพิ่มข้อมูลเก็บเกี่ยวได้ กรุณาลองอีกครั้ง',
-        icon: 'error',
-        confirmButtonText: 'ตกลง'
-      });
-    });
+  
+    this.harvestsService.addHarvest(formData).subscribe(
+      (response) => {
+        Swal.fire({
+          title: 'สำเร็จ!',
+          text: 'ข้อมูลเก็บเกี่ยวถูกเพิ่มเรียบร้อยแล้ว',
+          icon: 'success',
+          confirmButtonText: 'ตกลง'
+        }).then(() => {
+          this.dialogRef.close();
+        });
+      },
+      (error) => {
+        Swal.fire({
+          title: 'ข้อผิดพลาด!',
+          text: 'ไม่สามารถเพิ่มข้อมูลเก็บเกี่ยวได้ กรุณาลองอีกครั้ง',
+          icon: 'error',
+          confirmButtonText: 'ตกลง'
+        });
+      }
+    );
   }
+  
 
   onFileSelect(event: any): void {
     if (event.target.files.length > 0) {

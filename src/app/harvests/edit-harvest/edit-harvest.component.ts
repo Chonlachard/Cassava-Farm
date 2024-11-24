@@ -28,8 +28,13 @@ export class EditHarvestComponent implements OnInit {
       plot_id: [''],
       harvest_date: [''],
       company_name: [''],
+      weight_in: [''],
+      weight_out: [''],
+      weight_product: [''],
+      weight_deduct: [''],
       net_weight_kg: [''],
       starch_percentage: [''],
+      price: [''],
       image: [null],
       amount: ['']
     });
