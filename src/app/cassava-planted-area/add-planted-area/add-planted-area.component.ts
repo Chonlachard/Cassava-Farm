@@ -255,7 +255,7 @@ export class AddPlantedAreaComponent implements OnInit {
     const polygonPath = closedPolygonCoords.map(coord => `${coord.lat()},${coord.lng()}`).join('|');
   
     // สร้าง URL ของภาพแผนที่ที่รวมพอลิกอน
-    const mapImageUrl = `${this.staticMapsApiUrl}?center=${lat},${lng}&zoom=${zoom}&size=${imageSize}&maptype=${mapType}&scale=${scale}&path=color:0xFF0000%7Cweight:2%7C${polygonPath}&key=AIzaSyABE32hZ-0NLz2HZ_0BE9IDiX7SskFUe9M&callback=initMap`;
+    const mapImageUrl = `${this.staticMapsApiUrl}?center=${lat},${lng}&zoom=${zoom}&size=${imageSize}&maptype=${mapType}&scale=${scale}&path=color:0xFF0000%7Cweight:2%7C${polygonPath}&key=AIzaSyDF81bGnOY5TKIXzqN2wfWhTMZXMooP7LY&callback=initMap`;
   
     console.log('Map image URL:', mapImageUrl);
   

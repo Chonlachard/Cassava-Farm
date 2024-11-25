@@ -29,27 +29,27 @@ exports.addHarvest = function (req, res) {
         }
 
         // รับข้อมูลจาก req.body
-        const { 
-            user_id, 
-            plot_id, 
-            harvest_date, 
-            company_name, 
-            weight_in, 
-            weight_out, 
-            weight_product, 
-            weight_deduct, 
-            net_weight_kg, 
-            starch_percentage, 
-            price, 
-            amount 
+        const {
+            user_id,
+            plot_id,
+            harvest_date,
+            company_name,
+            weight_in,
+            weight_out,
+            weight_product,
+            weight_deduct,
+            net_weight_kg,
+            starch_percentage,
+            price,
+            amount
         } = req.body;
-        
+
         const image_path = req.file ? `/uploads/${req.file.filename}` : null;
 
         // ตรวจสอบข้อมูลที่จำเป็น
         if (
-            !user_id || !plot_id || !harvest_date || !company_name || 
-            !weight_in || !weight_out || !weight_product || !weight_deduct || 
+            !user_id || !plot_id || !harvest_date || !company_name ||
+            !weight_in || !weight_out || !weight_product || !weight_deduct ||
             !net_weight_kg || !starch_percentage || !price || !amount
         ) {
             return res.status(400).json({ message: 'กรุณาระบุข้อมูลให้ครบถ้วน' });
@@ -76,18 +76,18 @@ exports.addHarvest = function (req, res) {
 
         // ทำการเพิ่มข้อมูลไปยังฐานข้อมูล
         db.query(query, [
-            user_id, 
-            plot_id, 
-            harvest_date, 
-            company_name, 
-            weight_in, 
-            weight_out, 
-            weight_product, 
-            weight_deduct, 
-            net_weight_kg, 
-            starch_percentage, 
-            price, 
-            amount, 
+            user_id,
+            plot_id,
+            harvest_date,
+            company_name,
+            weight_in,
+            weight_out,
+            weight_product,
+            weight_deduct,
+            net_weight_kg,
+            starch_percentage,
+            price,
+            amount,
             image_path
         ], (err, results) => {
             if (err) {
@@ -109,7 +109,7 @@ exports.getHarvests = async (req, res) => {
 
     try {
         const query = `
-            SELECT a.harvest_id, a.harvest_date,b.plot_name,a.company_name,a.net_weight_kg,a.starch_percentage,a.amount
+            SELECT a.harvest_id , a.harvest_date, b.plot_name, a.company_name,a.weight_in,a.weight_out, a.weight_product,a.weight_deduct, a.net_weight_kg, a.starch_percentage,a.price, a.amount , a.image_path
             FROM harvests a
             LEFT JOIN plots b ON a.plot_id = b.plot_id
             WHERE a.user_id = ?
@@ -182,7 +182,20 @@ exports.deleteHarvest = async (req, res) => {
 };
 
 exports.updateHarvest = async (req, res) => {
-    const { harvest_id, plot_id, harvest_date, company_name, net_weight_kg, starch_percentage, amount } = req.body;
+    const {
+        harvest_id,
+        plot_id,
+        harvest_date,
+        company_name,
+        weight_in,
+        weight_out,
+        weight_product,
+        weight_deduct,
+        net_weight_kg,
+        starch_percentage,
+        price,
+        amount
+    } = req.body;
     let image_path = null;
 
     try {
@@ -207,7 +220,20 @@ exports.updateHarvest = async (req, res) => {
         }
 
         // ตรวจสอบความครบถ้วนของข้อมูลที่จำเป็น
-        if (!harvest_id || !plot_id || !harvest_date || !company_name || !net_weight_kg || !starch_percentage || !amount) {
+        if (
+            !harvest_id ||
+            !plot_id ||
+            !harvest_date ||
+            !company_name ||
+            !weight_in ||
+            !weight_out ||
+            !weight_product ||
+            !weight_deduct ||
+            !net_weight_kg ||
+            !starch_percentage ||
+            !price ||
+            !amount
+        ) {
             return res.status(400).json({ error: 'ข้อมูลบางอย่างขาดหายไป' });
         }
 
@@ -217,21 +243,31 @@ exports.updateHarvest = async (req, res) => {
                 plot_id = ?, 
                 harvest_date = ?, 
                 company_name = ?, 
+                weight_in = ?, 
+                weight_out = ?, 
+                weight_product = ?, 
+                weight_deduct = ?, 
                 net_weight_kg = ?, 
                 starch_percentage = ?, 
-                amount = ?,
+                price = ?, 
+                amount = ?, 
                 image_path = ?
             WHERE harvest_id = ?
         `;
 
         const params = [
-            plot_id, 
-            harvest_date, 
-            company_name, 
-            net_weight_kg, 
-            starch_percentage, 
+            plot_id,
+            harvest_date,
+            company_name,
+            weight_in,
+            weight_out,
+            weight_product,
+            weight_deduct,
+            net_weight_kg,
+            starch_percentage,
+            price,
             amount,
-            image_path, // เพิ่ม image_path ในพารามิเตอร์
+            image_path,
             harvest_id
         ];
 
@@ -247,6 +283,7 @@ exports.updateHarvest = async (req, res) => {
         res.status(500).json({ message: 'เกิดข้อผิดพลาดในการอัปเดตข้อมูลการเก็บเกี่ยว', error: error.message });
     }
 };
+
 
 
 

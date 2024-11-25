@@ -1,24 +1,23 @@
 const express = require('express');
-const multer = require('multer'); // นำเข้า multer
-const fs = require('fs'); // นำเข้า fs
-const path = require('path'); // นำเข้า path
-
+const multer = require('multer');
+const fs = require('fs');
+const path = require('path');
 const router = express.Router();
 
+// Controllers Import
 const registerController = require('../controllers/registerController');
 const loginController = require('../controllers/loginController');
 const profileController = require('../controllers/profileController');
 const userController = require('../controllers/getUser');
-
 const expensesController = require('../controllers/expensesController');
 const plotController = require('../controllers/plotsController');
 const getPlotController = require('../controllers/getPlotController');
 const harvestController = require('../controllers/harvestsController');
-const workerController = require('../controllers/workerController')
-const dashbordController = require('../controllers/dashbordController')
-const { sendOTP, verifyOTP ,changePassword,resendOTP} = require('../controllers/passwordController');
+const workerController = require('../controllers/workerController');
+const dashbordController = require('../controllers/dashbordController');
+const { sendOTP, verifyOTP, changePassword, resendOTP } = require('../controllers/passwordController');
 
-// การตั้งค่า Multer
+// Multer Configuration
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         const uploadDir = 'public/uploads/';
@@ -33,89 +32,63 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-//dashboard
+// 1. Authentication Routes
+// ─────────────────────────────────────────
+// Login & Register
+router.post('/register', registerController.register);
+router.post('/login', loginController.login);
+
+// Password Management
+router.post('/sendOTP', sendOTP);
+router.post('/verify-otp', verifyOTP);
+router.post('/change-password', changePassword);
+router.post('/resendOtp', resendOTP);
+
+// 2. User Profile Routes
+// ─────────────────────────────────────────
+router.get('/user', userController.user);
+router.get('/profileuser', profileController.getProfile);
+router.put('/profileuser', profileController.updateProfile);
+router.post('/change-password', profileController.changePassword);
+
+// 3. Dashboard Routes
+// ─────────────────────────────────────────
 router.get('/getPlotAnalytics', dashbordController.getPlotAnalytics);
 router.get('/availableYears', dashbordController.availableYears);
 router.get('/financialData', dashbordController.financialData);
 
+// 4. Plot Management Routes
+// ─────────────────────────────────────────
+router.post('/addplots', upload.single('image'), plotController.handlePlotUpload);
+router.get('/getplots', getPlotController.getPlots);
+router.delete('/deleteplot/:plot_id', getPlotController.deletePlot);
 
-// เส้นทางสำหรับส่ง OTP
-router.post('/sendOTP', sendOTP);
-
-// เส้นทางสำหรับตรวจสอบ OTP
-router.post('/verify-otp', verifyOTP);
-router.post('/change-password', changePassword);
-
-router.post('/resendOtp',resendOTP)
-
-
-//Worker
-router.get('/getWorkers',workerController.getWorker)
-router.post('/addWorker' , workerController.addWorker)
-router.delete('/deleteWorker/:worker_id' , workerController.deleteWorker)
-
-router.get('/getEditWorker/:worker_id', workerController.getUpdateWorker);
-router.put('/editWorker', workerController.editWorker);
-
-// เส้นทางสำหรับเพิ่มการเก็บเกี่ยว
+// 5. Harvest Management Routes
+// ─────────────────────────────────────────
 router.post('/addharvest', harvestController.addHarvest);
-
 router.get('/getHarvestImage/:harvest_id', harvestController.getHarvestImage);
-
-// เส้นทางสำหรับดลบข้อมูลการเก็บเกี่ยว
 router.delete('/deleteharvest/:harvest_id', harvestController.deleteHarvest);
-
 router.get('/getEditHarvest/:harvest_id', harvestController.getUpdateHarvest);
-
-// เส้นทางสำหรับอัปเดตข้อมูลการเก็บเกี่ยว
 router.put('/updateharvest', harvestController.updateHarvest);
-// เส้นทางสำหรับดึงข้อมูลการเก็บเกี่ยว
 router.get('/getharvests', harvestController.getHarvests);
 router.get('/getSerch', harvestController.getSerch);
 
-// Route สำหรับการอัปโหลด plot
-router.post('/addplots', upload.single('image'), plotController.handlePlotUpload);
+// 6. Worker Management Routes
+// ─────────────────────────────────────────
+router.get('/getWorkers', workerController.getWorker);
+router.post('/addWorker', workerController.addWorker);
+router.delete('/deleteWorker/:worker_id', workerController.deleteWorker);
+router.get('/getEditWorker/:worker_id', workerController.getUpdateWorker);
+router.put('/editWorker', workerController.editWorker);
 
-// Route สำหรับการดึงข้อมูล plot
-router.get('/getplots',  getPlotController.getPlots);
-
-// Route สำหรับการลบ plot
-router.delete('/deleteplot/:plot_id', getPlotController.deletePlot);
-
-// เส้นทางสำหรับการดึงข้อมูลผู้ใช้
-router.get('/user', userController.user);
-
-// เส้นทางสำหรับการลงทะเบียน
-router.post('/register', registerController.register);
-
-// เส้นทางสำหรับการเข้าสู่ระบบ
-router.post('/login', loginController.login);
-
-// ดึงข้อมูลโปรไฟล์โดยใช้ query parameters
-router.get('/profileuser', profileController.getProfile);
-
-// อัปเดตข้อมูลโปรไฟล์
-router.put('/profileuser', profileController.updateProfile);
-
-// เปลี่ยนรหัสผ่าน
-router.post('/change-password', profileController.changePassword);
-
+// 7. Expense Management Routes
+// ─────────────────────────────────────────
 router.get('/getExpenses', expensesController.getExpense);
-
 router.get('/getDeopdowplot', expensesController.getDeopdowplot);
-
 router.post('/addExpenses', expensesController.addExpense);
-
-// ใช้ query parameter สำหรับลบค่าใช้จ่าย
 router.delete('/expenses/:expense_id', expensesController.deleteExpense);
-
-// อัพเดตข้อมูลค่าใช้จ่าย
 router.put('/editExpenses', expensesController.updateExpense);
-
-// Route สำหรับดึงข้อมูลตาม expense_id
 router.get('/getExpenseEdit/:expense_id', expensesController.getExpenseEdit);
-
-// เพิ่ม Route สำหรับการค้นหาข้อมูลตามช่วงวันที่
 router.get('/expenses/date-range', expensesController.getExpensesByDateRange);
 
 module.exports = router;

@@ -104,7 +104,7 @@
     "plot": "Plot",
     "selectPlot": "Select Plot",
     "netWeight": "Net Weight (kg)",
-    "image": "Upload Image",
+    "image": "Upload Image Receipt",
     "save": "Save",
     "errorLoading": "An error occurred while loading harvest data!",
     "errorLoadingPlots": "An error occurred while loading plots!",
@@ -118,8 +118,8 @@
       "startDateLabel": "Start Date:",
       "endDateLabel": "End Date:",
       "searchButton": "Search",
-      "clearButton": "Clear",
-      "addButton": "Add",
+      "clearButton": "Clear Data",
+      "addButton": "AddData",
       "dateRangeError": "Please specify both start and end dates."
     },
     "table": {

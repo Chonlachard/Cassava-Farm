@@ -4,86 +4,203 @@
         <mat-card-header>
             <mat-card-title>{{ 'expense.pageTitle' | translate }}</mat-card-title>
         </mat-card-header>
+
+        <!-- ฟอร์มค้นหา -->
         <div class="container mt-4">
-            <form (ngSubmit)="onSearch()" #searchForm="ngForm">
-                <div class="row align-items-end">
-                    <!-- Start Date Field -->
-                    <div class="col-md-3">
-                        <label for="startDate" class="form-label">{{ 'expense.searchForm.startDateLabel' | translate }}</label>
-                        <input type="date" class="form-control" id="startDate" [(ngModel)]="startDate" name="startDate" required>
+            <form [formGroup]="searchForm" (ngSubmit)="onSearch()">
+                <div class="search-container p-4 bg-white rounded shadow-sm">
+                    <div class="row g-3">
+                        <!-- Start Date Field -->
+                        <div class="col-md-3">
+                            <label for="startDate" class="form-label">
+                                {{ 'expense.searchForm.startDateLabel' | translate }}
+                            </label>
+                            <input
+                                type="date"
+                                class="form-control"
+                                id="startDate"
+                                formControlName="startDate"
+                            />
+                        </div>
+
+                        <!-- End Date Field -->
+                        <div class="col-md-3">
+                            <label for="endDate" class="form-label">
+                                {{ 'expense.searchForm.endDateLabel' | translate }}
+                            </label>
+                            <input
+                                type="date"
+                                class="form-control"
+                                id="endDate"
+                                formControlName="endDate"
+                            />
+                        </div>
+
+                        <!-- Plot Field -->
+                        <div class="col-md-3">
+                            <label for="plot" class="form-label">แปลงที่ปลูก</label>
+                            <select
+                                id="plot"
+                                class="form-control"
+                                formControlName="plot_id"
+                            >
+                                <option value="" disabled selected>
+                                    {{ 'harvest.selectPlot' | translate }}
+                                </option>
+                                <option
+                                    *ngFor="let plot of plots"
+                                    [value]="plot.plot_id"
+                                >
+                                    {{ plot.plot_name }}
+                                </option>
+                            </select>
+                        </div>
+
+                        <!-- Category Field -->
+                        <div class="col-md-3">
+                            <label for="category" class="form-label">
+                                ประเภทรายจ่าย
+                            </label>
+                            <select
+                                id="category"
+                                class="form-control"
+                                formControlName="category"
+                            >
+                                <option value="" disabled selected>
+                                    {{ 'expense.form.categoryPlaceholder' | translate }}
+                                </option>
+                                <option
+                                    *ngFor="let category of categories"
+                                    [value]="category.value"
+                                >
+                                    {{ category.label | translate }}
+                                </option>
+                            </select>
+                        </div>
                     </div>
-                    <!-- End Date Field -->
-                    <div class="col-md-3">
-                        <label for="endDate" class="form-label">{{ 'expense.searchForm.endDateLabel' | translate }}</label>
-                        <input type="date" class="form-control" id="endDate" [(ngModel)]="endDate" name="endDate" required>
-                    </div>
-                    <!-- Search and Clear Buttons -->
-                    <div class="col-md-4 d-flex align-items-end gap-2">
-                        <button type="submit" class="btn btn-primary w-50" [disabled]="!searchForm.form.valid">
-                            {{ 'expense.searchForm.searchButton' | translate }}
-                        </button>
-                        <button type="button" class="btn btn-secondary w-45" (click)="clearSearch()">
-                            {{ 'expense.searchForm.clearButton' | translate }}
-                        </button>
-                    </div>
-                    <!-- Add Button -->
-                    <div class="col-md-2 d-flex justify-content-end align-items-end">
-                        <button type="button" class="btn btn-success" (click)="openAddExpense()">
-                            {{ 'expense.searchForm.addButton' | translate }}
-                        </button>
+
+                    <!-- Action Buttons -->
+                    <div class="row mt-4">
+                        <div class="col-12 d-flex gap-2 justify-content-end">
+                            <button
+                                type="button"
+                                class="btn btn-secondary px-4"
+                                (click)="clearSearch()"
+                            >
+                                <i class="fas fa-undo me-2"></i>
+                                {{ 'expense.searchForm.clearButton' | translate }}
+                            </button>
+                            <button
+                                type="button"
+                                class="btn btn-success px-4"
+                                (click)="openAddExpense()"
+                            >
+                                <i class="fas fa-plus me-2"></i>
+                                {{ 'expense.searchForm.addButton' | translate }}
+                            </button>
+                        </div>
                     </div>
                 </div>
             </form>
         </div>
+
+        <!-- ตารางแสดงข้อมูล -->
         <mat-card-content>
             <div class="table-container">
-                <table mat-table [dataSource]="dataSource" matSort class="expense-table">
+                <table
+                    mat-table
+                    [dataSource]="dataSource"
+                    matSort
+                    class="expense-table"
+                >
                     <!-- Date Column -->
                     <ng-container matColumnDef="expense_date">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'expense.table.dateHeader' | translate }}</th>
-                        <td mat-cell *matCellDef="let expense"> {{ expense.expense_date }} </td>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                            {{ 'expense.table.dateHeader' | translate }}
+                        </th>
+                        <td mat-cell *matCellDef="let expense">
+                            {{ expense.expense_date }}
+                        </td>
                     </ng-container>
 
-                    <!-- คอลัมน์ ชื่อแปลง -->
+                    <!-- Plot Name Column -->
                     <ng-container matColumnDef="plot_name">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'harvest.plotName' | translate }} </th>
-                        <td mat-cell *matCellDef="let expense"> {{ expense.plot_name }} </td>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                            {{ 'harvest.plotName' | translate }}
+                        </th>
+                        <td mat-cell *matCellDef="let expense">
+                            {{ expense.plot_name }}
+                        </td>
                     </ng-container>
 
                     <!-- Category Column -->
                     <ng-container matColumnDef="category">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'expense.table.categoryHeader' | translate }}</th>
-                        <td mat-cell *matCellDef="let expense"> {{ expense.category }} </td>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                            {{ 'expense.table.categoryHeader' | translate }}
+                        </th>
+                        <td mat-cell *matCellDef="let expense">
+                            {{ expense.category }}
+                        </td>
                     </ng-container>
 
                     <!-- Amount Column -->
                     <ng-container matColumnDef="amount">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'expense.table.amountHeader' | translate }}</th>
-                        <td mat-cell *matCellDef="let expense"> {{ expense.amount }} </td>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                            {{ 'expense.table.amountHeader' | translate }}
+                        </th>
+                        <td mat-cell *matCellDef="let expense">
+                            {{ expense.amount }}
+                        </td>
                     </ng-container>
 
                     <!-- Details Column -->
                     <ng-container matColumnDef="details">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'expense.table.detailsHeader' | translate }}</th>
-                        <td mat-cell *matCellDef="let expense"> {{ expense.details }} </td>
+                        <th mat-header-cell *matHeaderCellDef>
+                            {{ 'expense.table.detailsHeader' | translate }}
+                        </th>
+                        <td mat-cell *matCellDef="let expense">
+                            {{ expense.details }}
+                        </td>
                     </ng-container>
 
                     <!-- Actions Column -->
                     <ng-container matColumnDef="actions">
-                        <th mat-header-cell *matHeaderCellDef>{{ 'expense.table.actionsHeader' | translate }}</th>
+                        <th mat-header-cell *matHeaderCellDef>
+                            {{ 'expense.table.actionsHeader' | translate }}
+                        </th>
                         <td mat-cell *matCellDef="let expense">
-                            <button mat-icon-button color="primary" (click)="editExpense(expense.expense_id)" matTooltip="{{ 'expense.table.editButtonTooltip' | translate }}">
+                            <button
+                                mat-icon-button
+                                color="primary"
+                                (click)="editExpense(expense.expense_id)"
+                                matTooltip="{{
+                                    'expense.table.editButtonTooltip' | translate
+                                }}"
+                            >
                                 <mat-icon>edit</mat-icon>
                             </button>
-                            <button mat-icon-button color="warn" (click)="deleteExpense(expense.expense_id)" matTooltip="{{ 'expense.table.deleteButtonTooltip' | translate }}">
+                            <button
+                                mat-icon-button
+                                color="warn"
+                                (click)="deleteExpense(expense.expense_id)"
+                                matTooltip="{{
+                                    'expense.table.deleteButtonTooltip' | translate
+                                }}"
+                            >
                                 <mat-icon>delete</mat-icon>
                             </button>
                         </td>
                     </ng-container>
 
                     <!-- Table Rows -->
-                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+                    <tr
+                        mat-header-row
+                        *matHeaderRowDef="displayedColumns"
+                    ></tr>
+                    <tr
+                        mat-row
+                        *matRowDef="let row; columns: displayedColumns"
+                    ></tr>
                 </table>
             </div>
 
@@ -94,7 +211,11 @@
             </div>
 
             <!-- Paginator -->
-            <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
+            <mat-paginator
+                [pageSize]="10"
+                [pageSizeOptions]="[5, 10, 25, 100]"
+                showFirstLastButtons
+            ></mat-paginator>
         </mat-card-content>
     </mat-card>
 </div>

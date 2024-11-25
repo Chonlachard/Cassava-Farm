@@ -5,7 +5,7 @@ import { ExpensesService } from './expenses.service';
 import { MatDialog } from '@angular/material/dialog';
 import { AddexpensesComponent } from './addexpenses/addexpenses.component';
 import Swal from 'sweetalert2';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core'; // Import TranslateService
 import { EditExpensesComponent } from './edit-expenses/edit-expenses.component';
 
@@ -21,8 +21,24 @@ export class ExpensesComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
 
   startDate: string = '';
+  
   endDate: string = '';
   userId: string = '';
+  searchForm!: FormGroup;
+  plots: any[] = [];
+  categories = [
+    { value: 'ค่าฮอโมน', label: 'expense.categories.hormone' },
+    { value: 'ค่าปุ๋ย', label: 'expense.categories.fertilizer' },
+    { value: 'ค่ายาฆ่าหญ่า', label: 'expense.categories.herbicide' },
+    { value: 'ต่าแรงงาน', label: 'expense.categories.labor' },
+    { value: 'ค่าน้ำมัน', label: 'expense.categories.fuel' },
+    { value: 'ค่าพันธุ์มัน', label: 'expense.categories.seed' },
+    { value: 'ค่าซ่อมอุปกรณ์', label: 'expense.categories.equipmentRepair' },
+    { value: 'ค่าอุปกรณ์', label: 'expense.categories.equipment' },
+    { value: 'ค่าเช่าที่ดิน', label: 'expense.categories.landRent' },
+    { value: 'ค่าขุด(ค่าเก็บเกี่ยว)', label: 'expense.categories.harvestCost' },
+    { value: 'อื่นๆ', label: 'expense.categories.other' }
+  ];
 
   constructor(
     private fb: FormBuilder,
@@ -33,6 +49,7 @@ export class ExpensesComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.userId = localStorage.getItem('userId') || '';
+    this.fetchPlots();
 
     if (this.userId) {
       this.loadExpenses();
@@ -43,6 +60,22 @@ export class ExpensesComponent implements OnInit, AfterViewInit {
     if (this.paginator) {
       this.dataSource.paginator = this.paginator;
     }
+  }
+  fetchPlots(): void {
+    const userId = localStorage.getItem('userId') || '';
+    this.expensesService.getDeopPlot(userId).subscribe((res: any) => {
+      this.plots = res;
+    }, error => {
+      this.translate.get('harvest.errorLoadingPlots').subscribe((translations: { title: string; text: string; }) => {
+        Swal.fire({
+          icon: 'error',
+          title: translations.title,
+          text: translations.text,
+          timer: 3000,
+          timerProgressBar: true,
+        });
+      });
+    });
   }
 
   loadExpenses() {
@@ -129,8 +162,8 @@ editExpense(expenseId: number): void {
   }
 
   clearSearch() {
-    this.startDate = '';
-    this.endDate = '';
+    this.startDate= '',
+      this.endDate= '',
     this.loadExpenses();
   }
 }
