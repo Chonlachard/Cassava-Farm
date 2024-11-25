@@ -73,10 +73,15 @@ export class EditHarvestComponent implements OnInit {
         plot_name: harvest.plot_name,
         harvest_date: this.formatDate(harvest.harvest_date),
         company_name: harvest.company_name,
+        weight_in : harvest.weight_in,
+        weight_out: harvest.weight_out,
+        weight_product: harvest.weight_product,
+        weight_deduct: harvest.weight_deduct,
         net_weight_kg: harvest.net_weight_kg,
         starch_percentage: harvest.starch_percentage,
+        price: harvest.price,
         amount: harvest.amount,
-        image: null // รีเซ็ตฟิลด์ image
+        image: harvest.image_path
       });
     }, error => {
       this.translate.get('harvest.errorLoading').subscribe((translations: { title: string; text: string; }) => {

@@ -262,7 +262,7 @@ exports.getUpdateHarvest = async (req, res) => {
     }
 
     const query = `
-    SELECT a.harvest_id , a.harvest_date, b.plot_name, a.company_name, a.net_weight_kg, a.starch_percentage, a.amount , a.image_path
+    SELECT a.harvest_id , a.harvest_date, b.plot_name, a.company_name,a.weight_in,a.weight_out, a.weight_product,a.weight_deduct, a.net_weight_kg, a.starch_percentage,a.price, a.amount , a.image_path
     FROM harvests a
     LEFT JOIN plots b ON a.plot_id = b.plot_id
     WHERE a.harvest_id = ?
