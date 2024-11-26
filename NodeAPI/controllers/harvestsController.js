@@ -101,35 +101,57 @@ exports.addHarvest = function (req, res) {
 
 
 exports.getHarvests = async (req, res) => {
-    const userId = req.query.user_id;
+    const { user_id, plot_id, company_name, harvest_date_start, harvest_date_end, net_weight_min, net_weight_max, starch_percentage_min, starch_percentage_max, price_min, price_max } = req.query;
 
-    if (!userId) {
+    if (!user_id) {
         return res.status(400).json({ message: 'กรุณาระบุ user_id' });
     }
 
-    try {
-        const query = `
-            SELECT a.harvest_id , a.harvest_date, b.plot_name, a.company_name,a.weight_in,a.weight_out, a.weight_product,a.weight_deduct, a.net_weight_kg, a.starch_percentage,a.price, a.amount , a.image_path
-            FROM harvests a
-            LEFT JOIN plots b ON a.plot_id = b.plot_id
-            WHERE a.user_id = ?
-            ORDER BY a.harvest_date DESC`;
+    let query = `
+        SELECT a.harvest_id, a.harvest_date, b.plot_name, a.company_name, a.net_weight_kg, a.starch_percentage, a.price, a.amount, a.image_path
+        FROM harvests a
+        LEFT JOIN plots b ON a.plot_id = b.plot_id
+        WHERE a.user_id = ?
+    `;
+    const params = [user_id];
 
-        db.query(query, [userId], (err, results) => {
-            if (err) {
-                console.error('Error executing query:', err.stack);
-                return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการดึงข้อมูลการเก็บเกี่ยว' });
-            }
-
-            // ส่งผลลัพธ์ในรูปแบบ JSON
-            res.json(results);
-        });
-
-    } catch (error) {
-        console.error('Unexpected error:', error);
-        res.status(500).json({ message: 'เกิดข้อผิดพลาดที่ไม่คาดคิด' });
+    if (plot_id) {
+        query += ' AND a.plot_id = ?';
+        params.push(plot_id);
     }
+    if (company_name) {
+        query += ' AND a.company_name LIKE ?';
+        params.push(`%${company_name}%`);
+    }
+    if (harvest_date_start && harvest_date_end) {
+        query += ' AND a.harvest_date BETWEEN ? AND ?';
+        params.push(harvest_date_start, harvest_date_end);
+    }
+    if (net_weight_min && net_weight_max) {
+        query += ' AND a.net_weight_kg BETWEEN ? AND ?';
+        params.push(net_weight_min, net_weight_max);
+    }
+    if (starch_percentage_min && starch_percentage_max) {
+        query += ' AND a.starch_percentage BETWEEN ? AND ?';
+        params.push(starch_percentage_min, starch_percentage_max);
+    }
+    if (price_min && price_max) {
+        query += ' AND a.price BETWEEN ? AND ?';
+        params.push(price_min, price_max);
+    }
+
+    query += ' ORDER BY a.harvest_date DESC';
+
+    db.query(query, params, (err, results) => {
+        if (err) {
+            console.error('Error executing query:', err.stack);
+            return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการดึงข้อมูลการเก็บเกี่ยว' });
+        }
+
+        res.json(results);
+    });
 };
+
 
 exports.getSerch = (req, res) => {
     const userId = req.query.user_id;

@@ -16,11 +16,19 @@ import { debounceTime } from 'rxjs/operators';
   styleUrls: ['./harvests.component.css']
 })
 export class HarvestsComponent implements OnInit, AfterViewInit {
-  displayedColumns: string[] = ['harvest_date', 'plot_name', 'company_name', 'net_weight_kg', 'starch_percentage', 'amount', 'actions'];
+  displayedColumns: string[] = [
+    'harvest_date',
+    'plot_name',
+    'company_name',
+    'net_weight_kg',
+    'starch_percentage',
+    'amount',
+    'actions'
+  ];
   dataSource = new MatTableDataSource<any>([]);
   userId: string = '';
   searchForm: FormGroup;
-  plots: any[] = []; // Variable to store plot data
+  plots: any[] = [];
   showModal: boolean = false;
   imageUrl: string = '';
 
@@ -61,28 +69,60 @@ export class HarvestsComponent implements OnInit, AfterViewInit {
     }
   }
 
+  // โหลดรายการแปลงสำหรับการค้นหา
   loadSearchPlots() {
     this.harvestsService.getSerchPlot(this.userId).subscribe((res: any) => {
       this.plots = res;
     });
   }
 
+  // โหลดข้อมูลการเก็บเกี่ยว
   loadHarvests(filters: any = {}) {
     this.harvestsService.getHarvests(this.userId, filters).subscribe((res: any) => {
       this.dataSource.data = res;
     });
   }
 
+  // เรียกเมื่อมีการค้นหา
   onSearch() {
-    const filters = this.searchForm.value;
+    const filters = this.prepareFilters(this.searchForm.value);
     this.loadHarvests(filters);
   }
 
+  // รีเซ็ตฟอร์มการค้นหา
   clearSearch() {
     this.searchForm.reset();
     this.loadHarvests();
   }
 
+  // แปลงค่าจากฟอร์มให้เหมาะสมกับ API
+  private prepareFilters(formValues: any): any {
+    const filters: any = {};
+    if (formValues.plot) filters.plot_id = formValues.plot;
+    if (formValues.company_name) filters.company_name = formValues.company_name;
+    if (formValues.harvest_date) {
+      filters.harvest_date_start = formValues.harvest_date;
+      filters.harvest_date_end = formValues.harvest_date;
+    }
+    if (formValues.net_weight_kg) {
+      const [min, max] = formValues.net_weight_kg.split('-').map(Number);
+      filters.net_weight_min = min ;
+      filters.net_weight_max = max ;
+    }
+    if (formValues.starch_percentage) {
+      const [min, max] = formValues.starch_percentage.split('-').map(Number);
+      filters.starch_percentage_min = min;
+      filters.starch_percentage_max = max;
+    }
+    if (formValues.price) {
+      const [min, max] = formValues.price.split('-').map(Number);
+      filters.price_min = min;
+      filters.price_max = max;
+    }
+    return filters;
+  }
+
+  // ลบข้อมูลการเก็บเกี่ยว
   DeleteHarvest(harvestId: number): void {
     if (!harvestId) {
       Swal.fire({
@@ -126,6 +166,7 @@ export class HarvestsComponent implements OnInit, AfterViewInit {
     });
   }
 
+  // เปิด Modal เพิ่มข้อมูล
   openAdd(userId: string): void {
     const dialogRef = this.dialog.open(AddHarvestComponent, {
       width: '500px',
@@ -137,6 +178,7 @@ export class HarvestsComponent implements OnInit, AfterViewInit {
     });
   }
 
+  // แก้ไขข้อมูลการเก็บเกี่ยว
   EditHarvest(harvestId: number): void {
     const dialogRef = this.dialog.open(EditHarvestComponent, {
       width: '500px',
@@ -148,27 +190,32 @@ export class HarvestsComponent implements OnInit, AfterViewInit {
     });
   }
 
+  // ดูรายละเอียดรูปภาพ
   viewDetails(harvestId: number): void {
-    this.harvestsService.getHarvestImage(harvestId).subscribe((res: any) => {
-      if (res.imageUrl) {
-        this.imageUrl = res.imageUrl;
-        this.showModal = true;
-      } else {
+    this.harvestsService.getHarvestImage(harvestId).subscribe(
+      (res: any) => {
+        if (res.imageUrl) {
+          this.imageUrl = res.imageUrl;
+          this.showModal = true;
+        } else {
+          Swal.fire({
+            title: this.translate.instant('harvest.error'),
+            text: this.translate.instant('harvest.noImageFound'),
+            icon: 'error'
+          });
+        }
+      },
+      () => {
         Swal.fire({
           title: this.translate.instant('harvest.error'),
-          text: this.translate.instant('harvest.noImageFound'),
+          text: this.translate.instant('harvest.fetchError'),
           icon: 'error'
         });
       }
-    }, () => {
-      Swal.fire({
-        title: this.translate.instant('harvest.error'),
-        text: this.translate.instant('harvest.fetchError'),
-        icon: 'error'
-      });
-    });
+    );
   }
 
+  // ปิด Modal
   closeModal() {
     this.showModal = false;
     this.imageUrl = '';
