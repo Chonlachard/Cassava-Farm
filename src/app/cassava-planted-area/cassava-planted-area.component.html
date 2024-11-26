@@ -5,17 +5,39 @@
         <mat-card-title>{{ 'plot.title' | translate }}</mat-card-title>
       </mat-card-header>
       <div class="container mt-4">
-        <form (ngSubmit)="onSearch()" #searchForm="ngForm">
-          <div class="row align-items-end">
-            <!-- Add Button -->
-            <div class="col-md-2 d-flex justify-content-end align-items-end">
-              <button type="button" class="btn btn-success" (click)="openAdd()">
-                {{ 'plot.addButton' | translate }}
-              </button>
+        <form [formGroup]="searchForm">
+          <div class="search-container p-4 bg-white rounded shadow-sm">
+            <!-- แถว: ช่องค้นหาและปุ่ม -->
+            <div class="row align-items-center g-3">
+              <!-- ช่องค้นหาด้วยชื่อแปลง -->
+              <div class="col-md-8">
+                <div class="form-group">
+                  <label for="keyword" class="form-label">ค้นหาชื่อแปลง</label>
+                  <input 
+                    type="text" 
+                    formControlName="keyword" 
+                    id="keyword" 
+                    class="form-control"
+                    placeholder="ค้นหาชื่อแปลง" 
+                  />
+                </div>
+              </div>
+              
+              <!-- ปุ่มเพิ่มข้อมูล -->
+              <div class="col-md-4 d-flex justify-content-end">
+                <button 
+                  type="button" 
+                  class="btn btn-success px-4" 
+                  (click)="openAdd()"
+                >
+                  <i class="fas fa-plus me-2"></i>เพิ่มข้อมูล
+                </button>
+              </div>
             </div>
           </div>
         </form>
       </div>
+      
       <mat-card-content>
         <div class="table-responsive">
           <table mat-table [dataSource]="dataSource" matSort class="table table-striped plantedArea-table">

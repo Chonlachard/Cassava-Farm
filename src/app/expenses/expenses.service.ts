@@ -24,10 +24,18 @@ export class ExpensesService {
     private http: HttpClient
   ) { }
 
-  // ดึงข้อมูลค่าใช้จ่ายตาม userId
-  getExpenses(userId: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/getExpenses?user_id=${userId}`);
+  // ดึงข้อมูลค่าใช้จ่ายตาม userId พร้อมตัวกรอง
+  getExpenses(userId: string, filters: { startDate?: string; endDate?: string; plot_id?: string; category?: string } = {}): Observable<any> {
+    // เตรียมพารามิเตอร์ในรูปแบบ query string
+    const params: any = { user_id: userId, ...filters };
+    debugger
+
+    // กำหนด URL พร้อมพารามิเตอร์
+    const queryString = new URLSearchParams(params).toString();
+
+    return this.http.get(`${this.apiUrl}/getExpenses?${queryString}`);
   }
+
 
   // ดึงข้อมูลค่าใช้จ่ายตาม expenseId
   getExpense(expenseId: number): Observable<any> {

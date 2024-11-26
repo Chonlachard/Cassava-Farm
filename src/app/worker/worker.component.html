@@ -4,14 +4,57 @@
         <mat-card-header>
             <mat-card-title>ข้อมูลติดต่อคนงาน</mat-card-title>
         </mat-card-header>
+        <!-- ฟอร์มค้นหา -->
         <div class="container mt-4">
-            <form (ngSubmit)="onSearch()" #searchForm="ngForm">
-                <div class="row align-items-end">
-                    <!-- ปุ่มเพิ่ม -->
-                    <div class="col-md-12 d-flex justify-content-end align-items-end">
-                        <button type="button" class="btn btn-success" (click)="addWorker()">
-                            เพิ่มข้อมูล
-                        </button>
+            <form [formGroup]="searchForm">
+                <div class="search-container p-4 bg-white rounded shadow-sm">
+                    <!-- แถวที่ 1: ช่องค้นหา -->
+                    <div class="row g-3 mb-4">
+                        <!-- ช่องค้นหาด้วยชื่อหรือเบอร์โทร -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="keyword" class="form-label">ชื่อหรือเบอร์โทร</label>
+                                <input 
+                                    type="text" 
+                                    formControlName="keyword" 
+                                    id="keyword" 
+                                    class="form-control"
+                                    placeholder="กรอกชื่อหรือเบอร์โทร" 
+                                />
+                            </div>
+                        </div>
+                        
+                        <!-- ช่องค้นหาด้วยทักษะ -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="skills" class="form-label">ทักษะ</label>
+                                <select formControlName="skills" id="skills" class="form-select">
+                                    <option value="">-- เลือกทักษะ --</option>
+                                    <option *ngFor="let skill of skillOptions" [value]="skill">{{ skill }}</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                    </div>
+        
+                    <!-- แถวที่ 2: ปุ่มกดด้านขวา -->
+                    <div class="row">
+                        <div class="col-12 d-flex justify-content-end gap-2">
+                            <button 
+                                type="button" 
+                                class="btn btn-secondary px-4" 
+                                (click)="clearSearch()"
+                            >
+                                <i class="fas fa-undo me-2"></i>ล้างข้อมูล
+                            </button>
+                            <button 
+                                type="button" 
+                                class="btn btn-success px-4" 
+                                (click)="addWorker()"
+                            >
+                                <i class="fas fa-plus me-2"></i>เพิ่มข้อมูล
+                            </button>
+                        </div>
                     </div>
                 </div>
             </form>

@@ -1,13 +1,14 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { CassavaAreaServiceService } from './cassava-area-service.service';
 import { Router } from '@angular/router';
-import Swal from 'sweetalert2'; // Import SweetAlert2
+import Swal from 'sweetalert2'; // ใช้ SweetAlert2
 import { MatPaginator } from '@angular/material/paginator';
-import { TranslateService } from '@ngx-translate/core'; // Import TranslateService
+import { TranslateService } from '@ngx-translate/core'; // ใช้ TranslateService
 import { AddPlantedAreaComponent } from './add-planted-area/add-planted-area.component';
+import { debounceTime } from 'rxjs/operators'; // ใช้ debounceTime
 
 @Component({
   selector: 'app-cassava-planted-area',
@@ -21,14 +22,20 @@ export class CassavaPlantedAreaComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
 
   userId: string = '';
+  searchForm: FormGroup;
 
   constructor(
     private fb: FormBuilder,
     private cassavaAreaService: CassavaAreaServiceService,
     public dialog: MatDialog,
     private router: Router,
-    private translate: TranslateService // Inject TranslateService
-  ) { }
+    private translate: TranslateService // ใช้ TranslateService
+  ) {
+    // สร้าง FormGroup
+    this.searchForm = this.fb.group({
+      keyword: [''] // ฟิลด์สำหรับคำค้นหา
+    });
+  }
 
   ngOnInit(): void {
     this.userId = localStorage.getItem('userId') || '';
@@ -38,6 +45,13 @@ export class CassavaPlantedAreaComponent implements OnInit, AfterViewInit {
     } else {
       console.error(this.translate.instant('plot.noUserIdError'));
     }
+
+    // ใช้ valueChanges เพื่อตรวจสอบการเปลี่ยนแปลงในช่องค้นหา
+    this.searchForm.get('keyword')?.valueChanges
+      .pipe(debounceTime(300)) // รอ 300ms หลังจากผู้ใช้หยุดพิมพ์
+      .subscribe((keyword: string) => {
+        this.applyFilter(keyword); // ใช้ฟังก์ชันกรองข้อมูล
+      });
   }
 
   ngAfterViewInit(): void {
@@ -46,7 +60,7 @@ export class CassavaPlantedAreaComponent implements OnInit, AfterViewInit {
     }
   }
 
-  // Function to delete data
+  // ฟังก์ชันลบข้อมูล
   deleted(plotId: string) {
     Swal.fire({
       title: this.translate.instant('plot.confirmDeleteTitle'),
@@ -64,7 +78,7 @@ export class CassavaPlantedAreaComponent implements OnInit, AfterViewInit {
               this.translate.instant('plot.deleteSuccessText'),
               'success'
             );
-            this.loadPlots(); // Reload data after successful deletion
+            this.loadPlots(); // โหลดข้อมูลใหม่หลังลบสำเร็จ
           },
           error => {
             Swal.fire(
@@ -79,19 +93,14 @@ export class CassavaPlantedAreaComponent implements OnInit, AfterViewInit {
     });
   }
 
-  // Function to edit data (if needed)
-  edit() {
-    // Implement edit function here
-  }
-
-  // Function to load data
+  // ฟังก์ชันโหลดข้อมูล
   loadPlots() {
     this.cassavaAreaService.getCassavaArea(this.userId).subscribe((res: any) => {
       this.dataSource.data = res.map((item: any) => ({
         ...item,
         area_rai: Math.round(item.area_rai)
       }));
-      // Ensure paginator is set after data load
+      // ตั้งค่าตัวแบ่งหน้า
       if (this.paginator) {
         this.dataSource.paginator = this.paginator;
       }
@@ -100,32 +109,31 @@ export class CassavaPlantedAreaComponent implements OnInit, AfterViewInit {
     });
   }
 
-  // Function to open add form
-openAdd() {
-  const dialogRef = this.dialog.open(AddPlantedAreaComponent, {
-    width: '90%',   // กำหนดความกว้างให้เต็มหน้าจอ
-    height: '90%',  // กำหนดความสูงให้เต็มหน้าจอ
-    maxWidth: '100vw', // กำหนดขนาดกว้างสูงสุดเป็น 100% ของหน้าจอ
-    maxHeight: '100vh' // กำหนดขนาดสูงสุดเป็น 100% ของหน้าจอ
-  });
+  // ฟังก์ชันเปิดฟอร์มเพิ่มข้อมูล
+  openAdd() {
+    const dialogRef = this.dialog.open(AddPlantedAreaComponent, {
+      width: '90%',   // กำหนดความกว้างให้เต็มหน้าจอ
+      height: '90%',  // กำหนดความสูงให้เต็มหน้าจอ
+      maxWidth: '100vw', // ความกว้างสูงสุดเป็น 100% ของหน้าจอ
+      maxHeight: '100vh' // ความสูงสูงสุดเป็น 100% ของหน้าจอ
+    });
 
-  dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe(result => {
       if (result) {
-          // เรียกฟังก์ชันเพื่อโหลดข้อมูลใหม่หลังจากเพิ่ม/แก้ไข
-          this.loadPlots();
+        this.loadPlots(); // โหลดข้อมูลใหม่หลังจากเพิ่ม/แก้ไข
       }
-  });
-}
-
-
-
-  // Function to search (if needed)
-  onSearch() {
-    // Implement search function here
+    });
   }
 
-  // Function to view details (if needed)
-  viewDetails() {
-    // Implement view details function here
+  // ฟังก์ชันกรองข้อมูล
+  applyFilter(keyword: string) {
+    this.dataSource.filter = keyword.trim().toLowerCase(); // กรองข้อมูลในตาราง
   }
+
+
+
+  edit(){}
+
+  viewDetails(){}
+
 }
