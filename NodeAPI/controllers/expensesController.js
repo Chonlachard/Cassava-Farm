@@ -3,18 +3,44 @@ const db = require('../config/db'); // ใช้ db สำหรับเชื�
 
 // ฟังก์ชันสำหรับดึงข้อมูลค่าใช้จ่าย
 exports.getExpense = async (req, res) => {
-    const userId = req.query.user_id;
+    const { user_id, startDate, endDate, plot_id, category } = req.query;
 
     // ตรวจสอบว่ามีการส่ง user_id มาหรือไม่
-    if (!userId) {
+    if (!user_id) {
         return res.status(400).json({ message: 'กรุณาระบุ user_id' });
     }
 
-    const query = `SELECT a.expense_id, a.expense_date,b.plot_name , a.category ,a.amount , a.details
+    // เริ่มต้นคำสั่ง SQL
+    let query = `SELECT a.expense_id, a.expense_date, b.plot_name, a.category, a.amount, a.details
                     FROM expenses a
                     LEFT JOIN plots b on a.plot_id = b.plot_id
                     WHERE a.user_id = ?`;
-    db.query(query, [userId], (err, results) => {
+
+    // ตัวแปร values สำหรับกรอกพารามิเตอร์
+    const values = [user_id];
+
+    // การเพิ่มเงื่อนไขต่าง ๆ ใน SQL
+    if (plot_id) {
+        query += ' AND a.plot_id = ?';
+        values.push(plot_id);
+    }
+    if (startDate) {
+        query += ' AND a.expense_date >= ?';
+        values.push(startDate); // ค่าของ startDate
+    }
+    if (endDate) {
+        query += ' AND a.expense_date <= ?';
+        values.push(endDate); // ค่าของ endDate
+    }
+    if (category) {
+        query += ' AND a.category = ?';
+        values.push(category); // ค่าของ category
+    }
+
+    query += ' ORDER BY a.expense_date DESC';  // การเรียงลำดับผลลัพธ์
+
+    // การรันคำสั่ง SQL
+    db.query(query, values, (err, results) => {
         if (err) {
             console.error('Error executing query:', err.stack);
             return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการดึงข้อมูลค่าใช้จ่าย' });
@@ -23,7 +49,7 @@ exports.getExpense = async (req, res) => {
         // แปลงวันที่จาก yyyy-mm-dd เป็น dd-mm-yyyy
         const formattedResults = results.map(expense => ({
             ...expense,
-            expense_date: moment(expense.expense_date).format('DD-MM-YYYY')
+            expense_date: moment(expense.expense_date).format('DD-MM-YYYY')  // ใช้ moment.js เพื่อจัดรูปแบบวันที่
         }));
 
         // ส่งผลลัพธ์กลับไปในรูปแบบ JSON

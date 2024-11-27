@@ -21,10 +21,10 @@ export class ExpensesComponent implements OnInit, AfterViewInit {
 
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
 
-  searchForm!: FormGroup;
+  searchForm: FormGroup;
   plots: any[] = [];
   categories = [
-    { value: 'ค่าฮอโมน', label: 'expense.categories.hormone' },
+    { value: 'ค่าฮอร์โมน', label: 'expense.categories.hormone' },
     { value: 'ค่าปุ๋ย', label: 'expense.categories.fertilizer' },
     { value: 'ค่ายาฆ่าหญ่า', label: 'expense.categories.herbicide' },
     { value: 'ค่าแรงงาน', label: 'expense.categories.labor' },
@@ -44,11 +44,17 @@ export class ExpensesComponent implements OnInit, AfterViewInit {
     private expensesService: ExpensesService,
     public dialog: MatDialog,
     private translate: TranslateService
-  ) {}
+  ) {
+    this.searchForm = this.fb.group({
+      startDate: [''],
+      endDate: [''],
+      plot_id: [''],
+      category: ['']
+    });
+  }
 
   ngOnInit() {
     this.userId = localStorage.getItem('userId') || '';
-    this.initSearchForm();
     this.fetchPlots();
 
     // Auto-search when form values change
@@ -67,14 +73,7 @@ export class ExpensesComponent implements OnInit, AfterViewInit {
     }
   }
 
-  initSearchForm() {
-    this.searchForm = this.fb.group({
-      startDate: [''],
-      endDate: [''],
-      plot_id: [''],
-      category: ['']
-    });
-  }
+
 
   fetchPlots(): void {
     this.expensesService.getDeopPlot(this.userId).subscribe({
@@ -91,9 +90,6 @@ export class ExpensesComponent implements OnInit, AfterViewInit {
     this.expensesService.getExpenses(this.userId, filters).subscribe({
       next: (res: any) => {
         this.dataSource.data = res;
-      },
-      error: () => {
-        this.showError('expense.errorLoading');
       }
     });
   }

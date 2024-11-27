@@ -25,15 +25,21 @@ export class ExpensesService {
   ) { }
 
   // ดึงข้อมูลค่าใช้จ่ายตาม userId พร้อมตัวกรอง
-  getExpenses(userId: string, filters: { startDate?: string; endDate?: string; plot_id?: string; category?: string } = {}): Observable<any> {
-    // เตรียมพารามิเตอร์ในรูปแบบ query string
-    const params: any = { user_id: userId, ...filters };
+  getExpenses(userId: string, filters: any = {}): Observable<any> {
     debugger
+    // สร้างพารามิเตอร์สำหรับ query string
+    let params = new HttpParams().set('user_id', userId);
 
-    // กำหนด URL พร้อมพารามิเตอร์
-    const queryString = new URLSearchParams(params).toString();
+    // เพิ่มตัวกรองใน query string (ถ้าตัวกรองมีค่า)
+    Object.keys(filters).forEach((key) => {
+      if (filters[key]) {
+        params = params.set(key, filters[key]);
+      }
+    });
 
-    return this.http.get(`${this.apiUrl}/getExpenses?${queryString}`);
+    console.log('Request params:', params.toString());
+
+    return this.http.get(`${this.apiUrl}/getExpenses?${params}`);
   }
 
 

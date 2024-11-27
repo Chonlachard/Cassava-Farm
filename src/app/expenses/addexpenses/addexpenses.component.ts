@@ -15,10 +15,10 @@ export class AddexpensesComponent implements OnInit {
   expenseForm: FormGroup;
   plots: any[] = [];
   categories = [
-    { value: 'ค่าฮอโมน', label: 'expense.categories.hormone' },
+    { value: 'ค่าฮอร์โมน', label: 'expense.categories.hormone' },
     { value: 'ค่าปุ๋ย', label: 'expense.categories.fertilizer' },
     { value: 'ค่ายาฆ่าหญ่า', label: 'expense.categories.herbicide' },
-    { value: 'ต่าแรงงาน', label: 'expense.categories.labor' },
+    { value: 'ค่าแรงงาน', label: 'expense.categories.labor' },
     { value: 'ค่าน้ำมัน', label: 'expense.categories.fuel' },
     { value: 'ค่าพันธุ์มัน', label: 'expense.categories.seed' },
     { value: 'ค่าซ่อมอุปกรณ์', label: 'expense.categories.equipmentRepair' },
