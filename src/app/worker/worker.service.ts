@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
@@ -13,9 +13,21 @@ export class WorkerService {
   ) { }
 
 
-  getWorker(userId: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/getWorkers?user_id=${userId}`);
-  }
+  getWorker(userId: string,filters : any={} ): Observable<any> {
+    debugger
+    let params = new HttpParams().set('user_id', userId);
+
+    // เพิ่มตัวกรองใน query string (ถ้าตัวกรองมีค่า)
+    Object.keys(filters).forEach((key) => {
+      if (filters[key]) {
+        params = params.set(key, filters[key]);
+      }
+    });
+
+    console.log('Request params:', params.toString());
+    return this.http.get(`${this.apiUrl}/getWorkers`, { params });
+}
+
 
   addWorker(worker: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/addWorker`, worker);

@@ -2,30 +2,46 @@ const db = require('../config/db');
 
 
 exports.getWorker = async (req, res) => {
+    const { user_id, keyword, skills } = req.query;
 
-    // ดึง user_id จาก request parameters, body หรือ query
-    const userId = req.params.user_id || req.body.user_id || req.query.user_id;
-
-    // ตรวจสอบว่ามีการส่ง user_id มาหรือไม่
-    if (!userId) {
+    if (!user_id) {
         return res.status(400).json({ message: 'กรุณาระบุ user_id' });
     }
 
-    const query = 'SELECT * FROM workers WHERE user_id = ?';
-    db.query(query, [userId], (err, results) => {
-        if (err) {
-            console.error('Error executing query:', err.stack);
-            return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการดึงข้อมูลค่าใช้จ่าย' });
-        }
-       // ตรวจสอบว่ามีผลลัพธ์หรือไม่
-       if (results.length === 0) {
-        return res.status(404).json({ message: 'ไม่พบข้อมูลพนักงาน' });
+    let query = 'SELECT * FROM workers WHERE user_id = ?';
+    const params = [user_id];
+
+    // ค้นหาชื่อหรือเบอร์โทร
+    if (keyword) {
+        query += ' AND (worker_name LIKE ? OR phone LIKE ?)';
+        const keywordParam = `%${keyword}%`;  // ใช้ % สำหรับการค้นหาพาร์เชียล
+        params.push(keywordParam, keywordParam);  // ส่งพารามิเตอร์สองตัวสำหรับ worker_name และ phone
     }
 
-    // ส่งผลลัพธ์กลับไปในรูปแบบ JSON โดยตรง
-    res.json(results);
+    // ค้นหาทักษะ
+    if (skills) {
+        query += ' AND skills LIKE ?'; // ใช้ LIKE เพื่อค้นหาทักษะ
+        params.push(`%${skills}%`);  
+    }
+
+    // เรียงลำดับจาก worker_id ใหม่สุด
+    query += ' ORDER BY worker_id DESC';
+
+    // คิวรี่ฐานข้อมูล
+    db.query(query, params, (err, results) => {
+        if (err) {
+            console.error('Database query error:', err.stack);
+            return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการดึงข้อมูลคนงาน' });
+        }
+
+
+
+        res.json(results);
     });
 };
+
+
+
 
 exports.addWorker = async (req, res) => {
     const { user_id, worker_name, phone, skills } = req.body;

@@ -3,11 +3,12 @@ import { MatTableDataSource } from '@angular/material/table';
 import { WorkerService } from './worker.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AddWorkerComponent } from './add-worker/add-worker.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import Swal from 'sweetalert2';
+import { AddWorkerComponent } from './add-worker/add-worker.component';
 import { EditWorkerComponent } from './edit-worker/edit-worker.component';
+import { debounceTime, filter } from 'rxjs';
 
 @Component({
   selector: 'app-worker',
@@ -18,9 +19,9 @@ export class WorkerComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = ['worker_name', 'phone', 'skills', 'actions'];
   dataSource = new MatTableDataSource<any>([]);
   userId: string = '';
-  
+
   searchForm: FormGroup;
-  skillOptions: string[] = ['คนขุด', 'ฉีดยา', 'ตัดต้น'];
+  skillOptions: string[] = ['คนขุด', 'คนฉีด', 'ตัดต้น', 'คนปลูก'];
 
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
 
@@ -30,7 +31,6 @@ export class WorkerComponent implements OnInit, AfterViewInit {
     private router: Router,
     public dialog: MatDialog,
   ) {
-    // Initialize search form
     this.searchForm = this.fb.group({
       keyword: [''],
       skills: ['']
@@ -39,8 +39,20 @@ export class WorkerComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.userId = localStorage.getItem('userId') || '';
+
     if (this.userId) {
       this.loadWorker();
+
+      // ค้นหาตามการเปลี่ยนแปลงของฟอร์ม และดีบาวน์ให้การค้นหาช้าลง
+      this.searchForm.valueChanges.pipe(
+        debounceTime(500), // เว้นเวลาระหว่างการค้นหาหลังจากพิมพ์
+        filter(() => this.searchForm.valid) // ค้นหาต่อเมื่อฟอร์มมีค่าถูกต้อง
+      ).subscribe(() => {
+        this.onSearch();
+      });
+    } else {
+      // หากไม่พบ userId, ให้ปิดการทำงาน หรือแสดงข้อความผิดพลาด
+      Swal.fire('ไม่พบข้อมูลผู้ใช้', 'กรุณาล็อกอินใหม่', 'error');
     }
   }
 
@@ -50,10 +62,36 @@ export class WorkerComponent implements OnInit, AfterViewInit {
     }
   }
 
-  loadWorker() {
-    this.workerService.getWorker(this.userId).subscribe((res: any) => {
+  loadWorker(filter: any = {}) {
+    // ตรวจสอบว่ามีการกรองหรือไม่ ถ้ามีก็ส่งไปใน request
+    this.workerService.getWorker(this.userId, filter).subscribe((res: any) => {
       this.dataSource.data = res;
     });
+  }
+
+  onSearch() {
+    const filters: any = {};
+
+    // ตรวจสอบค่าที่กรอกในฟอร์ม
+    const keyword = this.searchForm.get('keyword')?.value;
+    if (keyword) {
+      filters.keyword = keyword;
+    }
+
+    const skills = this.searchForm.get('skills')?.value;
+    if (skills) {
+      filters.skills = skills;
+    }
+
+    // ค้นหาข้อมูลคนงาน
+    this.loadWorker(filters);
+  }
+  
+
+  clearSearch() {
+    // รีเซ็ตฟอร์มการค้นหาทั้งหมด
+    this.searchForm.reset();
+    this.loadWorker(); // โหลดข้อมูลทั้งหมด
   }
 
   addWorker() {
@@ -66,22 +104,6 @@ export class WorkerComponent implements OnInit, AfterViewInit {
         this.loadWorker();
       }
     });
-  }
-
-  onSearch() {
-    const { keyword, skills } = this.searchForm.value;
-
-    this.workerService.getWorker(this.userId).subscribe((res: any) => {
-      this.dataSource.data = res.filter((worker: any) =>
-        (!keyword || worker.worker_name.includes(keyword) || worker.phone.includes(keyword)) &&
-        (!skills || worker.skills.includes(skills))
-      );
-    });
-  }
-
-  clearSearch() {
-    this.searchForm.reset();
-    this.loadWorker();
   }
 
   Edit(workerId: string): void {

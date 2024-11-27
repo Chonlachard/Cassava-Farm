@@ -12,7 +12,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 export class AddWorkerComponent implements OnInit {
 
   workerForm: FormGroup;
-  availableSkills: string[] = ['คนขุด', 'ฉีดยา', 'ตัดต้น']; // ทักษะที่สามารถเลือกได้
+  availableSkills: string[] = ['คนขุด', 'คนฉีด', 'ตัดต้น','คนปลูก']; // ทักษะที่สามารถเลือกได้
 
   constructor(
     private fb: FormBuilder,

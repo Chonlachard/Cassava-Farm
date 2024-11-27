@@ -26,6 +26,7 @@ export class HarvestsService {
     });
   
     // ส่ง request พร้อม query string
+    console.log('Request params:', params.toString());
     return this.http.get(`${this.apiUrl}/getharvests`, { params });
   }
   
