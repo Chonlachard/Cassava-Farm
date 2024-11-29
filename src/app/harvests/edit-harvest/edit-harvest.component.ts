@@ -107,33 +107,36 @@ export class EditHarvestComponent implements OnInit {
   onSubmit(): void {
     if (this.harvestForm.invalid) {
       Swal.fire({
-        title: 'ข้อผิดพลาด!',
-        text: 'กรุณาตรวจสอบข้อมูลในแบบฟอร์ม',
+        title: this.translate.instant('harvest.formInvalidErrorTitle'),
+        text: this.translate.instant('harvest.formInvalidErrorText'),
         icon: 'error',
-        confirmButtonText: 'ตกลง'
+        confirmButtonText: this.translate.instant('harvest.confirmButtonText')
       });
       return;
     }
 
     const formData = { ...this.harvestForm.getRawValue() };
 
-    this.harvestsService.updateHarvest(formData).subscribe(response => {
-      Swal.fire({
-        title: 'สำเร็จ!',
-        text: 'ข้อมูลเก็บเกี่ยวถูกแก้ไขเรียบร้อยแล้ว',
-        icon: 'success',
-        confirmButtonText: 'ตกลง'
-      }).then(() => {
-        this.dialogRef.close();
-      });
-    }, error => {
-      Swal.fire({
-        title: 'ข้อผิดพลาด!',
-        text: 'ไม่สามารถแก้ไขข้อมูลเก็บเกี่ยวได้ กรุณาลองอีกครั้ง',
-        icon: 'error',
-        confirmButtonText: 'ตกลง'
-      });
-    });
+    this.harvestsService.updateHarvest(formData).subscribe(
+      (response) => {
+        Swal.fire({
+          title: this.translate.instant('harvest.updateSuccessTitle'),
+          text: this.translate.instant('harvest.updateSuccessText'),
+          icon: 'success',
+          confirmButtonText: this.translate.instant('harvest.confirmButtonText')
+        }).then(() => {
+          this.dialogRef.close();
+        });
+      },
+      (error) => {
+        Swal.fire({
+          title: this.translate.instant('harvest.updateErrorTitle'),
+          text: this.translate.instant('harvest.updateErrorText'),
+          icon: 'error',
+          confirmButtonText: this.translate.instant('harvest.confirmButtonText')
+        });
+      }
+    );
   }
 
   onFileSelect(event: any): void {

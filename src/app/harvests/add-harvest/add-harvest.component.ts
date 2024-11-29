@@ -72,10 +72,10 @@ export class AddHarvestComponent implements OnInit {
     debugger;
     if (this.harvestForm.invalid) {
       Swal.fire({
-        title: 'ข้อผิดพลาด!',
-        text: 'กรุณาตรวจสอบข้อมูลในแบบฟอร์ม',
+        title: this.translate.instant('harvest.formInvalidErrorTitle'),
+        text: this.translate.instant('harvest.formInvalidErrorText'),
         icon: 'error',
-        confirmButtonText: 'ตกลง'
+        confirmButtonText: this.translate.instant('harvest.confirmButtonText')
       });
       return;
     }
@@ -102,20 +102,20 @@ export class AddHarvestComponent implements OnInit {
     this.harvestsService.addHarvest(formData).subscribe(
       (response) => {
         Swal.fire({
-          title: 'สำเร็จ!',
-          text: 'ข้อมูลเก็บเกี่ยวถูกเพิ่มเรียบร้อยแล้ว',
+          title: this.translate.instant('harvest.addSuccessTitle'),
+          text: this.translate.instant('harvest.addSuccessText'),
           icon: 'success',
-          confirmButtonText: 'ตกลง'
+          confirmButtonText: this.translate.instant('harvest.confirmButtonText')
         }).then(() => {
           this.dialogRef.close();
         });
       },
       (error) => {
         Swal.fire({
-          title: 'ข้อผิดพลาด!',
-          text: 'ไม่สามารถเพิ่มข้อมูลเก็บเกี่ยวได้ กรุณาลองอีกครั้ง',
+          title: this.translate.instant('harvest.addErrorTitle'),
+          text: this.translate.instant('harvest.addErrorText'),
           icon: 'error',
-          confirmButtonText: 'ตกลง'
+          confirmButtonText: this.translate.instant('harvest.confirmButtonText')
         });
       }
     );

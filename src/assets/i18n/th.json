@@ -74,7 +74,7 @@
     "passwordMismatchErrorTitle": "ผิดพลาด!",
     "passwordMismatchErrorText": "รหัสผ่านและการยืนยันรหัสผ่านไม่ตรงกัน."
   },
-   "harvest": {
+  "harvest": {
     "title": "รายรับ",
     "formEditTitle": "แก้ไขข้อมูลเรายรับ",
     "searchByPlot": "ค้นหาตามแปลง",
@@ -106,9 +106,9 @@
     "harvestDate": "วันที่เก็บเกี่ยว",
     "plot": "แปลง",
     "selectPlot": "เลือกแปลง",
-    "SelectCompany" : "กรอกชื่อบริษัทที่ขาย",
+    "SelectCompany": "กรอกชื่อบริษัทที่ขาย",
     "SelectStarchPercentage": "เลือกเปอร์เซ็นต์แป้ง",
-    "SelectnetWeight":"เลือกน้ำหนักสุทธิ",
+    "SelectnetWeight": "เลือกน้ำหนักสุทธิ",
     "SelectSellingPrice": "เลือกราคาขาย",
     "netWeight": "น้ำหนักสุทธิ (กิโลกรัม)",
     "image": "อัปโหลดใบเสร็จภาพ",
@@ -119,18 +119,30 @@
     "updateSuccess": "อัปเดตข้อมูลการเก็บเกี่ยวสำเร็จ!",
     "updateError": "เกิดข้อผิดพลาดในการอัปเดตข้อมูลการเก็บเกี่ยว!",
     "actionsHeader": "การจัดการ",
-    "weightIn":"น้ำหนักเข้า",
-    "weightOut":"น้ำหนักเข้า",
-    "weightProduct":"น้ำหนักสินค้า",
-    "weightDeduct":"น้ำหนักหัก",
-    "errorNoData": "ไม่มีข้อมูล"
-
+    "weightIn": "น้ำหนักเข้า",
+    "weightOut": "น้ำหนักเข้า",
+    "weightProduct": "น้ำหนักสินค้า",
+    "weightDeduct": "น้ำหนักหัก",
+    "errorNoData": "ไม่มีข้อมูล",
+    "formInvalidErrorTitle": "ข้อผิดพลาด!",
+    "formInvalidErrorText": "กรุณาตรวจสอบข้อมูลในแบบฟอร์ม",
+    "addSuccessTitle": "สำเร็จ!",
+    "addSuccessText": "ข้อมูลเก็บเกี่ยวถูกเพิ่มเรียบร้อยแล้ว",
+    "addErrorTitle": "ข้อผิดพลาด!",
+    "addErrorText": "ไม่สามารถเพิ่มข้อมูลเก็บเกี่ยวได้ กรุณาลองอีกครั้ง",
+    "confirmButtonText": "ตกลง",
+    "updateSuccessTitle": "สำเร็จ!",
+    "updateSuccessText": "ข้อมูลเก็บเกี่ยวถูกแก้ไขเรียบร้อยแล้ว",
+    "updateErrorTitle": "ข้อผิดพลาด!",
+    "updateErrorText": "ไม่สามารถแก้ไขข้อมูลเก็บเกี่ยวได้ กรุณาลองอีกครั้ง"
   },
   "expense": {
     "pageTitle": "รายการค่าใช้จ่าย",
     "searchForm": {
       "startDateLabel": "วันที่เริ่มต้น:",
       "endDateLabel": "วันที่สิ้นสุด:",
+      "plot": "แปลงที่ปลูก",
+      "expenseCategory": "ประเภทรายจ่าย",
       "searchButton": "ค้นหา",
       "clearButton": "ล้างข้อมูล",
       "addButton": "เพิ่มข้อมูล",
@@ -147,7 +159,7 @@
     },
     "form": {
       "title": "เพิ่มรายจ่าย",
-      "EditTitle":"แก้ไขข้อมูลรายจ่าย",
+      "EditTitle": "แก้ไขข้อมูลรายจ่าย",
       "dateLabel": "วันที่",
       "categoryLabel": "หมวดหมู่",
       "categoryPlaceholder": "เลือกหมวดหมู่",
