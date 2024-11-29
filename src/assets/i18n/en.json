@@ -220,6 +220,7 @@
   },
   "plot": {
     "title": "Cassava Planted Area",
+    "titleAdd" : "Add Cassava Planted Area",
     "searchByPlot": "Search by Name Plot",
     "addButton": "Add",
     "plotNameHeader": "Plot Name",
@@ -239,7 +240,14 @@
     "loadDataError": "Error loading data",
     "editButtonText": "Edit",
     "viewDetailsButtonText": "View Details",
-    "addButtonText": "Add New"
+    "addButtonText": "Add New",
+    "search": "Search",
+    "clearAll": "Clear All",
+    "currentLocation": "Current Location",
+    "pinLocation": "Pin Location",
+    "saveLocation": "Save",
+    "searchAr": "Search Location",
+    "polygonCoordinates": "Polygon Coordinates"
   },
   "worker": {
     "title": "Worker Contact Information",

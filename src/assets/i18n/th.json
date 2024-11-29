@@ -220,6 +220,7 @@
   },
   "plot": {
     "title": "พื้นที่ปลูกมันสำปะหลัง",
+    "titleAdd" : "เพิ่มพื้นที่ปลูกมันสำปะหลัง",
     "searchByPlot": "ค้นหาตามชื่อแปลง",
     "addButton": "เพิ่ม",
     "plotNameHeader": "ชื่อแปลง",
@@ -239,7 +240,14 @@
     "loadDataError": "เกิดข้อผิดพลาดในการโหลดข้อมูล",
     "editButtonText": "แก้ไข",
     "viewDetailsButtonText": "ดูรายละเอียด",
-    "addButtonText": "เพิ่มข้อมูลใหม่"
+    "addButtonText": "เพิ่มข้อมูลใหม่",
+    "search": "ค้นหา",
+    "clearAll": "เคลียร์ทั้งหมด",
+    "currentLocation": "ตำแหน่งปัจจุบัน",
+    "pinLocation": "พิกัดหมุดที่",
+    "saveLocation": "บันทึก",
+    "searchAr": "ค้นหาสถานที่",
+    "polygonCoordinates": "พิกัด Polygon"
   },
   "worker": {
     "title": "ข้อมูลติดต่อคนงาน",
