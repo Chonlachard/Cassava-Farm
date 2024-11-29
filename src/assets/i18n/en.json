@@ -219,7 +219,8 @@
     }
   },
   "plot": {
-    "title": "Expense List",
+    "title": "Cassava Planted Area",
+    "searchByPlot": "Search by Name Plot",
     "addButton": "Add",
     "plotNameHeader": "Plot Name",
     "areaHeader": "Area (Rai)",

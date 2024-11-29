@@ -1,50 +1,55 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
-    <div class="container-fluid">
-      <a class="navbar-brand fw-bold fs-3" >{{ 'navbar.title' | translate }}</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" routerLink="/dashboard">{{ 'navbar.dashboard' | translate }}</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" routerLink="/cassavaPlantedArea">{{ 'navbar.landInfo' | translate }}</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" routerLink="/harvests">{{ 'navbar.harvest' | translate }}</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" routerLink="/expenses">{{ 'navbar.expenses' | translate }}</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" routerLink="/worker">{{ 'navbar.contact' | translate }}</a>
-          </li>
+  <div class="container-fluid">
+    <a class="navbar-brand fw-bold fs-3" href="/dashboard">
+      <img src="assets/picture/logo.png" alt="Navbar Logo" class="navbar-logo img-fluid">
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+        <li class="nav-item" [class.active]="isActive('/dashboard')">
+          <a class="nav-link fs-5" routerLink="/dashboard">{{ 'navbar.dashboard' | translate }}</a>
+        </li>
+        <li class="nav-item" [class.active]="isActive('/cassavaPlantedArea')">
+          <a class="nav-link fs-5" routerLink="/cassavaPlantedArea">{{ 'navbar.landInfo' | translate }}</a>
+        </li>
+        <li class="nav-item" [class.active]="isActive('/harvests')">
+          <a class="nav-link fs-5" routerLink="/harvests">{{ 'navbar.harvest' | translate }}</a>
+        </li>
+        <li class="nav-item" [class.active]="isActive('/expenses')">
+          <a class="nav-link fs-5" routerLink="/expenses">{{ 'navbar.expenses' | translate }}</a>
+        </li>
+        <li class="nav-item" [class.active]="isActive('/worker')">
+          <a class="nav-link fs-5" routerLink="/worker">{{ 'navbar.contact' | translate }}</a>
+        </li>
+      </ul>
+      
+
+      <!-- เมนูเลือกภาษา -->
+      <div class="dropdown ms-3">
+        <a class="nav-link dropdown-toggle" href="#" role="button" id="languageMenu" data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="bi bi-globe"></i> {{ 'navbar.language' | translate }}
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageMenu">
+          <li><a class="dropdown-item" (click)="setLanguage('th')">{{ 'navbar.thai' | translate }}</a></li>
+          <li><a class="dropdown-item" (click)="setLanguage('en')">{{ 'navbar.english' | translate }}</a></li>
         </ul>
-        <div class="dropdown ms-3">
-            <a class="nav-link dropdown-toggle" href="#" role="button" id="languageMenu" data-bs-toggle="dropdown"
-              aria-expanded="false">
-              <i class="bi bi-globe"></i> {{ 'navbar.language' | translate }}
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageMenu">
-              <li><a class="dropdown-item" (click)="setLanguage('th')">{{ 'navbar.thai' | translate }}</a></li>
-              <li><a class="dropdown-item" (click)="setLanguage('en')">{{ 'navbar.english' | translate }}</a></li>
-            </ul>
-          </div>
-        <div class="dropdown ms-3">
-          <a class="nav-link dropdown-toggle" href="#" role="button" id="userMenu" data-bs-toggle="dropdown"
-            aria-expanded="false">
-            <i class="bi bi-person-circle"></i> {{ userName }}
-          </a>
-          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
-            <li><a class="dropdown-item" routerLink="/profile">{{ 'navbar.profile' | translate }}</a></li>
-            <li><a class="dropdown-item" href="#" (click)="logout()">{{ 'navbar.logout' | translate }}</a></li>
-          </ul>
-        </div>
-        
       </div>
+
+      <!-- เมนูผู้ใช้ -->
+      <div class="dropdown ms-3">
+        <a class="nav-link dropdown-toggle" href="#" role="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="bi bi-person-circle"></i> {{ userName }}
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+          <li><a class="dropdown-item" routerLink="/profile">{{ 'navbar.profile' | translate }}</a></li>
+          <li><a class="dropdown-item" href="#" (click)="logout()">{{ 'navbar.logout' | translate }}</a></li>
+        </ul>
+      </div>
+
     </div>
-  </nav>
-  
+  </div>
+</nav>

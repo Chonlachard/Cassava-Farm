@@ -1,8 +1,8 @@
 <app-navbar></app-navbar>
 <div class="container mt-4">
     <mat-card class="plot-card">
-      <mat-card-header>
-        <mat-card-title>พื้นที่ปลูกมันสำปะหลัง</mat-card-title>
+      <mat-card-header style="display: flex; justify-content: center; align-items: center;">
+        <mat-card-title style="font-weight: bold;  font-size: 48px;">{{ 'plot.title' | translate }}</mat-card-title>
       </mat-card-header>
       <div class="container mt-4">
         <form [formGroup]="searchForm">
@@ -12,13 +12,13 @@
               <!-- ช่องค้นหาด้วยชื่อแปลง -->
               <div class="col-md-8">
                 <div class="form-group">
-                  <label for="keyword" class="form-label">ค้นหาชื่อแปลง</label>
+                  <label for="keyword" class="form-label">{{ 'plot.searchByPlot' | translate }}</label>
                   <input 
                     type="text" 
                     formControlName="keyword" 
                     id="keyword" 
                     class="form-control"
-                    placeholder="ค้นหาชื่อแปลง" 
+                    placeholder="{{ 'plot.searchByPlot' | translate }}" 
                   />
                 </div>
               </div>

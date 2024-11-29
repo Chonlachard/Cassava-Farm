@@ -1,6 +1,7 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { NavbarService } from './navbar.service';
 import { TranslateService } from '@ngx-translate/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
@@ -13,7 +14,8 @@ export class NavbarComponent implements OnInit {
 
   constructor(
     private navbarService: NavbarService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private router: Router
   ) {
    
   }
@@ -62,5 +64,8 @@ export class NavbarComponent implements OnInit {
 
   setLanguage(lang: string) {
     this.translate.use(lang);
+  }
+  isActive(route: string): boolean {
+    return this.router.url === route;
   }
 }

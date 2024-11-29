@@ -1,0 +1,13 @@
+.navbar-logo {
+    width: 150px;  /* ปรับขนาดโลโก้ตามที่ต้องการ */
+    height: auto;  /* คงอัตราส่วนของรูปภาพ */
+}
+
+.navbar-nav .nav-item.active .nav-link {
+    color: #000000; /* สีของลิงก์ที่เลือก */
+    font-weight: bold;
+}
+
+.navbar {
+    background-color: #F0ECE3 !important; /* ใช้ !important เพื่อให้แน่ใจว่ามีผล */
+  }
