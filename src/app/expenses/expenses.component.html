@@ -1,8 +1,8 @@
 <app-navbar></app-navbar>
 <div class="container mt-4">
     <mat-card class="expense-card">
-        <mat-card-header>
-            <mat-card-title>{{ 'expense.pageTitle' | translate }}</mat-card-title>
+        <mat-card-header style="display: flex; justify-content: center; align-items: center;">
+            <mat-card-title style="font-weight: bold;  font-size: 48px;">{{ 'expense.pageTitle' | translate }}</mat-card-title>
         </mat-card-header>
 
         <!-- ฟอร์มค้นหา -->
@@ -12,7 +12,7 @@
                     <div class="row g-3">
                         <!-- Start Date Field -->
                         <div class="col-md-3">
-                            <label for="startDate" class="form-label">
+                            <label for="startDate" class="form-label" >
                                 {{ 'expense.searchForm.startDateLabel' | translate }}
                             </label>
                             <input
@@ -114,8 +114,8 @@
                     class="expense-table"
                 >
                     <!-- Date Column -->
-                    <ng-container matColumnDef="expense_date">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    <ng-container matColumnDef="expense_date" >
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header  style="font-weight: bold;" >
                             {{ 'expense.table.dateHeader' | translate }}
                         </th>
                         <td mat-cell *matCellDef="let expense">
@@ -125,7 +125,7 @@
 
                     <!-- Plot Name Column -->
                     <ng-container matColumnDef="plot_name">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header  style="font-weight: bold;">
                             {{ 'harvest.plotName' | translate }}
                         </th>
                         <td mat-cell *matCellDef="let expense">
@@ -135,7 +135,7 @@
 
                     <!-- Category Column -->
                     <ng-container matColumnDef="category">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header  style="font-weight: bold;">
                             {{ 'expense.table.categoryHeader' | translate }}
                         </th>
                         <td mat-cell *matCellDef="let expense">
@@ -145,7 +145,7 @@
 
                     <!-- Amount Column -->
                     <ng-container matColumnDef="amount">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header  style="font-weight: bold;">
                             {{ 'expense.table.amountHeader' | translate }}
                         </th>
                         <td mat-cell *matCellDef="let expense">
@@ -155,7 +155,7 @@
 
                     <!-- Details Column -->
                     <ng-container matColumnDef="details">
-                        <th mat-header-cell *matHeaderCellDef>
+                        <th mat-header-cell *matHeaderCellDef  style="font-weight: bold;">
                             {{ 'expense.table.detailsHeader' | translate }}
                         </th>
                         <td mat-cell *matCellDef="let expense">
@@ -165,7 +165,7 @@
 
                     <!-- Actions Column -->
                     <ng-container matColumnDef="actions">
-                        <th mat-header-cell *matHeaderCellDef>
+                        <th mat-header-cell *matHeaderCellDef style="font-weight: bold;">
                             {{ 'expense.table.actionsHeader' | translate }}
                         </th>
                         <td mat-cell *matCellDef="let expense">

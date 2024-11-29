@@ -46,7 +46,8 @@ export class HarvestsComponent implements OnInit, AfterViewInit {
       net_weight_kg: [''],
       starch_percentage: [''],
       price: [''],
-      harvest_date: ['']
+      harvest_date_start: [''], // ฟิลด์วันที่เริ่มต้น
+      harvest_date_end: ['']
     });
   }
 
@@ -78,6 +79,7 @@ export class HarvestsComponent implements OnInit, AfterViewInit {
 
   // โหลดข้อมูลการเก็บเกี่ยว
   loadHarvests(filters: any = {}) {
+    debugger
     this.harvestsService.getHarvests(this.userId, filters).subscribe((res: any) => {
       this.dataSource.data = res;
     });
@@ -100,14 +102,14 @@ export class HarvestsComponent implements OnInit, AfterViewInit {
     const filters: any = {};
     if (formValues.plot) filters.plot_id = formValues.plot;
     if (formValues.company_name) filters.company_name = formValues.company_name;
-    if (formValues.harvest_date) {
-      filters.harvest_date_start = formValues.harvest_date;
-      filters.harvest_date_end = formValues.harvest_date;
+    if (formValues.harvest_date_start || formValues.harvest_date_end) {
+      filters.harvest_date_start = formValues.harvest_date_start || null;
+      filters.harvest_date_end = formValues.harvest_date_end || null;
     }
     if (formValues.net_weight_kg) {
       const [min, max] = formValues.net_weight_kg.split('-').map(Number);
-      filters.net_weight_min = min ;
-      filters.net_weight_max = max ;
+      filters.net_weight_min = min;
+      filters.net_weight_max = max;
     }
     if (formValues.starch_percentage) {
       const [min, max] = formValues.starch_percentage.split('-').map(Number);

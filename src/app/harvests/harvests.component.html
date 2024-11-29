@@ -1,9 +1,10 @@
 <app-navbar></app-navbar>
 <div class="container mt-4">
     <mat-card class="harvests-card">
-        <mat-card-header>
-            <mat-card-title>ข้อมูลการเก็บเกี่ยว</mat-card-title>
+        <mat-card-header style="display: flex; justify-content: center; align-items: center;">
+            <mat-card-title style="font-weight: bold;  font-size: 48px;">{{ 'harvest.title' | translate }}</mat-card-title>
         </mat-card-header>
+        
 
         <!-- ฟอร์มค้นหา -->
         <div class="container mt-4">
@@ -13,9 +14,9 @@
                         <!-- แถวที่ 1 -->
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="plot" class="form-label">ค้นหาตามแปลง</label>
+                                <label for="plot" class="form-label">{{ 'harvest.searchByPlot' | translate }}</label>
                                 <select formControlName="plot" id="plot" class="form-select">
-                                    <option value="">เลือกแปลง</option>
+                                    <option value="">{{ 'harvest.selectPlot' | translate }}</option>
                                     <option *ngFor="let plot of plots" [value]="plot.value">{{ plot.text }}</option>
                                 </select>
                             </div>
@@ -23,33 +24,43 @@
         
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="company_name" class="form-label">บริษัทที่ขาย</label>
+                                <label for="company_name" class="form-label">{{ 'harvest.companyName' | translate }}</label>
                                 <input 
                                     type="text" 
                                     formControlName="company_name" 
                                     id="company_name" 
                                     class="form-control" 
-                                    placeholder="กรอกชื่อบริษัทที่ขาย" />
+                                    placeholder="{{ 'harvest.SelectCompany' | translate }}" />
                             </div>
                         </div>
         
-                        <div class="col-md-4">
+                        <div class="col-md-2">
                             <div class="form-group">
-                                <label for="harvest_date" class="form-label">วันที่เก็บเกี่ยว</label>
+                                <label for="harvest_date_start" class="form-label">{{ 'harvest.searchStartDate' | translate }}</label>
                                 <input 
                                     type="date" 
-                                    formControlName="harvest_date" 
-                                    id="harvest_date" 
-                                    class="form-control" />
+                                    formControlName="harvest_date_start" 
+                                    id="harvest_date_start" 
+                                    class="form-control" >
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="harvest_date_end" class="form-label">{{ 'harvest.searchsEndDate' | translate }}</label>
+                                <input 
+                                    type="date" 
+                                    formControlName="harvest_date_end" 
+                                    id="harvest_date_end" 
+                                    class="form-control" >
                             </div>
                         </div>
         
                         <!-- แถวที่ 2 -->
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="starch_percentage" class="form-label">เปอร์เซ็นต์แป้ง</label>
+                                <label for="starch_percentage" class="form-label">{{ 'harvest.starchPercentage' | translate }}</label>
                                 <select formControlName="starch_percentage" id="starch_percentage" class="form-select">
-                                    <option value="">เลือกช่วงเปอร์เซ็นต์แป้ง</option>
+                                    <option value="">{{ 'harvest.SelectStarchPercentage' | translate }}</option>
                                     <option value="1-10">1-10%</option>
                                     <option value="11-20">11-20%</option>
                                     <option value="21-30">21-30%</option>
@@ -60,9 +71,9 @@
         
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="net_weight_kg" class="form-label">น้ำหนักสุทธิ (กิโลกรัม)</label>
+                                <label for="net_weight_kg" class="form-label">{{ 'harvest.netWeight' | translate }}</label>
                                 <select formControlName="net_weight_kg" id="net_weight_kg" class="form-select">
-                                    <option value="">เลือกช่วงน้ำหนักสุทธิ</option>
+                                    <option value="">{{ 'harvest.SelectnetWeight' | translate }}</option>
                                     <option value="1-1000">1-1000 กิโลกรัม</option>
                                     <option value="1001-5000">1001-5000 กิโลกรัม</option>
                                     <option value="5001-10000">5001-10000 กิโลกรัม</option>
@@ -73,9 +84,9 @@
         
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="price" class="form-label">ราคาขาย/กิโลกรัม</label>
+                                <label for="price" class="form-label">{{ 'harvest.searchPricePerkilogram' | translate }}</label>
                                 <select formControlName="price" id="price" class="form-select">
-                                    <option value="">เลือกช่วงราคาขาย</option>
+                                    <option value="">{{ 'harvest.SelectSellingPrice' | translate }}</option>
                                     <option value="1-2">1-2บาท</option>
                                     <option value="3-4">3-4 บาท</option>
                                     <option value="5-6">5-6 บาท</option>
@@ -89,10 +100,10 @@
                     <div class="row mt-4">
                         <div class="col-12 d-flex gap-2 justify-content-end">
                             <button type="button" class="btn btn-secondary px-4" (click)="clearSearch()">
-                                <i class="fas fa-undo me-2"></i>ล้างข้อมูล
+                                <i class="fas fa-undo me-2"></i>{{ 'harvest.clear' | translate }}
                             </button>
                             <button type="button" class="btn btn-success px-4" (click)="openAdd(userId)">
-                                <i class="fas fa-plus me-2"></i>เพิ่มข้อมูล
+                                <i class="fas fa-plus me-2"></i>{{ 'harvest.add' | translate }}
                             </button>
                         </div>
                     </div>
@@ -101,44 +112,44 @@
         </div>
 
         <!-- ตารางข้อมูล -->
-        <mat-card-content>
-            <div class="table-container">
+        <mat-card-content >
+            <div class="table-container" >
                 <table mat-table [dataSource]="dataSource" matSort class="harvests-table">
                     <!-- คอลัมน์ วันที่เก็บเกี่ยว -->
                     <ng-container matColumnDef="harvest_date">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>วันที่เก็บเกี่ยว</th>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: bold;">{{ 'harvest.harvestDate' | translate }}</th>
                         <td mat-cell *matCellDef="let harvest">
                             {{ harvest.harvest_date | date:'dd/MM/yyyy' }}
                         </td>
                     </ng-container>
                     <!-- คอลัมน์ ชื่อแปลง -->
                     <ng-container matColumnDef="plot_name">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>ชื่อแปลง</th>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header  style="font-weight: bold;">{{ 'harvest.plotName' | translate }}</th>
                         <td mat-cell *matCellDef="let harvest"> {{ harvest.plot_name }} </td>
                     </ng-container>
                     <!-- คอลัมน์ บริษัทที่ขาย -->
                     <ng-container matColumnDef="company_name">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>บริษัทที่ขาย</th>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header  style="font-weight: bold;">{{ 'harvest.companyName' | translate }}</th>
                         <td mat-cell *matCellDef="let harvest"> {{ harvest.company_name }} </td>
                     </ng-container>
                     <!-- คอลัมน์ น้ำหนักสุทธิ -->
                     <ng-container matColumnDef="net_weight_kg">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>น้ำหนักสุทธิ</th>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: bold;">{{ 'harvest.netWeight' | translate }}</th>
                         <td mat-cell *matCellDef="let harvest"> {{ harvest.net_weight_kg }} </td>
                     </ng-container>
                     <!-- คอลัมน์ เปอร์เซ็นต์แป้ง -->
                     <ng-container matColumnDef="starch_percentage">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>เปอร์เซ็นต์แป้ง</th>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: bold;">{{ 'harvest.starchPercentage' | translate }}</th>
                         <td mat-cell *matCellDef="let harvest"> {{ harvest.starch_percentage }} </td>
                     </ng-container>
                     <!-- คอลัมน์ ราคาขาย -->
                     <ng-container matColumnDef="amount">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>ราคาขาย</th>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: bold;">{{ 'harvest.amount' | translate }}</th>
                         <td mat-cell *matCellDef="let harvest"> {{ harvest.amount }} </td>
                     </ng-container>
                     <!-- คอลัมน์ Actions -->
                     <ng-container matColumnDef="actions">
-                        <th mat-header-cell *matHeaderCellDef>จัดการ</th>
+                        <th mat-header-cell *matHeaderCellDef style="font-weight: bold;">{{ 'harvest.actionsHeader' | translate }}</th>
                         <td mat-cell *matCellDef="let harvest">
                             <button mat-icon-button color="primary" (click)="EditHarvest(harvest.harvest_id)" matTooltip="แก้ไข">
                                 <mat-icon>edit</mat-icon>
@@ -161,7 +172,7 @@
             <!-- ไม่มีข้อมูล -->
             <div *ngIf="dataSource.data.length === 0" class="no-data">
                 <mat-icon>info</mat-icon>
-                <p>ไม่มีข้อมูล</p>
+                <p>{{ 'harvest.errorNoData' | translate }}</p>
             </div>
 
             <!-- Paginator -->

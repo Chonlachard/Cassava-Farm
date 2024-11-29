@@ -13,8 +13,8 @@ export class AppComponent {
     if (savedLanguage) {
       this.translate.use(savedLanguage);
     } else {
-      this.translate.setDefaultLang('th');
-      this.translate.use('th');
+      this.translate.setDefaultLang('en');
+      this.translate.use('en');
     }
   }
 
