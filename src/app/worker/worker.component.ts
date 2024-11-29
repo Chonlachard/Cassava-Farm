@@ -9,6 +9,7 @@ import Swal from 'sweetalert2';
 import { AddWorkerComponent } from './add-worker/add-worker.component';
 import { EditWorkerComponent } from './edit-worker/edit-worker.component';
 import { debounceTime, filter } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-worker',
@@ -30,6 +31,7 @@ export class WorkerComponent implements OnInit, AfterViewInit {
     private workerService: WorkerService,
     private router: Router,
     public dialog: MatDialog,
+    private translate: TranslateService,
   ) {
     this.searchForm = this.fb.group({
       keyword: [''],
@@ -121,27 +123,36 @@ export class WorkerComponent implements OnInit, AfterViewInit {
 
   Delete(workerId: string) {
     Swal.fire({
-      title: 'คุณแน่ใจหรือไม่?',
-      text: 'คุณจะไม่สามารถกู้คืนข้อมูลนี้ได้!',
+      title: this.translate.instant('worker.deleteConfirmTitle'),
+      text: this.translate.instant('worker.deleteConfirmText'),
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#d33',
       cancelButtonColor: '#3085d6',
-      confirmButtonText: 'ใช่, ลบเลย!',
-      cancelButtonText: 'ยกเลิก'
+      confirmButtonText: this.translate.instant('worker.deleteConfirmButtonText'),
+      cancelButtonText: this.translate.instant('worker.deleteCancelButtonText')
     }).then((result) => {
       if (result.isConfirmed) {
         this.workerService.deleteWorker(workerId).subscribe(
           () => {
-            Swal.fire('ลบสำเร็จ!', 'ข้อมูลคนงานถูกลบแล้ว.', 'success');
+            Swal.fire(
+              this.translate.instant('worker.deleteSuccessTitle'),
+              this.translate.instant('worker.deleteSuccessText'),
+              'success'
+            );
             this.loadWorker();
           },
           (error) => {
             console.error('เกิดข้อผิดพลาดในการลบข้อมูลคนงาน:', error);
-            Swal.fire('เกิดข้อผิดพลาด!', 'ไม่สามารถลบข้อมูลคนงานได้.', 'error');
+            Swal.fire(
+              this.translate.instant('worker.deleteErrorTitle'),
+              this.translate.instant('worker.deleteErrorText'),
+              'error'
+            );
           }
         );
       }
     });
   }
+  
 }

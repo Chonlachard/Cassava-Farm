@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { WorkerService } from '../worker.service';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import Swal from 'sweetalert2'; // ใช้สำหรับแสดงการแจ้งเตือน
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-edit-worker',
@@ -18,6 +19,7 @@ export class EditWorkerComponent implements OnInit {
     private fb: FormBuilder,
     private workerService: WorkerService,
     public dialogRef: MatDialogRef<EditWorkerComponent>,
+    private translate: TranslateService,
     @Inject(MAT_DIALOG_DATA) public data: any // รับข้อมูล workerId ที่ถูกส่งมาจาก Edit
   ) {
     this.workerForm = this.fb.group({
@@ -50,7 +52,7 @@ export class EditWorkerComponent implements OnInit {
         console.error('เกิดข้อผิดพลาดในการดึงข้อมูลคนงาน:', error);
         Swal.fire({
           icon: 'error',
-          title: 'เกิดข้อผิดพลาด!',
+          title: this.translate.instant('common.error'),
           text: 'ไม่สามารถดึงข้อมูลคนงานได้!',
           confirmButtonText: 'ตกลง'
         });
@@ -67,16 +69,15 @@ export class EditWorkerComponent implements OnInit {
         skills: this.workerForm.get('skills')?.value || [] // ตรวจสอบว่า skills เป็น array
       };
   
-      console.log('ข้อมูลที่จะส่งไปยัง API:', formData);
   
       this.workerService.updateWorker(formData).subscribe(
         response => {
           console.log('แก้ไขข้อมูลคนงานสำเร็จ:', response);
           Swal.fire({
             icon: 'success',
-            title: 'สำเร็จ!',
-            text: 'ข้อมูลคนงานถูกแก้ไขแล้ว!',
-            confirmButtonText: 'ตกลง'
+            title: this.translate.instant('common.success'),
+            text: this.translate.instant('worker.successEdit'),
+            confirmButtonText: this.translate.instant('common.ok')
           });
           this.dialogRef.close(true); // ปิด dialog และส่งผลลัพธ์กลับไปยัง component หลัก
         },
@@ -84,18 +85,18 @@ export class EditWorkerComponent implements OnInit {
           console.error('เกิดข้อผิดพลาดในการแก้ไขข้อมูลคนงาน:', error);
           Swal.fire({
             icon: 'error',
-            title: 'เกิดข้อผิดพลาด!',
-            text: 'ไม่สามารถแก้ไขข้อมูลคนงานได้!',
-            confirmButtonText: 'ตกลง'
+            title: this.translate.instant('common.error'),
+            text: this.translate.instant('worker.errorEdit'),
+             confirmButtonText: this.translate.instant('common.ok')
           });
         }
       );
     } else {
       Swal.fire({
         icon: 'warning',
-        title: 'ข้อมูลไม่ถูกต้อง!',
-        text: 'กรุณาตรวจสอบข้อมูลในฟอร์มให้ครบถ้วน.',
-        confirmButtonText: 'ตกลง'
+        title:  this.translate.instant('common.incomplete'),
+        text: this.translate.instant('worker.incompleteForm'),
+        confirmButtonText: this.translate.instant('common.ok')
       });
     }
   }

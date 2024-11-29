@@ -1,23 +1,25 @@
 <div class="worker-form-container">
     <div class="form-card">
-        <h1 class="form-title">แก้ไขข้อมูลติดต่อคนงาน</h1>
+        <h1 class="form-title" style="font-weight: bold;">{{ 'worker.editTitle' | translate }}</h1>
         <form [formGroup]="workerForm" (ngSubmit)="onSubmit()">
             <div class="form-field">
                 <label for="worker_name">
-                    <i class="fas fa-user"></i> ชื่อ-นามสกุล
+                    <i class="fas fa-user"></i>  {{ 'worker.nameAdd' | translate }}
                 </label>
                 <input type="text" id="worker_name" formControlName="worker_name" placeholder="กรุณากรอกชื่อ-นามสกุล" required>
             </div>
 
             <div class="form-field">
                 <label for="phone">
-                    <i class="fas fa-phone"></i> เบอร์โทรศัพท์
+                    <i class="fas fa-phone"></i> {{ 'worker.phone' | translate }}
                 </label>
                 <input type="tel" id="phone" formControlName="phone" placeholder="กรุณากรอกเบอร์โทรศัพท์" required>
             </div>
 
             <div class="form-field">
-                <label>ทักษะ</label>
+                <label for="skills">
+                    <i class="fas fa-tag"></i> {{ 'worker.skills' | translate }}
+                </label>
                 <div class="skills-container">
                     <div *ngFor="let skill of availableSkills" class="skill-item">
                         <input 
@@ -31,7 +33,7 @@
             </div>
             
             <button type="submit" [disabled]="!workerForm.valid" class="submit-button">
-                <i class="fas fa-save"></i> บันทึก
+                <i class="fas fa-save"></i> {{ 'worker.save' | translate }}
             </button>
         </form>
     </div>

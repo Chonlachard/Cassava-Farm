@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { WorkerService } from '../worker.service';
 import Swal from 'sweetalert2';
 import { MatDialogRef } from '@angular/material/dialog';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-add-worker',
@@ -18,6 +19,7 @@ export class AddWorkerComponent implements OnInit {
     private fb: FormBuilder,
     private workerService: WorkerService,
     public dialogRef: MatDialogRef<AddWorkerComponent>,
+    private translate: TranslateService
   ) {
     this.workerForm = this.fb.group({
       worker_id: [''], // ID ของคนงาน สามารถปล่อยว่างได้
@@ -48,9 +50,9 @@ export class AddWorkerComponent implements OnInit {
           // แสดง SweetAlert2 เมื่อเพิ่มข้อมูลสำเร็จ
           Swal.fire({
             icon: 'success',
-            title: 'สำเร็จ!',
-            text: 'เพิ่มข้อมูลคนงานสำเร็จ!',
-            confirmButtonText: 'ตกลง'
+            title: this.translate.instant('common.success'),
+            text: this.translate.instant('worker.successAdd'),
+            confirmButtonText: this.translate.instant('common.ok')
           }).then(() => {
             // ปิด dialog หลังจากแสดง alert
             this.dialogRef.close(true); // ส่งค่า true กลับไปยัง WorkerComponent
@@ -65,9 +67,9 @@ export class AddWorkerComponent implements OnInit {
           // แสดง SweetAlert2 เมื่อเกิดข้อผิดพลาด
           Swal.fire({
             icon: 'error',
-            title: 'เกิดข้อผิดพลาด!',
-            text: 'ไม่สามารถเพิ่มข้อมูลคนงานได้!',
-            confirmButtonText: 'ตกลง'
+            title: this.translate.instant('common.error'),
+            text: this.translate.instant('worker.errorAdd'),
+            confirmButtonText: this.translate.instant('common.ok')
           });
         }
       );
@@ -77,9 +79,9 @@ export class AddWorkerComponent implements OnInit {
       // แสดง SweetAlert2 ถ้าฟอร์มไม่ถูกต้อง
       Swal.fire({
         icon: 'warning',
-        title: 'ข้อมูลไม่ครบถ้วน!',
-        text: 'กรุณากรอกข้อมูลให้ครบถ้วน!',
-        confirmButtonText: 'ตกลง'
+        title:  this.translate.instant('common.incomplete'),
+        text:  this.translate.instant('worker.incompleteData'),
+        confirmButtonText: this.translate.instant('common.ok')
       });
     }
   }

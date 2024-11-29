@@ -239,5 +239,47 @@
     "editButtonText": "แก้ไข",
     "viewDetailsButtonText": "ดูรายละเอียด",
     "addButtonText": "เพิ่มข้อมูลใหม่"
+  },
+  "worker": {
+    "title": "ข้อมูลติดต่อคนงาน",
+    "nameOrPhone": "ชื่อหรือเบอร์โทร",
+    "enterNameOrPhone": "กรอกชื่อหรือเบอร์โทร",
+    "skills": "ทักษะ",
+    "selectSkill": "-- เลือกทักษะ --",
+    "clearData": "ล้างข้อมูล",
+    "addData": "เพิ่มข้อมูล",
+    "name": "ชื่อ",
+    "phone": "เบอร์โทรศัพท์",
+    "actions": "การกระทำ",
+    "noData": "ไม่มีข้อมูล",
+    "edit": "แก้ไข",
+    "delete": "ลบ",
+    "addTitle":"เพิ่มข้อมูลติดต่อคนงาน",
+    "editTitle": "แก้ไขข้อมูลติดต่อคนงาน",
+    "nameAdd": "ชื่อ-นามสกุล",
+    "NameOrPhone": "กรอกชื่อหรือเบอร์โทร",
+    "save": "บันทึก",
+    "successAdd": "เพิ่มข้อมูลคนงานสำเร็จ!",
+    "errorAdd": "ไม่สามารถเพิ่มข้อมูลคนงานได้!",
+    "successEdit": "ข้อมูลคนงานถูกแก้ไขแล้ว!",
+    "errorEdit": "ไม่สามารถแก้ไขข้อมูลคนงานได้!",
+    "incompleteData": "กรุณากรอกข้อมูลให้ครบถ้วน!",
+    "errorFetch": "ไม่สามารถดึงข้อมูลคนงานได้!",
+    "incompleteForm": "กรุณาตรวจสอบข้อมูลในฟอร์มให้ครบถ้วน.",
+    "common": {
+      "success": "สำเร็จ",
+      "error": "เกิดข้อผิดพลาด",
+      "incomplete": "ข้อมูลไม่ครบถ้วน",
+      "ok": "ตกลง"
+    },
+    "deleteConfirmTitle": "คุณแน่ใจหรือไม่?",
+    "deleteConfirmText": "คุณจะไม่สามารถกู้คืนข้อมูลนี้ได้!",
+    "deleteConfirmButtonText": "ใช่, ลบเลย!",
+    "deleteCancelButtonText": "ยกเลิก",
+    "deleteSuccessTitle": "ลบสำเร็จ!",
+    "deleteSuccessText": "ข้อมูลคนงานถูกลบแล้ว.",
+    "deleteErrorTitle": "เกิดข้อผิดพลาด!",
+    "deleteErrorText": "ไม่สามารถลบข้อมูลคนงานได้."
+
   }
 }
