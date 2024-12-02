@@ -24,7 +24,6 @@ function calculateAreaRai(latlngs) {
 async function handlePlotUpload(req, res) {
     const { user_id, plot_name, latlngs, fileData } = req.body;
 
-    // ตรวจสอบ latlngs ว่าเป็นออบเจกต์หรือ JSON string
     let parsedLatlngs;
     if (typeof latlngs === 'string') {
         try {
@@ -36,8 +35,13 @@ async function handlePlotUpload(req, res) {
         parsedLatlngs = latlngs;
     }
 
-    if (!parsedLatlngs || parsedLatlngs.length < 3) {
-        return res.status(400).json({ message: 'กรุณาระบุตำแหน่งพิกัดที่เพียงพอสำหรับการคำนวณพื้นที่' });
+    // ตรวจสอบและเติมข้อมูลพิกัดให้ครบ 20 ค่า
+    if (!parsedLatlngs || parsedLatlngs.length < 20) {
+        while (parsedLatlngs.length < 20) {
+            parsedLatlngs.push({ lat: null, lng: null }); // เติมค่าว่าง
+        }
+    } else if (parsedLatlngs.length > 20) {
+        parsedLatlngs = parsedLatlngs.slice(0, 20); // ตัดเหลือ 20 ค่า
     }
 
     try {
@@ -87,10 +91,11 @@ async function handlePlotUpload(req, res) {
             });
         });
     } catch (err) {
-        console.error('Error:', err); // เพิ่มการแสดงข้อผิดพลาดในคอนโซลเพื่อการดีบัก
+        console.error('Error:', err);
         res.status(500).json({ message: 'เกิดข้อผิดพลาดในการบันทึกข้อมูล', error: err.message });
     }
 }
+
 
 module.exports = { handlePlotUpload };
 

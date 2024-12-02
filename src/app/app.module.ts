@@ -44,6 +44,7 @@ import { EditExpensesComponent } from './expenses/edit-expenses/edit-expenses.co
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { EnterOtpComponent } from './forgot-password/enter-otp/enter-otp.component';
 import { ChangePasswordComponent } from './forgot-password/change-password/change-password.component';
+import { EditPlantedComponent } from './cassava-planted-area/edit-planted/edit-planted.component';
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
@@ -69,6 +70,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     ForgotPasswordComponent,
     EnterOtpComponent,
     ChangePasswordComponent,
+    EditPlantedComponent,
   ],
   imports: [
     BrowserModule,

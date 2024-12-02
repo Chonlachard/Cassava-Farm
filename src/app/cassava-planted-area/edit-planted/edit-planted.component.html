@@ -1,0 +1,82 @@
+<div class="container mt-3">
+    <!-- Form Section -->
+    <div class="plantedArea-form-container mt-3">
+        <div class="card shadow-sm">
+            <div class="card-header" style="text-align: center;">
+                <h1 class="card-title">{{ 'plot.titleEdit' | translate }}</h1>
+            </div>
+            <div class="card-body">
+                <form [formGroup]="plantedAreaForm" (ngSubmit)="onSubmit()" enctype="multipart/form-data">
+                    <!-- Plot Name and Area Input Fields -->
+                    <div class="mb-3">
+                        <label for="plot_name" class="form-label">
+                            <i class="fas fa-calendar"></i> {{ 'plot.plotNameHeader' | translate }}
+                        </label>
+                        <input type="text" id="plot_name" formControlName="plot_name" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label for="area_rai" class="form-label">
+                            <i class="fas fa-calendar"></i> {{ 'plot.areaHeader' | translate }}
+                        </label>
+                        <input type="text" id="area_rai" formControlName="area_rai" class="form-control" readonly>
+                    </div>
+
+                    <!-- Search and Action Buttons -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <input formControlName="searchQuery" class="form-control" placeholder="{{ 'plot.searchAr' | translate }}">
+                        </div>
+                        <div class="col-md-6">
+                            <div class="btn-group w-100">
+                                <button type="button" class="btn btn-primary" (click)="onSearchPlace()">{{ 'plot.search' | translate }}</button>
+                                <button type="button" class="btn btn-danger"
+                                    (click)="onClearPolygon()">{{ 'plot.clearAll' | translate }}</button>
+                                <button type="button" class="btn btn-success"
+                                    (click)="onCurrentLocation()">{{ 'plot.currentLocation' | translate }}</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Google Map -->
+                    <div class="mb-3" #mapContainer>
+                        <google-map 
+                          [center]="mapCenter" 
+                          [zoom]="zoom" 
+                          height="500px" 
+                          width="100%" 
+                          (mapClick)="onPolygonEdit($event)" 
+                          (dragstart)="onDragStart()" 
+                          (dragend)="onDragEnd()"
+                          [class.grabbing]="isDragging" 
+                          class="google-map">
+                          
+                          <map-marker *ngIf="currentLocationMarker" [position]="currentLocationMarker"></map-marker>
+                          
+                          <!-- แสดง polygon จากพิกัดที่มี -->
+                          <map-polygon [paths]="polygonCoords" [options]="polygonOptions"></map-polygon>
+                        </google-map>
+                      </div>
+
+                    <!-- Polygon Coordinates and Area Information -->
+                    <div class="mb-3">
+                        <h5> {{ 'plot.polygonCoordinates' | translate }}:</h5>
+                        <ul class="list-unstyled">
+                            <li *ngFor="let coord of polygonCoords">Lat: {{coord.lat}}, Lng: {{coord.lng}}</li>
+                        </ul>
+                    </div>
+
+                    <!-- Displaying Selected Coordinates -->
+                    <div class="mb-3">
+                        <p *ngFor="let marker of markers; let i = index">{{ 'plot.pinLocation' | translate }} {{ i + 1 }}: {{
+                            marker.getPosition()?.lat() }}, {{ marker.getPosition()?.lng() }}</p>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" [disabled]="!plantedAreaForm.valid" class="btn btn-primary w-100">
+                        <i class="fas fa-save"></i> {{ 'plot.saveLocation' | translate }} 
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -221,6 +221,7 @@
   "plot": {
     "title": "Cassava Planted Area",
     "titleAdd" : "Add Cassava Planted Area",
+    "titleEdit": "Edit Cassava Planted Area",
     "searchByPlot": "Search by Name Plot",
     "addButton": "Add",
     "plotNameHeader": "Plot Name",

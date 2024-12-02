@@ -12,7 +12,6 @@ export class CassavaAreaServiceService {
   constructor(private http: HttpClient) { }
 
   savePlantedArea(data: any): Observable<any> {
-    debugger
     const headers = new HttpHeaders({
       'Content-Type': 'application/json' // กำหนด content type เป็น JSON
     });
@@ -37,6 +36,12 @@ export class CassavaAreaServiceService {
   deletePlot(plotId: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/deleteplot/${plotId}`);
   }
+
+  getPlotById(plotId: string): Observable<any> {
+    debugger
+    return this.http.get<any>(`${this.apiUrl}/getPlotUpdate/${plotId}`);
+  }
+  
 
 
 

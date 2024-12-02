@@ -93,3 +93,57 @@ exports.deletePlot = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+exports.getPlotsUpdate = (req, res) => {
+    const { plot_id } = req.params; // ใช้ req.params แทน req.body
+
+    if (!plot_id) {
+        return res.status(400).json({ message: 'กรุณาส่ง plot_id มาด้วย' });
+    }
+
+    const sqlQuery = `
+        SELECT 
+            a.plot_id,
+            a.plot_name,
+            CAST(a.area_rai AS SIGNED) AS area_rai,
+            a.image_path,
+            GROUP_CONCAT(b.latitude ORDER BY b.location_id ASC) AS latitudes,
+            GROUP_CONCAT(b.longitude ORDER BY b.location_id ASC) AS longitudes
+        FROM 
+            plots a 
+        LEFT JOIN 
+            plot_locations b 
+        ON 
+            a.plot_id = b.plot_id 
+        WHERE 
+            a.plot_id = ?
+        GROUP BY 
+            a.plot_id
+        LIMIT 1;  -- จำกัดผลลัพธ์ให้แสดงแค่แถวเดียว
+    `;
+
+    db.query(sqlQuery, [plot_id], (error, results) => {
+        if (error) {
+            return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการเชื่อมต่อฐานข้อมูล', error });
+        }
+
+        if (results.length === 0) {
+            return res.status(404).json({ message: 'ไม่พบข้อมูลสำหรับ plot_id ที่ระบุ' });
+        }
+
+        // แปลงค่าละติ ลองจิ ที่เก็บใน GROUP_CONCAT เป็นอาร์เรย์
+        const plotData = results[0];
+        const latitudes = plotData.latitudes ? plotData.latitudes.split(',') : [];
+        const longitudes = plotData.longitudes ? plotData.longitudes.split(',') : [];
+
+        res.status(200).json({
+            plot_id: plotData.plot_id,
+            plot_name: plotData.plot_name,
+            area_rai: plotData.area_rai,
+            image_path: plotData.image_path,
+            latitudes,
+            longitudes
+        });
+    });
+};
+

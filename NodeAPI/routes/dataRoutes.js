@@ -60,6 +60,7 @@ router.get('/financialData', dashbordController.financialData);
 // 4. Plot Management Routes
 // ─────────────────────────────────────────
 router.post('/addplots', upload.single('image'), plotController.handlePlotUpload);
+router.get('/getPlotUpdate/:plot_id', getPlotController.getPlotsUpdate);
 router.get('/getplots', getPlotController.getPlots);
 router.delete('/deleteplot/:plot_id', getPlotController.deletePlot);
 

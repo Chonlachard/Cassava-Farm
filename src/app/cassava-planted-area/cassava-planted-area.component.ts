@@ -9,6 +9,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { TranslateService } from '@ngx-translate/core'; // ใช้ TranslateService
 import { AddPlantedAreaComponent } from './add-planted-area/add-planted-area.component';
 import { debounceTime } from 'rxjs/operators'; // ใช้ debounceTime
+import { EditPlantedComponent } from './edit-planted/edit-planted.component';
 
 @Component({
   selector: 'app-cassava-planted-area',
@@ -29,7 +30,7 @@ export class CassavaPlantedAreaComponent implements OnInit, AfterViewInit {
     private cassavaAreaService: CassavaAreaServiceService,
     public dialog: MatDialog,
     private router: Router,
-    private translate: TranslateService // ใช้ TranslateService
+    private translate: TranslateService, // ใช้ TranslateService
   ) {
     // สร้าง FormGroup
     this.searchForm = this.fb.group({
@@ -132,7 +133,22 @@ export class CassavaPlantedAreaComponent implements OnInit, AfterViewInit {
 
 
 
-  edit(){}
+  edit(plotId: string) {
+    const dialogRef = this.dialog.open(EditPlantedComponent, {
+      width: '90%',   // กำหนดความกว้างให้เต็มหน้าจอ
+      height: '90%',  // กำหนดความสูงให้เต็มหน้าจอ
+      maxWidth: '100vw', // ความกว้างสูงสุดเป็น 100% ของหน้าจอ
+      maxHeight: '100vh', // ความสูงสูงสุดเป็น 100% ของหน้าจอ
+      data: { plot_id: plotId } // ส่ง plot_id เข้าไปใน Dialog
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadPlots(); // โหลดข้อมูลใหม่หลังจากเพิ่ม/แก้ไข
+      }
+    });
+  }
+  
 
   viewDetails(){}
 
