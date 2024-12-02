@@ -38,9 +38,15 @@ export class CassavaAreaServiceService {
   }
 
   getPlotById(plotId: string): Observable<any> {
-    debugger
     return this.http.get<any>(`${this.apiUrl}/getPlotUpdate/${plotId}`);
   }
+
+  updatePlot(plotData: any): Observable<any> {
+    // กำหนด URL ของ API โดยใช้ plot_id
+    return this.http.put<any>(`${this.apiUrl}/updateplot`, plotData);
+  }
+  
+  
   
 
 

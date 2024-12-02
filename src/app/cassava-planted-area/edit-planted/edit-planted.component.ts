@@ -4,6 +4,9 @@ import { ActivatedRoute } from '@angular/router';
 import { CassavaAreaServiceService } from '../cassava-area-service.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { take } from 'rxjs';
+import Swal from 'sweetalert2';
+import { MapGeocoder } from '@angular/google-maps';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-edit-planted',
@@ -44,6 +47,8 @@ export class EditPlantedComponent implements OnInit {
     private route: ActivatedRoute,
     private plantedAreaService: CassavaAreaServiceService,
     private dialogRef: MatDialogRef<EditPlantedComponent>,
+    private geocoder: MapGeocoder,
+    private http: HttpClient,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) { }
 
@@ -100,6 +105,27 @@ export class EditPlantedComponent implements OnInit {
       this.markers.push(marker);
     });
   }
+  onSearchPlace(): void {
+    const searchQuery = this.plantedAreaForm.get('searchQuery')?.value;
+
+    if (!searchQuery) {
+      this.showErrorAlert('โปรดระบุที่อยู่ในการค้นหา');
+      return;
+    }
+
+    this.geocoder.geocode({ address: searchQuery }).subscribe((result) => {
+      if (result.results.length > 0) {
+        this.mapCenter = result.results[0].geometry.location.toJSON();
+        this.zoom = 15;
+        // this.updateMap(); // อัปเดตตำแหน่งแผนที่
+      } else {
+        this.showErrorAlert('ไม่พบสถานที่ตามที่ค้นหา');
+      }
+    }, error => {
+      console.error('Error during geocoding:', error);
+      this.showErrorAlert('เกิดข้อผิดพลาดในการค้นหา');
+    });
+  }
 
   setMapCenter(): void {
     if (this.polygonCoords.length > 0) {
@@ -139,12 +165,44 @@ export class EditPlantedComponent implements OnInit {
     this.plantedAreaForm.get('area_rai')?.setValue(this.areaInRai.toString());
   }
 
-  onSearchPlace(): void { }
-  onClearPolygon(): void { }
-  onCurrentLocation(): void { }
+  
+  
 
-  onDragStart(): void { }
-  onDragEnd(): void { }
+  onClearPolygon(): void {
+    this.polygonCoords = [];
+    this.currentLocationMarker = null;
+    this.areaInRai = 0;
+    this.areaInNgan = 0;
+    this.markers = [];
+  }
+
+  onCurrentLocation(): void {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          this.mapCenter = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          };
+          this.zoom = 15;
+          // this.updateMap(); // อัปเดตตำแหน่งแผนที่
+        },
+        (error) => {
+          console.error('Error getting current location', error);
+          this.showErrorAlert('ไม่สามารถระบุตำแหน่งปัจจุบันได้');
+        }
+      );
+    } else {
+      this.showErrorAlert('เบราว์เซอร์ของคุณไม่รองรับการระบุตำแหน่ง');
+    }
+  }
+
+  onDragStart(): void {
+    this.isDragging = true;
+  }
+  onDragEnd(): void {
+    this.isDragging = false;
+  }
   onPolygonEdit(event: google.maps.MapMouseEvent): void {
     const path = event.latLng;
     if (path) {
@@ -155,22 +213,117 @@ export class EditPlantedComponent implements OnInit {
 
   // ฟังก์ชันสำหรับการบันทึกข้อมูล
   onSubmit(): void {
-    //   if (this.plantedAreaForm.valid) {
-    //     const formData = this.plantedAreaForm.value;
-    //     if (this.plot_id) {
-    //       this.plantedAreaService.updatePlot(this.plot_id, formData).subscribe({
-    //         next: (data) => {
-    //           console.log('Update successful:', data);
-    //           this.dialogRef.close(true); // ปิด Dialog และส่งค่าผลลัพธ์เป็น true
-    //         },
-    //         error: (err) => {
-    //           console.error('Error updating plot:', err);
-    //         },
-    //       });
-    //     }
-    //   } else {
-    //     console.error('Form is invalid');
-    //   }
-    // }
+    // ตรวจสอบความถูกต้องของฟอร์ม
+    if (this.plantedAreaForm.invalid) {
+      this.showErrorAlert('กรุณากรอกข้อมูลให้ครบถ้วน');
+      return;
+    }
+  
+    // เตรียมข้อมูลที่ต้องการบันทึก
+    const formData = this.plantedAreaForm.value;
+    const plotName = formData.plot_name;
+    const areaRai = this.areaInRai; // พื้นที่ที่คำนวณได้จากพิกัด
+    const polygonLatLngs = this.polygonCoords.map(coord => new google.maps.LatLng(coord.lat, coord.lng));
+  
+    // เรียกใช้ captureMapImage เพื่อดึง Base64 ของภาพแผนที่
+    this.captureMapImage(polygonLatLngs).then((imageUrl) => {
+      // เตรียมข้อมูลที่จะส่งไปยัง API
+      const plotData = {
+        plot_id: this.plot_id,
+        user_id: this.userId,
+        plot_name: plotName,
+        latlngs: this.polygonCoords, // ใช้ polygonCoords ที่เป็น LatLngLiteral[] แทน
+        fileData: imageUrl, // ส่งข้อมูล Base64 ของภาพแผนที่
+      };
+  
+      // ส่งข้อมูลไปที่ API เพื่อบันทึกแปลง
+      this.plantedAreaService.updatePlot(plotData).pipe(take(1)).subscribe({
+        next: (response) => {
+          // หากบันทึกสำเร็จ
+          Swal.fire({
+            icon: 'success',
+            title: 'บันทึกข้อมูลสำเร็จ',
+            text: 'ข้อมูลแปลงถูกอัปเดตเรียบร้อยแล้ว'
+          });
+          // ปิด dialog หรือทำการเปลี่ยนเส้นทาง
+          this.dialogRef.close(true);
+        },
+        error: (err) => {
+          // หากเกิดข้อผิดพลาด
+          console.error('Error updating plot:', err);
+          this.showErrorAlert('ไม่สามารถบันทึกข้อมูลได้ กรุณาลองใหม่');
+        }
+      });
+    }).catch((error) => {
+      console.error('Error capturing map image:', error);
+      this.showErrorAlert('ไม่สามารถจับภาพแผนที่ได้');
+    });
+  }
+  
+  
+  
+  // ฟังก์ชันสำหรับดึง Base64 ของรูปภาพ
+  private captureMapImage(polygonCoords: google.maps.LatLng[]): Promise<string> {
+    // คำนวณค่ากึ่งกลางของพอลิกอน
+    const center = this.calculatePolygonCenter(polygonCoords);
+  
+    const lat = center.lat();
+    const lng = center.lng();
+    const zoom = this.zoom;
+    const imageSize = '1024x1024';
+    const mapType = 'satellite';
+    const scale = 2;
+  
+    // เพิ่มจุดแรกในตำแหน่งสุดท้ายของพิกัดเพื่อให้เส้นเชื่อมจุดสุดท้ายกับจุดแรก
+    const closedPolygonCoords = [...polygonCoords, polygonCoords[0]];
+  
+    // แปลงพิกัดของพอลิกอนเป็นรูปแบบสตริงสำหรับการร้องขอ API
+    const polygonPath = closedPolygonCoords.map(coord => `${coord.lat()},${coord.lng()}`).join('|');
+  
+    // สร้าง URL ของภาพแผนที่ที่รวมพอลิกอน
+    const mapImageUrl = `${this.staticMapsApiUrl}?center=${lat},${lng}&zoom=${zoom}&size=${imageSize}&maptype=${mapType}&scale=${scale}&path=color:0xFF0000%7Cweight:2%7C${polygonPath}&key=AIzaSyDF81bGnOY5TKIXzqN2wfWhTMZXMooP7LY&callback=initMap`;
+  
+    console.log('Map image URL:', mapImageUrl);
+  
+    return new Promise((resolve, reject) => {
+      this.http.get(mapImageUrl, { responseType: 'blob' }).subscribe(
+        (blob: Blob) => {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            const base64data = (reader.result as string).split(',')[1];
+            resolve(`data:image/png;base64,${base64data}`);
+          };
+          reader.readAsDataURL(blob);
+        },
+        error => {
+          console.error('Error fetching map image:', error);
+          reject('ไม่สามารถจับภาพแผนที่ได้');
+        }
+      );
+    });
+  }
+  private calculatePolygonCenter(polygonCoords: google.maps.LatLng[]): google.maps.LatLng {
+    let sumLat = 0;
+    let sumLng = 0;
+  
+    // คำนวณผลรวมของละติจูดและลองจิจูดทั้งหมด
+    polygonCoords.forEach(coord => {
+      sumLat += coord.lat();
+      sumLng += coord.lng();
+    });
+  
+    // คำนวณค่าเฉลี่ยของละติจูดและลองจิจูด
+    const centerLat = sumLat / polygonCoords.length;
+    const centerLng = sumLng / polygonCoords.length;
+  
+    // คืนค่าจุดกึ่งกลางในรูปแบบ LatLng
+    return new google.maps.LatLng(centerLat, centerLng);
+  }
+  private showErrorAlert(message: string): void {
+    Swal.fire({
+      icon: 'error',
+      title: 'เกิดข้อผิดพลาด',
+      text: message
+    });
   }
 }

@@ -63,6 +63,7 @@ router.post('/addplots', upload.single('image'), plotController.handlePlotUpload
 router.get('/getPlotUpdate/:plot_id', getPlotController.getPlotsUpdate);
 router.get('/getplots', getPlotController.getPlots);
 router.delete('/deleteplot/:plot_id', getPlotController.deletePlot);
+router.put('/updateplot', getPlotController.EditPlot);
 
 // 5. Harvest Management Routes
 // ─────────────────────────────────────────
