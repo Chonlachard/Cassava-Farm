@@ -28,7 +28,7 @@ export class ForgotPasswordComponent {
           this.router.navigate(['/enter-otp'], { queryParams: { email: this.email } });
         },
         error: () => {
-          this.errorMessage = 'ไม่สามารถส่ง OTP ได้ กรุณาลองอีกครั้ง';
+          this.errorMessage = 'Email ไม่ถูกต้อง';
         }
       });
     } else {
