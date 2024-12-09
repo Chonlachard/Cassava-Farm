@@ -4,6 +4,7 @@
     "email": "อีเมล",
     "emailPlaceholder": "กรุณากรอกอีเมล",
     "password": "รหัสผ่าน",
+    "forgotPassword":"ลืมรหัส",
     "passwordPlaceholder": "กรุณากรอกรหัสผ่าน",
     "loginButton": "เข้าสู่ระบบ",
     "registerButton": "สมัครสมาชิก",

@@ -4,6 +4,7 @@
     "email": "Email",
     "emailPlaceholder": "Please enter your email",
     "password": "Password",
+    "forgotPassword":"Forgot Password",
     "passwordPlaceholder": "Please enter your password",
     "loginButton": "Login",
     "registerButton": "Register",
