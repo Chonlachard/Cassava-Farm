@@ -1,0 +1,20 @@
+{
+  "routes": [
+    "/addexpenses",
+    "/addHarvests",
+    "/addPlantedArea",
+    "/addWorker",
+    "/cassavaPlantedArea",
+    "/change-password",
+    "/dashboard",
+    "/edit-plot",
+    "/editWorker",
+    "/enter-otp",
+    "/expenses",
+    "/forgotPassword",
+    "/harvests",
+    "/login",
+    "/profile",
+    "/worker"
+  ]
+}
