@@ -1,19 +1,71 @@
 
   body {
-    justify-content: center; /* จัดกึ่งกลางแนวนอน */
-    align-items: center;    /* จัดกึ่งกลางแนวตั้ง */
-    background-color: #F0ECE3; /* สีพื้นหลัง */
+    min-height: 100vh;     
+  display: flex;          
+  justify-content: center; 
+  align-items: center;
+  background-color: #F0ECE3; 
+  margin: 0;             
+  padding: 20px;         
+  font-family: Arial, sans-serif; 
   }
   
   .card {
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* เพิ่มเงาให้ดูโดดเด่น */
-    border-radius: 8px; /* มุมโค้งมน */
-    width: 100%;
-    max-width: 500px;     /* จำกัดความกว้างของ card */
-    padding: 10px;
+    background-color: white; 
+  border-radius: 8px;     
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  width: 100%;           
+  max-width: 400px;      
+  padding: 24px;         
+  margin: auto;          
     
+  }
+  .card-title {
+    text-align: center;    
+    margin-bottom: 24px;   
+    font-size: 1.5rem;     
+    font-weight: 600;      
+    color: #333;          
   }
   .btn-primary {
     border-radius: 15px;
+    background-color: #4299e1; 
+  color: white;     
+  width: 75%;        
+  margin: 0 auto;    
+  display: block;   
   }
+
+  .form-group {
+    margin-bottom: 16px;   
+  }
+  
+  .form-label {
+    display: block;        
+    margin-bottom: 8px;    
+    font-size: 14px;      
+    font-weight: 500;     
+    color: #4a5568;       
+  }
+
+  .form-control:focus {    
+    outline: none;        
+    border-color: #4299e1; 
+    box-shadow: 0 0 0 3px rgba(66,153,225,0.1); 
+  }
+
+  .input-group {
+    position: relative;  
+    display: flex;      
+    align-items: center; 
+  }
+  
+  .input-group .form-control {
+    padding-right: 40px; 
+  }
+  
+
+
+ 
+ 
   
