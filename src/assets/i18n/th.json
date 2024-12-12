@@ -292,5 +292,29 @@
     "deleteErrorTitle": "เกิดข้อผิดพลาด!",
     "deleteErrorText": "ไม่สามารถลบข้อมูลคนงานได้."
 
+  },
+  "form": {
+    "title": "ลืมรหัสผ่าน",
+    "emailLabel": "อีเมล",
+    "emailPlaceholder": "กรอกอีเมลของคุณ",
+    "sendOtpButton": "ส่งรหัส OTP",
+    "backButton": "ย้อนกลับ",
+    "errorMessage": "เกิดข้อผิดพลาด โปรดลองอีกครั้ง",
+    "EmailNot":"Email ไม่ถูกต้อง",
+    "PlestInoutEmail":"กรุณากรอกอีเมล"
+},
+  "fromOtp" :{
+    "title": "กรอก OTP",
+    "otpLabel": "รหัส OTP:",
+    "otpPlaceholder": "กรอกรหัส OTP",
+    "submitButton": "ยืนยัน OTP",
+    "emailInstructions": "กรุณากรอกรหัสยืนยันที่ถูกส่งไปยังอีเมลของคุณ",
+    "resendText": "ไม่รับรหัสใช่ไหม?",
+    "resendButton": "ขอ OTP ใหม่",
+    "timerMessage": "สามารถขอ OTP ใหม่ได้ใน {{timer}} วินาที",
+    "otpInvalidError": "OTP ไม่ถูกต้อง กรุณาลองอีกครั้ง",
+    "otpRequiredError": "กรุณากรอก OTP",
+     "otpSent": "OTP ถูกส่งไปที่อีเมลของคุณแล้ว",
+    "otpResendError": "เกิดข้อผิดพลาดในการส่ง OTP ใหม่"
   }
 }

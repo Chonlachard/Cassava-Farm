@@ -291,5 +291,30 @@
     "deleteSuccessText": "Worker data has been deleted.",
     "deleteErrorTitle": "Error!",
     "deleteErrorText": "Could not delete worker data."
+  },
+  "form": {
+    "title": "Forgot Password",
+    "emailLabel": "Email",
+    "emailPlaceholder": "Enter your email",
+    "sendOtpButton": "Send OTP",
+    "backButton": "Back",
+    "errorMessage": "An error occurred. Please try again.",
+     "EmailNot":"Email not found",
+    "PlestInoutEmail":"Please input email"
+    
+  },
+  "fromOtp" :{
+    "title": "Enter OTP",
+    "otpLabel": "OTP Code:",
+    "otpPlaceholder": "Enter OTP",
+    "submitButton": "Verify OTP",
+    "emailInstructions": "Please enter the verification code sent to your email.",
+    "resendText": "Didn’t receive the code?",
+    "resendButton": "Request a new OTP",
+    "timerMessage": "You can request a new OTP in {{timer}} seconds",
+    "otpInvalidError": "The OTP is incorrect. Please try again.",
+    "otpRequiredError": "Please enter the OTP.",
+    "otpSent": "The OTP has been sent to your email.",
+    "otpResendError": "An error occurred while sending the OTP."
   }
 }

@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ForgotPasswordService } from '../forgot-password.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-enter-otp',
@@ -19,7 +20,8 @@ export class EnterOtpComponent implements OnInit {
   constructor(
     private router: Router,
     private forgotService: ForgotPasswordService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private translate: TranslateService
   ) {}
 
   ngOnInit() {
@@ -36,28 +38,38 @@ export class EnterOtpComponent implements OnInit {
           this.router.navigate(['/change-password'], { queryParams: { email: this.email } });
         },
         error: () => {
-          this.errorMessage = 'OTP ไม่ถูกต้อง กรุณาลองอีกครั้ง';
+          this.translate.get('form.otpInvalidError').subscribe((translatedMessage: string) => {
+            this.errorMessage = translatedMessage;
+          });
         },
       });
     } else {
-      this.errorMessage = 'กรุณากรอก OTP';
+      this.translate.get('form.otpRequiredError').subscribe((translatedMessage: string) => {
+        this.errorMessage = translatedMessage;
+      });
     }
   }
-
   // ฟังก์ชัน resend OTP
   resendOTP(): void {
     this.forgotService.resendOtp(this.email).subscribe({
       next: () => {
-        this.successMessage = 'OTP ถูกส่งไปที่อีเมลของคุณแล้ว';
-        this.errorMessage = null; // ล้างข้อความผิดพลาด
-        this.startTimer(); // เริ่มจับเวลาหลังจากส่ง OTP ใหม่
+        // Use translation for success message
+        this.translate.get('form.otpSent').subscribe((translatedMessage: string) => {
+          this.successMessage = translatedMessage;
+        });
+        this.errorMessage = null; // Clear previous error message
+        this.startTimer(); // Start the timer after resending OTP
       },
       error: () => {
-        this.errorMessage = 'เกิดข้อผิดพลาดในการส่ง OTP ใหม่';
-        this.successMessage = null; // ล้างข้อความสำเร็จ
+        // Use translation for error message
+        this.translate.get('form.otpResendError').subscribe((translatedMessage: string) => {
+          this.errorMessage = translatedMessage;
+        });
+        this.successMessage = null; // Clear previous success message
       },
     });
   }
+  
 
   // ฟังก์ชันเริ่มจับเวลา
   startTimer(): void {

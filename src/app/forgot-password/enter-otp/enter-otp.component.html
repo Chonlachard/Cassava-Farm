@@ -1,46 +1,42 @@
-<div class="form-container">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-12 col-md-6 col-lg-4">
-                <div class="card">
-                    <div class="card-header text-center py-3">
-                        <h4 class="mb-0">กรอก OTP</h4>
-                    </div>
-                    <div class="card-body p-4">
-                        <p class="text-center text-muted mb-4">
-                            กรุณากรอกรหัสยืนยันที่ถูกส่งไปยังอีเมลของคุณ
-                        </p>
-                        <form (ngSubmit)="onSubmit()" #otpForm="ngForm">
-                            <div class="form-group">
-                                <label for="otp" class="form-label">รหัส OTP:</label>
-                                <input
-                                    type="text"
-                                    class="form-control otp-input"
-                                    id="otp"
-                                    required
-                                    name="otp"
-                                    [(ngModel)]="otp"
-                                    placeholder="กรอกรหัส OTP"
-                                    maxlength="6"
-                                />
-                            </div>
-                            <button type="submit" class="btn btn-primary">
-                                ยืนยัน OTP
-                            </button>
-                        </form>
-                        <div class="resend-timer">
-                            ไม่ได้รับรหัสใช่ไหม? 
-                            <a class="resend-link" (click)="resendOTP()">ขอ OTP ใหม่</a>
-                            <div class="mt-2" *ngIf="showTimer">
-                                สามารถขอ OTP ใหม่ได้ใน {{timer}} วินาที
-                            </div>
+<body>
+    <div class="form-container" style="background-color:#F0ECE3 ;">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card">
+                        <div class="card-header text-center py-3">
+                            <h4 class="mb-0">{{ 'fromOtp.title' | translate }}</h4>
                         </div>
-                        <div *ngIf="errorMessage" class="alert alert-danger mt-3">
-                            {{ errorMessage }}
+                        <div class="card-body p-4">
+                            <p class="text-center text-muted mb-4">
+                                {{ 'fromOtp.emailInstructions' | translate }}
+                            </p>
+                            <form (ngSubmit)="onSubmit()" #otpForm="ngForm">
+                                <div class="form-group">
+                                    <label for="otp" class="form-label">{{ 'fromOtp.otpLabel' | translate }}:</label>
+                                    <input type="text" class="form-control otp-input" id="otp" required name="otp"
+                                        [(ngModel)]="otp" [placeholder]="'fromOtp.otpPlaceholder' | translate"
+                                        maxlength="6" />
+                                </div>
+                                <button type="submit" class="btn btn-primary">
+                                    {{ 'fromOtp.submitButton' | translate }}
+                                </button>
+                            </form>
+                            <div class="resend-timer">
+                                {{ 'fromOtp.resendText' | translate }}
+                                <a class="resend-link" (click)="resendOTP()">{{ 'fromOtp.resendButton' | translate
+                                    }}</a>
+                                <div class="mt-2" *ngIf="showTimer">
+                                    {{ 'fromOtp.timerMessage' | translate: { timer: timer } }}
+                                </div>
+                            </div>
+                            <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+                                {{ errorMessage }}
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</body>

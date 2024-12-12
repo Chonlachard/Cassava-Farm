@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { ForgotPasswordService } from './forgot-password.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-forgot-password',
@@ -15,7 +16,8 @@ export class ForgotPasswordComponent {
 
   constructor(
     private router: Router,
-    private forgotService : ForgotPasswordService
+    private forgotService : ForgotPasswordService,
+    private translate: TranslateService
     
   ) {}
 
@@ -24,15 +26,21 @@ export class ForgotPasswordComponent {
     if (this.email) {
       this.forgotService.sendOtp(this.email).subscribe({
         next: () => {
-          // ส่งค่า email ไปด้วย
+          // Send email as query parameter
           this.router.navigate(['/enter-otp'], { queryParams: { email: this.email } });
         },
         error: () => {
-          this.errorMessage = 'Email ไม่ถูกต้อง';
+          // Use TranslateService to fetch the translation
+          this.translate.get('form.invalidEmailMessage').subscribe((translatedMessage: string) => {
+            this.errorMessage = translatedMessage;
+          });
         }
       });
     } else {
-      this.errorMessage = 'กรุณากรอกอีเมล';
+      // Use TranslateService to fetch the translation for empty email
+      this.translate.get('form.emailRequiredMessage').subscribe((translatedMessage: string) => {
+        this.errorMessage = translatedMessage;
+      });
     }
   }
   goBack() {
