@@ -1,104 +1,161 @@
+/* คอนเทนเนอร์หลักสำหรับฟอร์ม */
 .expense-form-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background: linear-gradient(135deg, #e0eafc 0%, #c8d6e5 100%);
-    padding: 20px;
+    display: flex; /* ใช้ flexbox เพื่อจัดเรียงเนื้อหาภายใน */
+    justify-content: center; /* จัดกึ่งกลางในแนวนอน */
+    align-items: center; /* จัดกึ่งกลางในแนวตั้ง */
+    background: linear-gradient(135deg, #e0eafc 0%, #c8d6e5 100%); /* พื้นหลังเป็น gradient */
+    padding: 20px; /* ระยะห่างภายในคอนเทนเนอร์ */
+    height: inherit; /* ความสูงเท่ากับความสูงของหน้าจอ */
+    box-sizing: border-box; /* ให้ padding รวมในขนาดคอนเทนเนอร์ */
+    overflow: auto; /* ทำให้เนื้อหาภายในสามารถเลื่อนได้ */
 }
-  
+
+/* การตั้งค่าของการ์ดฟอร์ม */
 .form-card {
-    background: #ffffff;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 500px;
+    background: #ffffff; /* พื้นหลังสีขาว */
+    padding: 30px; /* ระยะห่างภายในการ์ด */
+    border-radius: 8px; /* มุมโค้งมน */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* เงาเล็กน้อยให้กับการ์ด */
+    width: 100%; /* ความกว้างเต็มที่ */
+    max-width: 500px; /* กำหนดความกว้างสูงสุด */
+    flex-grow: 1; /* ทำให้การ์ดขยายขนาดตามเนื้อหาภายใน */
 }
-  
+
+/* ชื่อฟอร์ม */
 .form-title {
-    color: #333;
-    font-size: 22px;
-    margin-bottom: 20px;
-    text-align: center;
-    font-weight: 300;
+    color: #333; /* สีข้อความ */
+    font-size: 22px; /* ขนาดตัวอักษร */
+    margin-bottom: 20px; /* ระยะห่างด้านล่าง */
+    text-align: center; /* จัดข้อความกึ่งกลาง */
+    font-weight: 300; /* ความหนาของตัวอักษร */
 }
-  
+
+/* การตั้งค่าของฟิลด์ฟอร์ม */
 .form-field {
-    margin-bottom: 16px;
+    margin-bottom: 16px; /* ระยะห่างระหว่างฟิลด์ */
 }
-  
+
+/* การตั้งค่า label */
 label {
-    display: block;
-    margin-bottom: 4px;
-    color: #555;
-    font-size: 14px;
-    font-weight: 500;
+    display: block; /* ทำให้ label เป็นบล็อก */
+    margin-bottom: 4px; /* ระยะห่างด้านล่าง */
+    color: #555; /* สีข้อความ */
+    font-size: 14px; /* ขนาดตัวอักษร */
+    font-weight: 500; /* ความหนาของตัวอักษร */
 }
-  
-input, select, textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #d1d5db;
-    border-radius: 4px;
-    font-size: 16px;
-    background-color: #f9f9f9;
-    transition: border-color 0.3s ease, background-color 0.3s ease;
+
+/* การตั้งค่าของ input, select และ textarea */
+input,
+select,
+textarea {
+    width: 100%; /* ให้มีความกว้างเต็มที่ */
+    padding: 10px; /* ระยะห่างภายใน */
+    border: 1px solid #d1d5db; /* กรอบของ input */
+    border-radius: 4px; /* มุมโค้งมน */
+    font-size: 16px; /* ขนาดตัวอักษร */
+    background-color: #f9f9f9; /* พื้นหลัง */
+    transition: border-color 0.3s ease, background-color 0.3s ease; /* การเปลี่ยนแปลงแบบค่อยๆ เมื่อมีการโฟกัส */
 }
-  
-input:focus, select:focus, textarea:focus {
-    outline: none;
-    border-color: #4a5568;
-    background-color: #ffffff;
+
+/* เมื่อ input, select, หรือ textarea ได้รับโฟกัส */
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none; /* ลบเส้นขอบรอบๆ เมื่อโฟกัส */
+    border-color: #4a5568; /* เปลี่ยนสีกรอบเมื่อโฟกัส */
+    background-color: #ffffff; /* เปลี่ยนพื้นหลังเป็นสีขาว */
 }
-  
+
+/* ปุ่ม submit */
 .submit-button {
-    width: 100%;
-    padding: 12px;
-    background-color: #4a5568;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+    width: 100%; /* ความกว้างเต็มที่ */
+    padding: 12px; /* ระยะห่างภายใน */
+    background-color: #4a5568; /* พื้นหลังปุ่ม */
+    color: white; /* สีข้อความ */
+    border: none; /* ไม่มีกล่องกรอบ */
+    border-radius: 4px; /* มุมโค้งมน */
+    font-size: 16px; /* ขนาดตัวอักษร */
+    cursor: pointer; /* เปลี่ยนเคอร์เซอร์เป็นมือเมื่อวางเมาส์ */
+    transition: background-color 0.3s ease; /* การเปลี่ยนแปลงสีพื้นหลังค่อยๆ */
 }
-  
+
+/* เมื่อเอาเมาส์ไปวางบนปุ่ม */
 .submit-button:hover {
-    background-color: #2d3748;
+    background-color: #2d3748; /* เปลี่ยนสีพื้นหลังเมื่อ hover */
 }
-  
+
+/* เมื่อปุ่มถูกปิดใช้งาน */
 .submit-button:disabled {
-    background-color: #cbd5e0;
-    cursor: not-allowed;
+    background-color: #cbd5e0; /* เปลี่ยนพื้นหลังเป็นสีเทา */
+    cursor: not-allowed; /* เปลี่ยนเคอร์เซอร์เป็นเครื่องหมายลบ */
 }
-  
+
+/* การตั้งค่าการแจ้งเตือน */
 .alert {
-    padding: 12px;
-    border-radius: 4px;
-    margin-bottom: 20px;
-    font-size: 14px;
+    padding: 12px; /* ระยะห่างภายใน */
+    border-radius: 4px; /* มุมโค้งมน */
+    margin-bottom: 20px; /* ระยะห่างด้านล่าง */
+    font-size: 14px; /* ขนาดตัวอักษร */
 }
-  
+
+/* แจ้งเตือนเมื่อสำเร็จ */
 .alert-success {
-    background-color: #e6fffa;
-    color: #2c7a7b;
-    border: 1px solid #81e6d9;
+    background-color: #e6fffa; /* พื้นหลังสีเขียวอ่อน */
+    color: #2c7a7b; /* สีข้อความเขียวเข้ม */
+    border: 1px solid #81e6d9; /* กรอบสีเขียวอ่อน */
 }
-  
+
+/* แจ้งเตือนเมื่อเกิดข้อผิดพลาด */
 .alert-danger {
-    background-color: #fff5f5;
-    color: #c53030;
-    border: 1px solid #feb2b2;
+    background-color: #fff5f5; /* พื้นหลังสีแดงอ่อน */
+    color: #c53030; /* สีข้อความแดงเข้ม */
+    border: 1px solid #feb2b2; /* กรอบสีแดงอ่อน */
 }
-  
+
+/* ตั้งค่าของไอคอนในตัวเลือก */
 .option-icon {
-    margin-right: 12px; /* เว้นระยะห่างระหว่างไอคอนและข้อความ */
+    margin-right: 12px; /* ระยะห่างระหว่างไอคอนและข้อความ */
     font-size: 20px; /* ขนาดของไอคอน */
-  }
-  
-  .mat-option {
-    display: flex;
-    align-items: center;
-    font-size: 16px;
-  }
+}
+
+/* การตั้งค่าเมนูตัวเลือก */
+.mat-option {
+    display: flex; /* ใช้ flexbox เพื่อจัดไอคอนและข้อความ */
+    align-items: center; /* จัดไอคอนและข้อความให้อยู่ในแนวเดียวกัน */
+    font-size: 16px; /* ขนาดตัวอักษร */
+}
+
+/* การตั้งค่าของ radio group */
+.radio-group {
+    display: flex; /* ใช้ flexbox เพื่อให้ radio buttons อยู่ในบรรทัดเดียวกัน */
+    gap: 10px; /* ระยะห่างระหว่าง radio buttons */
+}
+
+/* การตั้งค่า label สำหรับ radio group */
+.radio-group label {
+    display: inline-flex; /* ทำให้ label อยู่ในบรรทัดเดียวกัน */
+    align-items: center; /* จัดให้อยู่ในแนวเดียวกัน */
+    font-size: 14px; /* ขนาดตัวอักษรเล็กลง */
+    white-space: nowrap; /* ห้ามให้ข้อความยืดออก */
+}
+
+/* การตั้งค่าของ radio button */
+.radio-group input[type="radio"] {
+    margin-right: 5px; /* ระยะห่างระหว่าง radio button และข้อความ */
+}
+
+/* กฎ Responsive สำหรับหน้าจอเล็ก (มือถือ) */
+@media (max-width: 768px) {
+    .form-card {
+        width: 90%; /* กำหนดให้ฟอร์มมีความกว้าง 90% ของหน้าจอ */
+        max-width: none; /* ยกเลิกการจำกัดความกว้างสูงสุด */
+    }
+
+    .submit-button {
+        font-size: 14px; /* ลดขนาดตัวอักษรของปุ่มบนมือถือ */
+    }
+
+    .form-title {
+        font-size: 18px; /* ลดขนาดตัวอักษรของชื่อฟอร์ม */
+    }
+}
