@@ -5,7 +5,7 @@
     align-items: center; /* จัดกึ่งกลางในแนวตั้ง */
     background: linear-gradient(135deg, #e0eafc 0%, #c8d6e5 100%); /* พื้นหลังเป็น gradient */
     padding: 20px; /* ระยะห่างภายในคอนเทนเนอร์ */
-    height: inherit; /* ความสูงเท่ากับความสูงของหน้าจอ */
+    height: 100vh; /* ความสูงเต็มหน้าจอ */
     box-sizing: border-box; /* ให้ padding รวมในขนาดคอนเทนเนอร์ */
     overflow: auto; /* ทำให้เนื้อหาภายในสามารถเลื่อนได้ */
 }

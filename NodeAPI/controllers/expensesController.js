@@ -58,32 +58,255 @@ exports.getExpense = async (req, res) => {
 };
 
 // ฟังก์ชันสำหรับเพิ่มข้อมูลค่าใช้จ่าย
+// ฟังก์ชันสำหรับเพิ่มข้อมูลค่าใช้จ่าย
 exports.addExpense = async (req, res) => {
-    const { user_id, plot_id, expense_date, category, amount, details } = req.body;
+    const { user_id, category, details } = req.body;
 
-    // ตรวจสอบให้แน่ใจว่าข้อมูลที่จำเป็นมีค่าทุกตัว
-    if (!user_id || !plot_id || !expense_date || !category || !amount) {
+    // ตรวจสอบข้อมูลที่ส่งมา
+    if (!user_id || !category || !details) {
         return res.status(400).json({ message: 'กรุณากรอกข้อมูลให้ครบถ้วน' });
     }
 
-    const query = 'INSERT INTO expenses (user_id, plot_id, expense_date, category, amount, details) VALUES (?, ?, ?, ?, ?, ?)';
-    try {
-        await new Promise((resolve, reject) => {
-            db.query(query, [user_id, plot_id, expense_date, category, amount, details], (err, results) => {
-                if (err) {
-                    console.error('Database query error:', err); // เพิ่มการพิมพ์ข้อผิดพลาดที่เกิดขึ้น
-                    reject(err);
-                } else {
-                    resolve(results);
-                }
-            });
+    // เพิ่มข้อมูลลงในฐานข้อมูล Expenses
+    const query = `INSERT INTO expenses (user_id, category) VALUES (?, ?)`;
+
+    db.query(query, [user_id, category], (err, expenseResult) => {
+        if (err) {
+            console.error('Error executing query:', err.stack);
+            return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการเพิ่มข้อมูลค่าใช้จ่าย' });
+        }
+
+        const expenseId = expenseResult.insertId;
+        let detailQuery = '';
+        let params = [];
+
+        // สร้าง Query ตามประเภท
+        switch (category) {
+            case 'ค่าฮอร์โมน':
+                const hormoneTotalPrice = details.price_per_bottle * details.quantity;
+                detailQuery = `
+                    INSERT INTO HormoneData (expense_id, brand, volume, price_per_bottle, quantity, total_price, plot_id)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                `;
+                params = [
+                    expenseId,
+                    details.brand,
+                    details.volume,
+                    details.price_per_bottle,
+                    details.quantity,
+                    hormoneTotalPrice,  // คำนวณ total_price
+                    details.plot_id
+                ];
+                break;
+
+            case 'ค่าปุ๋ย':
+                const fertilizerTotalPrice = details.price_per_bag * details.quantity;
+                detailQuery = `
+                    INSERT INTO FertilizerData (expense_id, brand, formula, price_per_bag, quantity, total_price, plot_id)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                `;
+                params = [
+                    expenseId,
+                    details.brand,
+                    details.formula,
+                    details.price_per_bag,
+                    details.quantity,
+                    fertilizerTotalPrice,  // คำนวณ total_price
+                    details.plot_id
+                ];
+                break;
+
+            case 'ค่ายาฆ่าหญ่า':
+                const herbicideTotalPrice = details.price_per_bottle * details.quantity;
+                detailQuery = `
+                    INSERT INTO HerbicideData (expense_id, brand, volume, price_per_bottle, quantity, total_price, plot_id)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                `;
+                params = [
+                    expenseId,
+                    details.brand,
+                    details.volume,
+                    details.price_per_bottle,
+                    details.quantity,
+                    herbicideTotalPrice,  // คำนวณ total_price
+                    details.plot_id
+                ];
+                break;
+
+            case 'ค่าน้ำมัน':
+                const fuelTotalPrice = details.price_per_liter * details.quantity_liters;
+                detailQuery = `
+                    INSERT INTO FuelData (expense_id, fuel_date, price_per_liter, quantity_liters, total_price, plot_id)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                `;
+                params = [
+                    expenseId,
+                    details.fuel_date,
+                    details.price_per_liter,
+                    details.quantity_liters,
+                    fuelTotalPrice,  // คำนวณ total_price
+                    details.plot_id
+                ];
+                break;
+
+            case 'ค่าพันธุ์มัน':
+                const cassavaTotalPrice = details.price_per_tree * details.quantity;
+                detailQuery = `
+                    INSERT INTO CassavaVarietyData (expense_id, purchase_date, quantity, price_per_tree, total_price, plot_id, variety_name, purchase_location)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                `;
+                params = [
+                    expenseId,
+                    details.purchase_date,
+                    details.quantity,
+                    details.price_per_tree,
+                    cassavaTotalPrice,  // คำนวณ total_price
+                    details.plot_id,
+                    details.variety_name,
+                    details.purchase_location
+                ];
+                break;
+
+            case 'ค่าซ่อมอุปกรณ์':
+                detailQuery = `
+                    INSERT INTO EquipmentRepairData (expense_id, repair_date, repair_names, details, repair_cost, shop_name)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                `;
+                params = [
+                    expenseId,
+                    details.repair_date,
+                    details.repair_names,
+                    details.details,
+                    details.repair_cost,
+                    details.shop_name
+                ];
+                break;
+
+            case 'ค่าอุปกรณ์':
+                detailQuery = `
+                    INSERT INTO EquipmentPurchaseData (expense_id, purchase_date, item_name, shop_name, purchase_price, remarks)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                `;
+                params = [
+                    expenseId,
+                    details.purchase_date,
+                    details.item_name,
+                    details.shop_name,
+                    details.purchase_price,
+                    details.remarks
+                ];
+                break;
+
+            case 'ค่าเช่าที่ดิน':
+                detailQuery = `
+                    INSERT INTO LandRentalData (expense_id, rental_date, owner_name, owner_phone, area, price_per_rai, rental_period, total_price, plot_id)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                `;
+                params = [
+                    expenseId,
+                    details.rental_date,
+                    details.owner_name,
+                    details.owner_phone,
+                    details.area,
+                    details.price_per_rai,
+                    details.rental_period,
+                    details.total_price,  // ใช้ total_price ที่ส่งมาจากหน้า
+                    details.plot_id
+                ];
+                break;
+
+            case 'ค่าขุด':
+                detailQuery = `
+                    INSERT INTO ExcavationData (expense_id, payment_date, weight, price_per_ton, total_price, plot_id)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                `;
+                params = [
+                    expenseId,
+                    details.payment_date,
+                    details.weight,
+                    details.price_per_ton,
+                    details.total_price,  // ใช้ total_price ที่ส่งมาจากหน้า
+                    details.plot_id
+                ];
+                break;
+
+            case 'ค่าคนตัดต้น':
+                detailQuery = `
+                    INSERT INTO TreeCutting (expense_id, cutting_date, number_of_trees, price_per_tree, total_price, bundle_count, plot_id)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                `;
+                params = [
+                    expenseId,
+                    details.cutting_date,
+                    details.number_of_trees,
+                    details.price_per_tree,
+                    details.total_price,  // ใช้ total_price ที่ส่งมาจากหน้า
+                    details.bundle_count,
+                    details.plot_id
+                ];
+                break;
+
+            case 'ค่าคนปลูก':
+                detailQuery = `
+                    INSERT INTO Planting (expense_id, payment_date, worker_name, land_area, price_per_rai, total_price, plot_id)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                `;
+                params = [
+                    expenseId,
+                    details.payment_date,
+                    details.worker_name,
+                    details.land_area,
+                    details.price_per_rai,
+                    details.total_price,  // ใช้ total_price ที่ส่งมาจากหน้า
+                    details.plot_id
+                ];
+                break;
+
+            case 'ค่าคนฉีดยาฆ่าหญ่า':
+                detailQuery = `
+                    INSERT INTO WeedSpraying (expense_id, spray_date, number_of_cans, price_per_can, total_price, plot_id)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                `;
+                params = [
+                    expenseId,
+                    details.spray_date,
+                    details.number_of_cans,
+                    details.price_per_can,
+                    details.total_price,  // ใช้ total_price ที่ส่งมาจากหน้า
+                    details.plot_id
+                ];
+                break;
+
+            case 'ค่าคนฉีดยาฮอโมน':
+                detailQuery = `
+                    INSERT INTO HormoneSpraying (expense_id, spray_date, number_of_cans, price_per_can, total_price, plot_id)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                `;
+                params = [
+                    expenseId,
+                    details.spray_date,
+                    details.number_of_cans,
+                    details.price_per_can,
+                    details.total_price,  // ใช้ total_price ที่ส่งมาจากหน้า
+                    details.plot_id
+                ];
+                break;
+
+            default:
+                return res.status(400).json({ error: 'ประเภทข้อมูลไม่ถูกต้อง' });
+        }
+
+        // เพิ่มข้อมูลในตารางที่เกี่ยวข้อง
+        db.query(detailQuery, params, (err, result) => {
+            if (err) {
+                return res.status(500).json({ error: err.message });
+            }
+            res.status(201).json({ message: 'เพิ่มข้อมูลสำเร็จ', expenseId });
         });
-        res.json({ message: 'เพิ่มข้อมูลค่าใช้จ่ายสำเร็จ' });
-    } catch (err) {
-        console.error('Error executing query:', err.stack); // เพิ่มการพิมพ์ข้อผิดพลาดที่เกิดขึ้น
-        res.status(500).json({ message: 'เกิดข้อผิดพลาดในการเพิ่มข้อมูลค่าใช้จ่าย' });
-    }
+    });
 };
+
+
 
 
 // ฟังก์ชันสำหรับแก้ไขข้อมูลค่าใช้จ่าย
