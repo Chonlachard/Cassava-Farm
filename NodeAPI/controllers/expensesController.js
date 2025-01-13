@@ -56,8 +56,6 @@ exports.getExpense = async (req, res) => {
         res.json(formattedResults);
     });
 };
-
-// ฟังก์ชันสำหรับเพิ่มข้อมูลค่าใช้จ่าย
 // ฟังก์ชันสำหรับเพิ่มข้อมูลค่าใช้จ่าย
 exports.addExpense = async (req, res) => {
     const { user_id, category, details } = req.body;
@@ -65,6 +63,16 @@ exports.addExpense = async (req, res) => {
     // ตรวจสอบข้อมูลที่ส่งมา
     if (!user_id || !category || !details) {
         return res.status(400).json({ message: 'กรุณากรอกข้อมูลให้ครบถ้วน' });
+    }
+    // ตรวจสอบประเภทข้อมูลว่าเป็นประเภทที่ถูกต้องหรือไม่
+    const validCategories = [
+        'ค่าฮอร์โมน', 'ค่าปุ๋ย', 'ค่ายาฆ่าหญ่า', 'ค่าน้ำมัน',
+        'ค่าพันธุ์มัน', 'ค่าซ่อมอุปกรณ์', 'ค่าอุปกรณ์', 'ค่าเช่าที่ดิน',
+        'ค่าขุด', 'ค่าคนตัดต้น', 'ค่าคนปลูก', 'ค่าคนฉีดยาฆ่าหญ่า', 'ค่าคนฉีดยาฮอโมน'
+    ];
+
+    if (!validCategories.includes(category)) {
+        return res.status(400).json({ message: 'ประเภทข้อมูลไม่ถูกต้อง' });
     }
 
     // เพิ่มข้อมูลลงในฐานข้อมูล Expenses

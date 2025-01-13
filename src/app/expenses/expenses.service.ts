@@ -26,7 +26,6 @@ export class ExpensesService {
 
   // ดึงข้อมูลค่าใช้จ่ายตาม userId พร้อมตัวกรอง
   getExpenses(userId: string, filters: any = {}): Observable<any> {
-    debugger
     // สร้างพารามิเตอร์สำหรับ query string
     let params = new HttpParams().set('user_id', userId);
 
@@ -62,7 +61,6 @@ export class ExpensesService {
   }
 
   updateExpense(expense: any): Observable<any> {
-    debugger
     return this.http.put(`${this.apiUrl}/editExpenses`, expense);
   }
   getExpensesByDateRange(userId: string, startDate: string, endDate: string): Observable<any> {

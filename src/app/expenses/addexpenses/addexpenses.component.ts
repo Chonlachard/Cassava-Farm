@@ -31,7 +31,6 @@ export class AddexpensesComponent implements OnInit {
   ];
   selectedCategory: string | null = null;
   calculatedTotalPrice: number = 0;
-  treesPerBundle: number = 0;
 
   constructor(
     private transactionService: ExpensesService,
@@ -42,39 +41,90 @@ export class AddexpensesComponent implements OnInit {
     this.expenseForm = this.fb.group({
       user_id: [{ value: '', disabled: true }, Validators.required],
       plot_id: ['', Validators.required],
-      expense_date: [new Date().toISOString().substring(0, 10), Validators.required], // ตั้งค่าวันที่เริ่มต้น
       category: ['', Validators.required],
-      amount: ['', [Validators.required, Validators.min(0)]],
       details: [''],
+      volume: [],
+      cuttingDate: [''],
+      brand: ['', Validators.required],
+      formula: ['', Validators.required],
+      paymentDate: [''],
+      workerName: [''],
+      landArea: [],
+      pricePerRai: [],
+      plotId: ['', Validators.required],
       bundleCount: ['', Validators.required],
+      sprayDate: [''],
+      numberOfCans: [],
+      remarks: [''],
+      purchasePrice: [],
+      itemName: [''],
+      area: [],
+      rentalPeriod: [''],
+      ownerPhone: [''],
+      ownerName: [''],
+      rentalDate: [''],
+      purchaseDate: [''],
+      varietyName: [''],
+      shopName: [''],
+      fuelDate: [''],
+      repairDate: [''],
+      repairNames: [''],
+      purchaseLocation: [''],
+      quantityLiters: [],
+      pricePerBottle: [],
+      pricePerBag: [],
+      pricePerCan: [],
+      pricePerTree: [],
+      pricePerSpray: [],
+      pricePerLiter: [],
+      pricePerSeed: [],
+      repairCost: [],
+      equipmentCost: [],
+      rentCost: [],
+      pricePerTon: [],
+      weight: [],
+      quantity: [Validators.min(1)],
+      numberOfTrees: [],
+      totalPrice: []
     });
   }
 
   ngOnInit() {
-    const userId = localStorage.getItem('userId') || '';
-    this.expenseForm.patchValue({ user_id: userId });
+    this.initializeForm();
     this.fetchPlots();
+    this.calculateTotalPrice();
     this.onCategoryChange();
   }
 
-  fetchPlots(): void {
+  // Initialize form with user ID
+  initializeForm(): void {
     const userId = localStorage.getItem('userId') || '';
-    this.transactionService.getDeopPlot(userId).subscribe((res: any) => {
-      this.plots = res;
-    }, error => {
-      this.translate.get('harvest.errorLoadingPlots').subscribe((translations: { title: string; text: string; }) => {
-        Swal.fire({
-          icon: 'error',
-          title: translations.title,
-          text: translations.text,
-          timer: 3000,
-          timerProgressBar: true,
-        });
-      });
-    });
+    this.expenseForm.patchValue({ user_id: userId });
   }
 
-  onSubmit() {
+  // Fetch plots based on user ID
+  fetchPlots(): void {
+    const userId = localStorage.getItem('userId') || '';
+    this.transactionService.getDeopPlot(userId).subscribe(
+      (res: any) => {
+        this.plots = res;
+      },
+      error => {
+        this.translate.get('harvest.errorLoadingPlots').subscribe((translations: { title: string; text: string; }) => {
+          Swal.fire({
+            icon: 'error',
+            title: translations.title,
+            text: translations.text,
+            timer: 3000,
+            timerProgressBar: true,
+          });
+        });
+      }
+    );
+  }
+
+  // Handle form submission
+  onSubmit(): void {
     if (this.expenseForm.valid) {
       const formData = { ...this.expenseForm.getRawValue() };
       this.transactionService.addExpense(formData).subscribe(
@@ -87,8 +137,7 @@ export class AddexpensesComponent implements OnInit {
               timer: 3000,
               timerProgressBar: true,
             }).then(() => {
-              // ปิด dialog เมื่อแสดงผลการแจ้งเตือนเสร็จสิ้น
-              this.dialogRef.close(true); // ส่งค่า true กลับไปเพื่อแจ้งว่ามีการเพิ่มข้อมูลสำเร็จ
+              this.dialogRef.close(true);
             });
           });
         },
@@ -101,7 +150,6 @@ export class AddexpensesComponent implements OnInit {
               timer: 3000,
               timerProgressBar: true,
             });
-            // ไม่ปิด dialog ถ้ามีข้อผิดพลาดในการเพิ่ม
           });
         }
       );
@@ -117,104 +165,163 @@ export class AddexpensesComponent implements OnInit {
       });
     }
   }
+
+  // Handle formula input for proper formatting
   onFormulaInput(event: any): void {
     const inputValue = event.target.value;
-    const formattedValue = inputValue.replace(/[^0-9-]/g, '').replace(/(\d{2})(?=\d)/g, '$1-');
-    this.expenseForm.get('formula')?.setValue(formattedValue);
+    const formattedValue = inputValue
+      .replace(/[^0-9-]/g, '')
+      .replace(/-{2,}/g, '-')
+      .replace(/(^-|-$)/g, '')
+      .replace(/(\d{2})(?=\d)/g, '$1-');
+    this.expenseForm.get('formula')?.setValue(formattedValue, { emitEvent: false });
   }
 
-
+  // Handle category change event
   onCategoryChange(): void {
     this.expenseForm.get('category')?.valueChanges.subscribe((value: string) => {
-      this.selectedCategory = value; // เก็บค่าประเภทที่เลือก
+      this.selectedCategory = value;
     });
   }
 
+  // Calculate total price based on selected category
   calculateTotalPrice(): void {
     this.expenseForm.valueChanges.subscribe(() => {
-      const category = this.expenseForm.get('category')?.value || '';  // ดึงหมวดหมู่
+      const category = this.expenseForm.get('category')?.value || '';
       let totalPrice = 0;
 
-      // คำนวณราคาตามหมวดหมู่ที่เลือก
       switch (category) {
         case 'ค่าฮอร์โมน':
-          const pricePerBottle = this.expenseForm.get('pricePerBottle')?.value || 0;
-          const quantityHormone = this.expenseForm.get('quantity')?.value || 0;
-          totalPrice = pricePerBottle * quantityHormone;
+          totalPrice = this.calculateHormoneCost();
           break;
-
         case 'ค่าปุ๋ย':
-          const pricePerBag = this.expenseForm.get('pricePerBag')?.value || 0;
-          const quantityFertilizer = this.expenseForm.get('quantity')?.value || 0;
-          totalPrice = pricePerBag * quantityFertilizer;
+          totalPrice = this.calculateFertilizerCost();
           break;
-
+        case 'ค่ายาฆ่าหญ่า':
+          totalPrice = this.calculateWeedKillerCost();
+          break;
         case 'ค่าคนตัดต้น':
-          const pricePerTreeCutting = this.expenseForm.get('pricePerTree')?.value || 0;
-          const numberOfTreesCutting = this.expenseForm.get('numberOfTrees')?.value || 0;
-          totalPrice = pricePerTreeCutting * numberOfTreesCutting;
+          totalPrice = this.calculateTreeCuttingCost();
           break;
-
         case 'ค่าคนปลูก':
-          const pricePerTreePlanting = this.expenseForm.get('pricePerTree')?.value || 0;
-          const numberOfTreesPlanting = this.expenseForm.get('numberOfTrees')?.value || 0;
-          totalPrice = pricePerTreePlanting * numberOfTreesPlanting;
+          totalPrice = this.calculateTreePlantingCost();
           break;
-
-        // คำนวณหมวดหมู่ "ค่าฉีดยาฆ่าหญ่า"
-        case 'ค่าฉีดยาฆ่าหญ่า':
-          const numberOfCans = this.expenseForm.get('numberOfCans')?.value || 0;
-          const pricePerCan = this.expenseForm.get('pricePerCan')?.value || 0;
-          totalPrice = numberOfCans * pricePerCan;
+        case 'ค่าคนฉีดยาฆ่าหญ่า':
+          totalPrice = this.calculateWeedSprayingCost();
           break;
-
-        // คำนวณหมวดหมู่ "คนฉีดยาฮอร์โมน"
-        case 'คนฉีดยาฮอร์โมน':
-          const numberOfCansHormone = this.expenseForm.get('numberOfCans')?.value || 0;
-          const pricePerCanHormone = this.expenseForm.get('pricePerCan')?.value || 0;
-          totalPrice = numberOfCansHormone * pricePerCanHormone;
+        case 'ค่าคนฉีดยาฮอโมน':
+          totalPrice = this.calculateHormoneSprayingCost();
           break;
-        case 'ค่าน้ำมันรถ':
-          const pricePerLiter = this.expenseForm.get('pricePerLiter')?.value || 0;
-          const quantityLiters = this.expenseForm.get('quantityLiters')?.value || 0;
-          totalPrice = pricePerLiter * quantityLiters;
+        case 'ค่าน้ำมัน':
+          totalPrice = this.calculateFuelCost();
+          break;
+        case 'ค่าพันธุ์มัน':
+          totalPrice = this.calculateSeedCost();
           break;
         case 'ค่าซ่อมอุปกรณ์':
-          const repairCost = this.expenseForm.get('repairCost')?.value || 0;
-          totalPrice = repairCost;  // ค่าใช้จ่ายในการซ่อม
+          totalPrice = this.calculateRepairCost();
           break;
         case 'ค่าอุปกรณ์':
-          const purchasePrice = this.expenseForm.get('purchasePrice')?.value || 0;
-          totalPrice = purchasePrice;  // ราคาที่ซื้อ
+          totalPrice = this.calculateEquipmentCost();
+          break;
+        case 'ค่าเช่าที่ดิน':
+          totalPrice = this.calculateRentCost();
           break;
         case 'ค่าขุด':
-          const weight = this.expenseForm.get('weight')?.value || 0;  // น้ำหนักสินค้า (ตัน)
-          const pricePerTon = this.expenseForm.get('pricePerTon')?.value || 0;  // ราคาต่อตัน
+          totalPrice = this.calculateExcavationCost();
           break;
-
-        // คุณสามารถเพิ่ม case อื่นๆ ที่ต้องการได้
         default:
-          totalPrice = 0;  // หากหมวดหมู่ไม่ตรงกับที่กำหนดไว้
+          totalPrice = 0;
           break;
       }
 
-      // กำหนดผลลัพธ์ราคารวม
       this.calculatedTotalPrice = totalPrice;
-
-      // อัพเดตฟอร์มด้วยราคารวมที่คำนวณได้
-      this.expenseForm.patchValue({ totalPrice: this.calculatedTotalPrice });
+      this.expenseForm.patchValue({ totalPrice: this.calculatedTotalPrice }, { emitEvent: false });
     });
   }
 
-
-
-  calculateBundles(): void {
-    const selectedBundleCount = this.expenseForm.get('bundleCount')?.value;
-    if (selectedBundleCount) {
-      this.treesPerBundle = selectedBundleCount;  // จำนวนต้นในแต่ละมัดตามที่เลือก
-    } else {
-      this.treesPerBundle = 0;
-    }
+  // Calculate hormone cost
+  calculateHormoneCost(): number {
+    const pricePerBottle = this.expenseForm.get('pricePerBottle')?.value || 0;
+    const quantityHormone = this.expenseForm.get('quantity')?.value || 0;
+    return pricePerBottle * quantityHormone;
   }
 
+  // Calculate fertilizer cost
+  calculateFertilizerCost(): number {
+    const pricePerBag = this.expenseForm.get('pricePerBag')?.value || 0;
+    const quantityFertilizer = this.expenseForm.get('quantity')?.value || 0;
+    return pricePerBag * quantityFertilizer;
+  }
+
+  // Calculate weed killer cost
+  calculateWeedKillerCost(): number {
+    const pricePerCan = this.expenseForm.get('pricePerCan')?.value || 0;
+    const quantityCans = this.expenseForm.get('quantity')?.value || 0;
+    return pricePerCan * quantityCans;
+  }
+
+  // Calculate tree cutting cost
+  calculateTreeCuttingCost(): number {
+    const pricePerTreeCut = this.expenseForm.get('pricePerTree')?.value || 0;
+    const numberOfTreesCut = this.expenseForm.get('numberOfTrees')?.value || 0;
+    return pricePerTreeCut * numberOfTreesCut;
+  }
+
+  // Calculate tree planting cost
+  calculateTreePlantingCost(): number {
+    const pricePerTreePlant = this.expenseForm.get('pricePerTree')?.value || 0;
+    const numberOfTreesPlant = this.expenseForm.get('numberOfTrees')?.value || 0;
+    return pricePerTreePlant * numberOfTreesPlant;
+  }
+
+  // Calculate weed spraying cost
+  calculateWeedSprayingCost(): number {
+    const pricePerSprayWeed = this.expenseForm.get('pricePerSpray')?.value || 0;
+    const numberOfSprayWeed = this.expenseForm.get('quantity')?.value || 0;
+    return pricePerSprayWeed * numberOfSprayWeed;
+  }
+
+  // Calculate hormone spraying cost
+  calculateHormoneSprayingCost(): number {
+    const pricePerSprayHormone = this.expenseForm.get('pricePerSpray')?.value || 0;
+    const numberOfSprayHormone = this.expenseForm.get('quantity')?.value || 0;
+    return pricePerSprayHormone * numberOfSprayHormone;
+  }
+
+  // Calculate fuel cost
+  calculateFuelCost(): number {
+    const pricePerLiter = this.expenseForm.get('pricePerLiter')?.value || 0;
+    const liters = this.expenseForm.get('quantity')?.value || 0;
+    return pricePerLiter * liters;
+  }
+
+  // Calculate seed cost
+  calculateSeedCost(): number {
+    const pricePerSeed = this.expenseForm.get('pricePerSeed')?.value || 0;
+    const numberOfSeeds = this.expenseForm.get('quantity')?.value || 0;
+    return pricePerSeed * numberOfSeeds;
+  }
+
+  // Calculate repair cost
+  calculateRepairCost(): number {
+    return this.expenseForm.get('repairCost')?.value || 0;
+  }
+
+  // Calculate equipment cost
+  calculateEquipmentCost(): number {
+    return this.expenseForm.get('equipmentCost')?.value || 0;
+  }
+
+  // Calculate rent cost
+  calculateRentCost(): number {
+    return this.expenseForm.get('rentCost')?.value || 0;
+  }
+
+  // Calculate excavation cost
+  calculateExcavationCost(): number {
+    const pricePerTon = this.expenseForm.get('pricePerTon')?.value || 0;
+    const weightInTons = this.expenseForm.get('weight')?.value || 0;
+    return pricePerTon * weightInTons;
+  }
 }

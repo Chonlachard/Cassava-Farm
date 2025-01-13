@@ -25,7 +25,7 @@
         </div>
         <div class="form-field">
           <label for="volume">ปริมาณ</label>
-          <input id="volume" type="text" formControlName="volume" placeholder="กรอกปริมาณ (เช่น 500 ml)" />
+          <input id="volume" type="number" formControlName="volume" placeholder="กรอกปริมาณ (เช่น 500 ml)" />
         </div>
         <div class="form-field">
           <label for="pricePerBottle">ราคาต่อขวด</label>
@@ -116,24 +116,6 @@
           <input id="totalPrice" type="number" [value]="calculatedTotalPrice" readonly
             placeholder="ราคารวมจะคำนวณอัตโนมัติ" />
         </div>
-
-        <div class="form-field">
-          <label for="bundleCount">จำนวนมัด</label>
-          <div class="radio-group">
-            <label>
-              <input type="radio" formControlName="bundleCount" value="20" (change)="calculateBundles()" />
-              20 ต้น/มัด
-            </label>
-            <label>
-              <input type="radio" formControlName="bundleCount" value="25" (change)="calculateBundles()" />
-              25 ต้น/มัด
-            </label>
-          </div>
-        </div>
-        <div class="form-field">
-          <label for="treesPerBundle">จำนวนต้นในแต่ละมัด</label>
-          <input id="treesPerBundle" type="number" [value]="treesPerBundle" readonly placeholder="จำนวนต้นในแต่ละมัด" />
-        </div>
       </div>
 
       <!-- ค่าคนปลูก -->
@@ -144,8 +126,8 @@
         </div>
       
         <div class="form-field">
-          <label for="name">ชื่อ</label>
-          <input id="name" type="text" formControlName="name" placeholder="กรอกชื่อคนปลูก" />
+          <label for="workerName">ชื่อ</label>
+          <input id="workerName" type="text" formControlName="workerName" placeholder="กรอกชื่อคนปลูก" />
         </div>
       
         <div class="form-field">
@@ -160,7 +142,7 @@
       
         <div class="form-field">
           <label for="totalPrice">ราคารวม</label>
-          <input id="totalPrice" type="number" [value]="calculatedTotalPrice" readonly placeholder="ราคารวมจะคำนวณอัตโนมัติ" />
+          <input id="pricePerRai" type="number" [value]="calculatedTotalPrice" readonly placeholder="ราคารวมจะคำนวณอัตโนมัติ" />
         </div>
       
         <div class="form-field">
