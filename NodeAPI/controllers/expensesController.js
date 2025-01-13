@@ -59,6 +59,10 @@ exports.getExpense = async (req, res) => {
 // ฟังก์ชันสำหรับเพิ่มข้อมูลค่าใช้จ่าย
 exports.addExpense = async (req, res) => {
     const { user_id, category, details } = req.body;
+    console.log('User ID:', user_id);
+    console.log('Category:', category);
+    console.log('Details:', details);
+    
 
     // ตรวจสอบข้อมูลที่ส่งมา
     if (!user_id || !category || !details) {
@@ -382,10 +386,7 @@ exports.getExpenseEdit = async (req, res) => {
         return res.status(400).json({ message: 'กรุณาระบุ expense_id' });
     }
 
-    const query = `SELECT a.expense_id, a.expense_date,b.plot_name , a.category ,a.amount , a.details
-                    FROM expenses a
-                    LEFT JOIN plots b on a.plot_id = b.plot_id
-                    WHERE a.expense_id = ?`;
+    const query = ``;
     db.query(query, [expenseId], (err, results) => {
         if (err) {
             console.error('Error executing query:', err.stack);
@@ -458,7 +459,7 @@ exports.getDeopdowplot = async (req, res) => {
         return res.status(400).json({ message: 'กรุณาระบุ user_id' });
     }
 
-    const query = 'SELECT plot_id , plot_name  FROM plots WHERE user_id = ?';
+    const query = 'SELECT plot_id  , plot_name  FROM plots WHERE user_id = ?';
     db.query(query, [userId], (err, results) => {
         if (err) {
             console.error('Error executing query:', err.stack);

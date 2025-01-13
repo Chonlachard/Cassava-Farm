@@ -23,24 +23,38 @@
           <label for="brand">ยี่ห้อ</label>
           <input id="brand" type="text" formControlName="brand" placeholder="กรอกยี่ห้อ" />
         </div>
+
         <div class="form-field">
           <label for="volume">ปริมาณ</label>
           <input id="volume" type="number" formControlName="volume" placeholder="กรอกปริมาณ (เช่น 500 ml)" />
         </div>
+
         <div class="form-field">
           <label for="pricePerBottle">ราคาต่อขวด</label>
-          <input id="pricePerBottle" type="number" formControlName="pricePerBottle" placeholder="กรอกราคาต่อขวด" />
+          <input id="price_per_bottle" type="number" formControlName="price_per_bottle" placeholder="กรอกราคาต่อขวด" />
         </div>
+
         <div class="form-field">
           <label for="quantity">จำนวนขวด</label>
           <input id="quantity" type="number" formControlName="quantity" placeholder="กรอกจำนวนขวด" />
         </div>
+
         <div class="form-field">
           <label for="totalPrice">ราคารวม</label>
           <input id="totalPrice" type="number" [value]="calculatedTotalPrice" readonly
             placeholder="ราคารวมจะคำนวณอัตโนมัติ" />
         </div>
+
+        <div class="form-field">
+          <label for="plotId">แปลง</label>
+          <select id="plot_id" formControlName="plot_id">
+            <option value="" disabled selected>เลือกแปลง</option>
+            <option *ngFor="let plot of plots" [value]="plot.plot_id">{{ plot.plot_name }}</option>
+          </select>
+        </div>
       </div>
+
+
 
       <!-- ค่าปุ๋ย -->
       <div *ngIf="selectedCategory === 'ค่าปุ๋ย'">
@@ -67,6 +81,15 @@
           <input id="totalPrice" type="number" [value]="calculatedTotalPrice" readonly
             placeholder="ราคารวมจะคำนวณอัตโนมัติ" />
         </div>
+        <!-- แปลง -->
+        <div class="form-field">
+          <label for="plotId">แปลง</label>
+          <select id="plotId" formControlName="plotId">
+            <option value="" disabled selected>เลือกแปลง</option>
+            <option *ngFor="let plot of plots" [value]="plot.plot_id">{{ plot.plot_name }}</option>
+          </select>
+        </div>
+
       </div>
 
       <!-- ค่ายาฆ่าหญ่า -->
@@ -92,6 +115,16 @@
           <input id="totalPrice" type="number" [value]="calculatedTotalPrice" readonly
             placeholder="ราคารวมจะคำนวณอัตโนมัติ" />
         </div>
+        <!-- แปลง -->
+        <div class="form-field">
+          <label for="plotId">แปลง</label>
+          <select id="plotId" formControlName="plotId">
+            <option value="" disabled selected>เลือกแปลง</option>
+            <option *ngFor="let plot of plots" [value]="plot.plot_id">{{ plot.plot_name }}</option>
+          </select>
+        </div>
+
+
       </div>
 
       <!-- ค่าคนตัดต้น -->
@@ -124,27 +157,28 @@
           <label for="paymentDate">วันที่จ่ายเงิน</label>
           <input id="paymentDate" type="date" formControlName="paymentDate" />
         </div>
-      
+
         <div class="form-field">
           <label for="workerName">ชื่อ</label>
           <input id="workerName" type="text" formControlName="workerName" placeholder="กรอกชื่อคนปลูก" />
         </div>
-      
+
         <div class="form-field">
           <label for="landArea">จำนวนไร่</label>
           <input id="landArea" type="number" formControlName="landArea" placeholder="กรอกจำนวนไร่" />
         </div>
-      
+
         <div class="form-field">
           <label for="pricePerRai">ราคาต่อไร่</label>
           <input id="pricePerRai" type="number" formControlName="pricePerRai" placeholder="กรอกราคาต่อไร่" />
         </div>
-      
+
         <div class="form-field">
           <label for="totalPrice">ราคารวม</label>
-          <input id="pricePerRai" type="number" [value]="calculatedTotalPrice" readonly placeholder="ราคารวมจะคำนวณอัตโนมัติ" />
+          <input id="pricePerRai" type="number" [value]="calculatedTotalPrice" readonly
+            placeholder="ราคารวมจะคำนวณอัตโนมัติ" />
         </div>
-      
+
         <div class="form-field">
           <label for="plotId">แปลง</label>
           <select id="plotId" formControlName="plotId">
@@ -153,29 +187,30 @@
           </select>
         </div>
       </div>
-      
+
       <!-- ค่าคนฉีดยาฆ่าหญ่า -->
       <div *ngIf="selectedCategory === 'ค่าคนฉีดยาฆ่าหญ่า'">
         <div class="form-field">
           <label for="sprayDate">วันที่ฉีด</label>
           <input id="sprayDate" type="date" formControlName="sprayDate" />
         </div>
-      
+
         <div class="form-field">
           <label for="numberOfCans">จำนวนถัง</label>
           <input id="numberOfCans" type="number" formControlName="numberOfCans" placeholder="กรอกจำนวนถัง" />
         </div>
-      
+
         <div class="form-field">
           <label for="pricePerCan">ราคาต่อถัง</label>
           <input id="pricePerCan" type="number" formControlName="pricePerCan" placeholder="กรอกราคาต่อถัง" />
         </div>
-      
+
         <div class="form-field">
           <label for="totalPrice">ราคารวม</label>
-          <input id="totalPrice" type="number" [value]="calculatedTotalPrice" readonly placeholder="ราคารวมจะคำนวณอัตโนมัติ" />
+          <input id="totalPrice" type="number" [value]="calculatedTotalPrice" readonly
+            placeholder="ราคารวมจะคำนวณอัตโนมัติ" />
         </div>
-      
+
         <div class="form-field">
           <label for="plotId">แปลง</label>
           <select id="plotId" formControlName="plotId">
@@ -184,7 +219,7 @@
           </select>
         </div>
       </div>
-      
+
       <!-- ค่าคนฉีดยาฮอโมน -->
       <div *ngIf="selectedCategory === 'ค่าคนฉีดยาฮอโมน'">
         <!-- วันที่ฉีด -->
@@ -192,25 +227,26 @@
           <label for="sprayDate">วันที่ฉีด</label>
           <input id="sprayDate" type="date" formControlName="sprayDate" />
         </div>
-      
+
         <!-- จำนวนถัง -->
         <div class="form-field">
           <label for="numberOfCans">จำนวนถัง</label>
           <input id="numberOfCans" type="number" formControlName="numberOfCans" placeholder="กรอกจำนวนถัง" />
         </div>
-      
+
         <!-- ราคาต่อถัง -->
         <div class="form-field">
           <label for="pricePerCan">ราคาต่อถัง</label>
           <input id="pricePerCan" type="number" formControlName="pricePerCan" placeholder="กรอกราคาต่อถัง" />
         </div>
-      
+
         <!-- ราคารวม (คำนวณ) -->
         <div class="form-field">
           <label for="totalPrice">ราคารวม</label>
-          <input id="totalPrice" type="number" [value]="calculatedTotalPrice" readonly placeholder="ราคารวมจะคำนวณอัตโนมัติ" />
+          <input id="totalPrice" type="number" [value]="calculatedTotalPrice" readonly
+            placeholder="ราคารวมจะคำนวณอัตโนมัติ" />
         </div>
-      
+
         <!-- แปลง -->
         <div class="form-field">
           <label for="plotId">แปลง</label>
@@ -220,7 +256,7 @@
           </select>
         </div>
       </div>
-      
+
       <!-- ค่าน้ำมัน -->
       <div *ngIf="selectedCategory === 'ค่าน้ำมัน'">
         <!-- วันที่เติม -->
@@ -228,25 +264,26 @@
           <label for="fuelDate">วันที่เติม</label>
           <input id="fuelDate" type="date" formControlName="fuelDate" />
         </div>
-      
+
         <!-- ราคาต่อลิตร -->
         <div class="form-field">
           <label for="pricePerLiter">ราคาต่อลิตร</label>
           <input id="pricePerLiter" type="number" formControlName="pricePerLiter" placeholder="กรอกราคาต่อลิตร" />
         </div>
-      
+
         <!-- จำนวนลิตร -->
         <div class="form-field">
           <label for="quantityLiters">จำนวนลิตร</label>
           <input id="quantityLiters" type="number" formControlName="quantityLiters" placeholder="กรอกจำนวนลิตร" />
         </div>
-      
+
         <!-- ราคาที่จ่าย (คำนวณ) -->
         <div class="form-field">
           <label for="totalPrice">ราคาที่จ่าย</label>
-          <input id="totalPrice" type="number" [value]="calculatedTotalPrice" readonly placeholder="ราคาที่จ่ายจะคำนวณอัตโนมัติ" />
+          <input id="totalPrice" type="number" [value]="calculatedTotalPrice" readonly
+            placeholder="ราคาที่จ่ายจะคำนวณอัตโนมัติ" />
         </div>
-      
+
         <!-- แปลง -->
         <div class="form-field">
           <label for="plotId">แปลง</label>
@@ -256,7 +293,7 @@
           </select>
         </div>
       </div>
-      
+
       <!-- ค่าพันธุ์มัน -->
       <div *ngIf="selectedCategory === 'ค่าพันธุ์มัน'">
         <!-- วันที่ซื้อ -->
@@ -264,25 +301,26 @@
           <label for="purchaseDate">วันที่ซื้อ</label>
           <input id="purchaseDate" type="date" formControlName="purchaseDate" />
         </div>
-      
+
         <!-- จำนวน -->
         <div class="form-field">
           <label for="quantity">จำนวนต้น</label>
           <input id="quantity" type="number" formControlName="quantity" placeholder="กรอกจำนวนต้น" />
         </div>
-      
+
         <!-- ราคาต่อต้น -->
         <div class="form-field">
           <label for="pricePerTree">ราคาต่อต้น</label>
           <input id="pricePerTree" type="number" formControlName="pricePerTree" placeholder="กรอกราคาต่อต้น" />
         </div>
-      
+
         <!-- ราคาที่จ่าย (คำนวณ) -->
         <div class="form-field">
           <label for="totalPrice">ราคาที่จ่าย</label>
-          <input id="totalPrice" type="number" [value]="calculatedTotalPrice" readonly placeholder="ราคาที่จ่ายจะคำนวณอัตโนมัติ" />
+          <input id="totalPrice" type="number" [value]="calculatedTotalPrice" readonly
+            placeholder="ราคาที่จ่ายจะคำนวณอัตโนมัติ" />
         </div>
-      
+
         <!-- ลงแปลงไหน -->
         <div class="form-field">
           <label for="plotId">แปลง</label>
@@ -291,20 +329,20 @@
             <option *ngFor="let plot of plots" [value]="plot.id">{{ plot.name }}</option>
           </select>
         </div>
-      
+
         <!-- ชื่อพันธุ์ -->
         <div class="form-field">
           <label for="varietyName">ชื่อพันธุ์</label>
           <input id="varietyName" type="text" formControlName="varietyName" placeholder="กรอกชื่อพันธุ์" />
         </div>
-      
+
         <!-- สถานที่ซื้อ -->
         <div class="form-field">
           <label for="purchaseLocation">สถานที่ซื้อ</label>
           <input id="purchaseLocation" type="text" formControlName="purchaseLocation" placeholder="กรอกสถานที่ซื้อ" />
         </div>
       </div>
-      
+
       <!-- ค่าซ่อมอุปกรณ์ -->
       <div *ngIf="selectedCategory === 'ค่าซ่อมอุปกรณ์'">
         <!-- วันที่ซ่อม -->
@@ -312,32 +350,32 @@
           <label for="repairDate">วันที่ซ่อม</label>
           <input id="repairDate" type="date" formControlName="repairDate" />
         </div>
-      
+
         <!-- รายชื่อที่ซ่อม -->
         <div class="form-field">
           <label for="repairNames">รายชื่อที่ซ่อม</label>
           <input id="repairNames" type="text" formControlName="repairNames" placeholder="กรอกรายชื่อที่ซ่อม" />
         </div>
-      
+
         <!-- รายละเอียด -->
         <div class="form-field">
           <label for="details">รายละเอียด</label>
           <textarea id="details" formControlName="details" placeholder="กรอกรายละเอียดการซ่อม"></textarea>
         </div>
-      
+
         <!-- ค่าใช้จ่ายในการซ่อม -->
         <div class="form-field">
           <label for="repairCost">ค่าใช้จ่ายในการซ่อม</label>
           <input id="repairCost" type="number" formControlName="repairCost" placeholder="กรอกค่าใช้จ่ายในการซ่อม" />
         </div>
-      
+
         <!-- ชื่อร้านที่ไปซ่อม -->
         <div class="form-field">
           <label for="shopName">ชื่อร้านที่ไปซ่อม</label>
           <input id="shopName" type="text" formControlName="shopName" placeholder="กรอกชื่อร้านที่ซ่อม" />
         </div>
       </div>
-      
+
       <!-- ค่าอุปกรณ์ -->
       <div *ngIf="selectedCategory === 'ค่าอุปกรณ์'">
         <!-- วันที่ซื้อ -->
@@ -345,32 +383,32 @@
           <label for="purchaseDate">วันที่ซื้อ</label>
           <input id="purchaseDate" type="date" formControlName="purchaseDate" />
         </div>
-      
+
         <!-- ชื่อรายการ -->
         <div class="form-field">
           <label for="itemName">ชื่อรายการ</label>
           <input id="itemName" type="text" formControlName="itemName" placeholder="กรอกชื่อรายการ" />
         </div>
-      
+
         <!-- ชื่อร้านที่ซื้อ -->
         <div class="form-field">
           <label for="shopName">ชื่อร้านที่ซื้อ</label>
           <input id="shopName" type="text" formControlName="shopName" placeholder="กรอกชื่อร้านที่ซื้อ" />
         </div>
-      
+
         <!-- ราคาที่ซื้อ -->
         <div class="form-field">
           <label for="purchasePrice">ราคาที่ซื้อ</label>
           <input id="purchasePrice" type="number" formControlName="purchasePrice" placeholder="กรอกราคาที่ซื้อ" />
         </div>
-      
+
         <!-- หมายเหตุ -->
         <div class="form-field">
           <label for="remarks">หมายเหตุ</label>
           <textarea id="remarks" formControlName="remarks" placeholder="กรอกหมายเหตุเพิ่มเติม"></textarea>
         </div>
       </div>
-      
+
       <!-- ค่าเช่าที่ดิน -->
       <div *ngIf="selectedCategory === 'ค่าเช่าที่ดิน'">
         <!-- วันที่เช่า -->
@@ -378,43 +416,44 @@
           <label for="rentalDate">วันที่เช่า</label>
           <input id="rentalDate" type="date" formControlName="rentalDate" />
         </div>
-      
+
         <!-- ชื่อเจ้าของที่ให้เช่า -->
         <div class="form-field">
           <label for="ownerName">ชื่อเจ้าของที่ให้เช่า</label>
           <input id="ownerName" type="text" formControlName="ownerName" placeholder="กรอกชื่อเจ้าของที่ให้เช่า" />
         </div>
-      
+
         <!-- เบอร์โทร -->
         <div class="form-field">
           <label for="ownerPhone">เบอร์โทร</label>
           <input id="ownerPhone" type="text" formControlName="ownerPhone" placeholder="กรอกเบอร์โทรของเจ้าของที่" />
         </div>
-      
+
         <!-- จำนวนไร่ -->
         <div class="form-field">
           <label for="area">จำนวนไร่</label>
           <input id="area" type="number" formControlName="area" placeholder="กรอกจำนวนไร่" />
         </div>
-      
+
         <!-- ราคาต่อไร่ -->
         <div class="form-field">
           <label for="pricePerRai">ราคาต่อไร่</label>
           <input id="pricePerRai" type="number" formControlName="pricePerRai" placeholder="กรอกราคาต่อไร่" />
         </div>
-      
+
         <!-- ระยะเวลาที่เช่า -->
         <div class="form-field">
           <label for="rentalPeriod">ระยะเวลาที่เช่า (ปี)</label>
           <input id="rentalPeriod" type="number" formControlName="rentalPeriod" placeholder="กรอกระยะเวลาที่เช่า" />
         </div>
-      
+
         <!-- ราคารวม -->
         <div class="form-field">
           <label for="totalPrice">ราคารวม</label>
-          <input id="totalPrice" type="number" [value]="calculatedTotalPrice" readonly placeholder="ราคารวมจะคำนวณอัตโนมัติ" />
+          <input id="totalPrice" type="number" [value]="calculatedTotalPrice" readonly
+            placeholder="ราคารวมจะคำนวณอัตโนมัติ" />
         </div>
-      
+
         <!-- แปลง -->
         <div class="form-field">
           <label for="plotId">แปลง</label>
@@ -424,7 +463,7 @@
           </select>
         </div>
       </div>
-      
+
       <!-- ค่าขุด -->
       <div *ngIf="selectedCategory === 'ค่าขุด'">
         <!-- วันที่มารับเงิน -->
@@ -432,27 +471,28 @@
           <label for="paymentDate">วันที่มารับเงิน</label>
           <input id="paymentDate" type="date" formControlName="paymentDate" />
         </div>
-      
+
         <!-- น้ำหนักสินค้า -->
         <div class="form-field">
           <label for="weight">น้ำหนักสินค้า (ตัน)</label>
           <input id="weight" type="number" formControlName="weight" placeholder="กรอกน้ำหนักสินค้า" />
         </div>
-      
+
         <!-- ราคาต่อตัน -->
         <div class="form-field">
           <label for="pricePerTon">ราคาต่อตัน</label>
           <input id="pricePerTon" type="number" formControlName="pricePerTon" placeholder="กรอกราคาต่อตัน" />
         </div>
-      
+
         <!-- ราคาที่จ่าย(คำนวณ) -->
         <div class="form-field">
           <label for="totalPrice">ราคาที่จ่าย</label>
-          <input id="totalPrice" type="number" [value]="calculatedTotalPrice" readonly placeholder="ราคาที่จ่ายจะคำนวณอัตโนมัติ" />
+          <input id="totalPrice" type="number" [value]="calculatedTotalPrice" readonly
+            placeholder="ราคาที่จ่ายจะคำนวณอัตโนมัติ" />
         </div>
       </div>
-      
-      <button type="submit" [disabled]="!expenseForm.valid" class="submit-button">
+
+      <button type="submit" class="submit-button">
         <i class="fas fa-save"></i> {{ 'expense.form.saveButton' | translate }}
       </button>
     </form>

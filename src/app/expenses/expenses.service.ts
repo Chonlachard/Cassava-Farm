@@ -46,12 +46,14 @@ export class ExpensesService {
   getExpense(expenseId: number): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/getExpenseEdit/${expenseId}`);
   }
-
-
-  addExpense(expense: Expense): Observable<any> {
+  addExpense(expense: any): Observable<any> {
+    debugger
+    console.log(expense);
+    // ทำการตรวจสอบ หรือปรับข้อมูลก่อนส่ง API ถ้าจำเป็น
     return this.http.post<any>(`${this.apiUrl}/addExpenses`, expense);
+  
   }
-
+  
 
   // ฟังก์ชันสำหรับลบค่าใช้จ่าย
   deleteExpense(expenseId: number): Observable<any> {
