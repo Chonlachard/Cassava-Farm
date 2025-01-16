@@ -97,8 +97,8 @@ exports.addExpense = async (req, res) => {
             case 'ค่าฮอร์โมน':
                 const hormoneTotalPrice = details.price_per_bottle * details.quantity;
                 detailQuery = `
-                    INSERT INTO HormoneData (expense_id, brand, volume, price_per_bottle, quantity, total_price, plot_id)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                    INSERT INTO HormoneData (expense_id, brand, volume, price_per_bottle, quantity, total_price, plot_id,purchase_location)
+                    VALUES (?, ?, ?, ?, ?, ?, ? , ?)
                 `;
                 params = [
                     expenseId,
@@ -107,15 +107,16 @@ exports.addExpense = async (req, res) => {
                     details.price_per_bottle,
                     details.quantity,
                     hormoneTotalPrice,  // คำนวณ total_price
-                    details.plot_id
+                    details.plot_id,
+                    details.purchase_location
                 ];
                 break;
 
             case 'ค่าปุ๋ย':
                 const fertilizerTotalPrice = details.price_per_bag * details.quantity;
                 detailQuery = `
-                    INSERT INTO FertilizerData (expense_id, brand, formula, price_per_bag, quantity, total_price, plot_id)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                    INSERT INTO FertilizerData (expense_id, brand, formula, price_per_bag, quantity, total_price, plot_id ,purchase_location)
+                    VALUES (?, ?, ?, ?, ?, ?, ? , ?)
                 `;
                 params = [
                     expenseId,
@@ -124,15 +125,17 @@ exports.addExpense = async (req, res) => {
                     details.price_per_bag,
                     details.quantity,
                     fertilizerTotalPrice,  // คำนวณ total_price
-                    details.plot_id
+                    details.plot_id,
+                    details.purchase_location
+                    
                 ];
                 break;
 
             case 'ค่ายาฆ่าหญ่า':
                 const herbicideTotalPrice = details.price_per_bottle * details.quantity;
                 detailQuery = `
-                    INSERT INTO HerbicideData (expense_id, brand, volume, price_per_bottle, quantity, total_price, plot_id)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                    INSERT INTO HerbicideData (expense_id, brand, volume, price_per_bottle, quantity, total_price, plot_id ,purchase_location)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 `;
                 params = [
                     expenseId,
@@ -141,7 +144,8 @@ exports.addExpense = async (req, res) => {
                     details.price_per_bottle,
                     details.quantity,
                     herbicideTotalPrice,  // คำนวณ total_price
-                    details.plot_id
+                    details.plot_id,
+                    details.purchase_location
                 ];
                 break;
 
@@ -180,6 +184,7 @@ exports.addExpense = async (req, res) => {
                 break;
 
             case 'ค่าซ่อมอุปกรณ์':
+               
                 detailQuery = `
                     INSERT INTO EquipmentRepairData (expense_id, repair_date, repair_names, details, repair_cost, shop_name)
                     VALUES (?, ?, ?, ?, ?, ?)
@@ -196,7 +201,7 @@ exports.addExpense = async (req, res) => {
 
             case 'ค่าอุปกรณ์':
                 detailQuery = `
-                    INSERT INTO EquipmentPurchaseData (expense_id, purchase_date, item_name, shop_name, purchase_price, remarks)
+                    INSERT INTO EquipmentPurchaseData (expense_id, purchase_date, item_name, shop_name, purchase_price, descript)
                     VALUES (?, ?, ?, ?, ?, ?)
                 `;
                 params = [
@@ -205,11 +210,12 @@ exports.addExpense = async (req, res) => {
                     details.item_name,
                     details.shop_name,
                     details.purchase_price,
-                    details.remarks
+                    details.descript
                 ];
                 break;
 
             case 'ค่าเช่าที่ดิน':
+                const rentalTotalPrice = details.price_per_rai * details.area;
                 detailQuery = `
                     INSERT INTO LandRentalData (expense_id, rental_date, owner_name, owner_phone, area, price_per_rai, rental_period, total_price, plot_id)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -222,12 +228,13 @@ exports.addExpense = async (req, res) => {
                     details.area,
                     details.price_per_rai,
                     details.rental_period,
-                    details.total_price,  // ใช้ total_price ที่ส่งมาจากหน้า
+                    rentalTotalPrice,  // ใช้ total_price ที่ส่งมาจากหน้า
                     details.plot_id
                 ];
                 break;
 
             case 'ค่าขุด':
+                const excavationTotalPrice = details.weight * (details.price_per_ton/1000);
                 detailQuery = `
                     INSERT INTO ExcavationData (expense_id, payment_date, weight, price_per_ton, total_price, plot_id)
                     VALUES (?, ?, ?, ?, ?, ?)
@@ -237,28 +244,30 @@ exports.addExpense = async (req, res) => {
                     details.payment_date,
                     details.weight,
                     details.price_per_ton,
-                    details.total_price,  // ใช้ total_price ที่ส่งมาจากหน้า
+                    excavationTotalPrice,  // ใช้ total_price ที่ส่งมาจากหน้า
                     details.plot_id
                 ];
                 break;
 
             case 'ค่าคนตัดต้น':
+                const cuttingTotalPrice = details.price_per_tree * details.number_of_trees;
                 detailQuery = `
-                    INSERT INTO TreeCutting (expense_id, cutting_date, number_of_trees, price_per_tree, total_price, bundle_count, plot_id)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                    INSERT INTO TreeCutting (expense_id, cutting_date, number_of_trees, price_per_tree, total_price, plot_id)
+                    VALUES (?, ?, ?, ?, ?, ?)
                 `;
                 params = [
                     expenseId,
                     details.cutting_date,
                     details.number_of_trees,
                     details.price_per_tree,
-                    details.total_price,  // ใช้ total_price ที่ส่งมาจากหน้า
-                    details.bundle_count,
+                    cuttingTotalPrice,
                     details.plot_id
                 ];
+                console.log(cuttingTotalPrice);
                 break;
 
             case 'ค่าคนปลูก':
+                const plantingTotalPrice = details.price_per_rai * details.land_area;
                 detailQuery = `
                     INSERT INTO Planting (expense_id, payment_date, worker_name, land_area, price_per_rai, total_price, plot_id)
                     VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -269,12 +278,13 @@ exports.addExpense = async (req, res) => {
                     details.worker_name,
                     details.land_area,
                     details.price_per_rai,
-                    details.total_price,  // ใช้ total_price ที่ส่งมาจากหน้า
+                    plantingTotalPrice,  // ใช้ total_price ที่ส่งมาจากหน้า
                     details.plot_id
                 ];
                 break;
 
             case 'ค่าคนฉีดยาฆ่าหญ่า':
+                const sprayingTotalPrice = details.price_per_can * details.number_of_cans;
                 detailQuery = `
                     INSERT INTO WeedSpraying (expense_id, spray_date, number_of_cans, price_per_can, total_price, plot_id)
                     VALUES (?, ?, ?, ?, ?, ?)
@@ -284,12 +294,13 @@ exports.addExpense = async (req, res) => {
                     details.spray_date,
                     details.number_of_cans,
                     details.price_per_can,
-                    details.total_price,  // ใช้ total_price ที่ส่งมาจากหน้า
+                    sprayingTotalPrice,  // ใช้ total_price ที่ส่งมาจากหน้า
                     details.plot_id
                 ];
                 break;
 
             case 'ค่าคนฉีดยาฮอโมน':
+                const hormoneSprayingTotalPrice = details.price_per_can * details.number_of_cans;
                 detailQuery = `
                     INSERT INTO HormoneSpraying (expense_id, spray_date, number_of_cans, price_per_can, total_price, plot_id)
                     VALUES (?, ?, ?, ?, ?, ?)
@@ -299,7 +310,7 @@ exports.addExpense = async (req, res) => {
                     details.spray_date,
                     details.number_of_cans,
                     details.price_per_can,
-                    details.total_price,  // ใช้ total_price ที่ส่งมาจากหน้า
+                    hormoneSprayingTotalPrice,  // ใช้ total_price ที่ส่งมาจากหน้า
                     details.plot_id
                 ];
                 break;

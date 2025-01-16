@@ -41,52 +41,56 @@ export class AddexpensesComponent implements OnInit {
 
   ) {
     this.expenseForm = this.fb.group({
-      user_id: [{ value: '', disabled: true }, Validators.required],
-      plot_id: ['', Validators.required],  // ต้องการตรวจสอบการกรอกข้อมูล
-      category: ['', Validators.required],  // ต้องการตรวจสอบการกรอกข้อมูล
-      details: [''],
-      volume: [''],
-      cuttingDate: [''],
-      brand: ['', Validators.required],  // ต้องการตรวจสอบการกรอกข้อมูล
-      formula: ['', Validators.required],  // ต้องการตรวจสอบการกรอกข้อมูล
-      paymentDate: [''],
-      workerName: [''],
-      landArea: [''],
-      pricePerRai: [''], // ต้องการตรวจสอบการกรอกข้อมูล
-      bundleCount: ['', Validators.required],  // ต้องการตรวจสอบการกรอกข้อมูล
-      sprayDate: [''],
-      numberOfCans: [''],
-      remarks: [''],
-      purchasePrice: [''],
-      itemName: [''],
       area: [''],
-      rentalPeriod: [''],
-      ownerPhone: [''],
-      ownerName: [''],
-      rentalDate: [''],  // ถ้าไม่จำเป็นต้องกรอก ให้ใช้ค่าว่าง
-      purchaseDate: [''],  // ถ้าไม่จำเป็นต้องกรอก ให้ใช้ค่าว่าง
-      varietyName: [''],
-      shopName: [''],
-      fuelDate: [''],
-      repairDate: [''],
-      repairNames: [''],
-      purchaseLocation: [''],
-      quantityLiters: [''],
-      price_per_bottle: [''],
-      pricePerBag: [''],
-      pricePerCan: [''],
-      pricePerTree: [''],
-      pricePerSpray: [''],
-      pricePerLiter: [''],
-      pricePerSeed: [''],
-      repairCost: [''],
+      brand: ['', Validators.required],  // ต้องการตรวจสอบการกรอกข้อมูล
+      bundleCount: ['', Validators.required],  // ต้องการตรวจสอบการกรอกข้อมูล
+      category: ['', Validators.required],  // ต้องการตรวจสอบการกรอกข้อมูล
+      cutting_date: [''],
+      details: [''],
+      descript : [''],
       equipmentCost: [''],
-      rentCost: [''],
-      pricePerTon: [''],
-      weight: [''],
+      fuel_date: [''],
+      formula: ['', Validators.required],  // ต้องการตรวจสอบการกรอกข้อมูล
+      land_area: [''],
+      number_of_cans: [''],
+      number_of_trees: [''],
+      owner_name: [''],
+      owner_phone: [''],
+      payment_date: [''],
+      plot_id: ['', Validators.required],  // ต้องการตรวจสอบการกรอกข้อมูล
+      price_per_can: [''],
+      price_per_liter: [''],
+      price_per_rai: [''], // ต้องการตรวจสอบการกรอกข้อมูล
+      pricePerSeed: [''],
+      pricePerSpray: [''],
+      price_per_ton: [''],
+      price_per_bag: [''],
+      price_per_bottle: [''],
+      price_per_tree: [''],
+      purchase_date: [''],  // ถ้าไม่จำเป็นต้องกรอก ให้ใช้ค่าว่าง
+      purchaseLocation: [''],
+      purchase_price: [''],
+      purchase_location: [''],
       quantity: ['', Validators.min(1)],  // ตรวจสอบจำนวน
-      numberOfTrees: [''],
-      totalPrice: ['']
+      quantity_liters: [''],
+      remarks: [''],
+      rentCost: [''],
+      rental_date: [''],  // ถ้าไม่จำเป็นต้องกรอก ให้ใช้ค่าว่าง
+      rental_period: [''],
+      repair_cost: [''],
+      repair_date: [''],
+      repair_names: [''],
+      shop_name: [''],
+      spray_date: [''],
+      totalPrice: [''],
+      user_id: [{ value: '', disabled: true }, Validators.required],
+      variety_name: [''],
+      volume: [''],
+      weight: [''],
+      worker_name: [''],
+      item_name : [''],
+      total_price : ['']
+
     });
 
   }
@@ -189,152 +193,154 @@ export class AddexpensesComponent implements OnInit {
     switch (category) {
       
       case 'ค่าฮอร์โมน':
-        if (formValue.brand && formValue.volume && formValue.price_per_bottle && formValue.quantity && formValue.plot_id) {
+        if (formValue.brand && formValue.volume && formValue.price_per_bottle && formValue.quantity && formValue.plot_id && formValue.purchase_location) {
           details = { 
               brand: formValue.brand,
               volume: formValue.volume,
               price_per_bottle: formValue.price_per_bottle, // ตรวจสอบว่าใช้ price_per_bottle ในการคำนวณหรือไม่
               quantity: formValue.quantity, 
+              purchase_location : formValue.purchase_location, 
               plot_id: formValue.plot_id, // เปลี่ยนจาก plotId เป็น plot_id ตามชื่อที่ถูกต้อง
               totalPrice: this.calculatedTotalPrice // ตรวจสอบการคำนวณ totalPrice ที่ถูกต้อง
           };
+          console.log('Details:', details);
       }
         break;
       case 'ค่าปุ๋ย':
-        if (formValue.brand && formValue.formula && formValue.pricePerBag && formValue.quantity &&  formValue.plotId) {
+        if (formValue.brand && formValue.formula && formValue.price_per_bag && formValue.quantity &&  formValue.plot_id) {
           details = { 
             brand: formValue.brand,
             formula: formValue.formula,
-            pricePerBag: formValue.pricePerBag, 
+            price_per_bag: formValue.price_per_bag, 
             quantity: formValue.quantity, 
-            plotId : formValue.plotId,
+            plot_id: formValue.plot_id,
             totalPrice: this.calculatedTotalPrice
           };
         }
         break;
       case 'ค่ายาฆ่าหญ่า':
-        if (formValue.brand && formValue.volume && formValue.price_per_bottle && formValue.quantity &&  formValue.plotId) {
+        if (formValue.brand && formValue.volume && formValue.price_per_bottle && formValue.quantity &&  formValue.plot_id) {
           details = { 
             brand: formValue.brand,
             volume: formValue.volume,
             price_per_bottle: formValue.price_per_bottle,
             quantity: formValue.quantity, 
-            plotId : formValue.plotId,
+            plot_id: formValue.plot_id,
             totalPrice: this.calculatedTotalPrice
           };
         }
         break;
       case 'ค่าคนตัดต้น':
-        if (formValue.cuttingDate && formValue.pricePerTree && formValue.numberOfTrees) {
+        if (formValue.cutting_date && formValue.price_per_tree && formValue.number_of_trees && formValue.plot_id) {
           details = { 
-            cuttingDate: formValue.cuttingDate,
-            pricePerTree: formValue.pricePerTree, 
-            numberOfTrees: formValue.numberOfTrees, 
-            totalPrice: this.calculatedTotalPrice
+            cutting_date: formValue.cutting_date,
+            price_per_tree: formValue.price_per_tree, 
+            number_of_trees: formValue.number_of_trees, 
+            totalPrice: this.calculatedTotalPrice,
+            plot_id: formValue.plot_id
           };
         }
         break;
       case 'ค่าคนปลูก':
-        if (formValue.paymentDate && formValue.pricePerTree && formValue.workerName && formValue.landArea && formValue.pricePerRai && formValue.plotId) {
+        if (formValue.payment_date  && formValue.worker_name && formValue.land_area && formValue.price_per_rai && formValue.plot_id) {
           details = { 
-            paymentDate: formValue.paymentDate,
-            pricePerTree: formValue.pricePerTree,
-            workerName: formValue.workerName,
-            landArea: formValue.landArea,
-            pricePerRai: formValue.pricePerRai,
-            plotId: formValue.plotId,
+            payment_date: formValue.payment_date,
+            worker_name: formValue.worker_name,
+            land_area: formValue.land_area,
+            price_per_rai: formValue.price_per_rai,
+            plot_id: formValue.plot_id,
             totalPrice: this.calculatedTotalPrice
           };
         }
         break;
       case 'ค่าคนฉีดยาฆ่าหญ่า':
-        if (formValue.sprayDate && formValue.numberOfCans && formValue.pricePerCan && formValue.plotId) {
+        if (formValue.spray_date && formValue.number_of_cans && formValue.price_per_can && formValue.plot_id) {
           details = { 
-            sprayDate: formValue.sprayDate,
-            numberOfCans: formValue.numberOfCans,
-            pricePerCan: formValue.pricePerCan,
-            plotId: formValue.plotId,
+            spray_date: formValue.spray_date,
+            number_of_cans: formValue.number_of_cans,
+            price_per_can: formValue.price_per_can,
+            plot_id: formValue.plot_id,
             totalPrice: this.calculatedTotalPrice
           };
         }
         break;
       case 'ค่าคนฉีดยาฮอโมน':
-        if (formValue.sprayDate && formValue.numberOfCans && formValue.pricePerCan && formValue.plotId) {
+        if (formValue.spray_date && formValue.number_of_cans && formValue.price_per_can && formValue.plot_id) {
           details = { 
-            sprayDate: formValue.sprayDate,
-            numberOfCans: formValue.numberOfCans,
-            pricePerCan: formValue.pricePerCan,
-            plotId: formValue.plotId,
+            spray_date: formValue.spray_date,
+            number_of_cans: formValue.number_of_cans,
+            price_per_can: formValue.price_per_can,
+            plot_id: formValue.plot_id,
             totalPrice: this.calculatedTotalPrice
           };
         }
         break;
       case 'ค่าน้ำมัน':
-        if (formValue.fuelDate && formValue.pricePerLiter && formValue.quantity && formValue.plotId) {
+        if (formValue.fuel_date && formValue.price_per_liter && formValue.quantity_liters && formValue.plot_id) {
           details = { 
-            fuelDate: formValue.fuelDate,
-            pricePerLiter: formValue.pricePerLiter, 
-            quantityLiters: formValue.quantity, 
-            plotId: formValue.plotId,
+            fuel_date: formValue.fuel_date,
+            price_per_liter: formValue.price_per_liter, 
+            quantity_liters: formValue.quantity_liters, 
+            plot_id: formValue.plot_id,
             totalPrice: this.calculatedTotalPrice
           };
         }
         break;
       case 'ค่าพันธุ์มัน':
-        if (formValue.purchaseDate && formValue.quantity && formValue.pricePerTree && formValue.plotId && formValue.varietyName && formValue.purchaseLocation) {
+        if (formValue.purchase_date && formValue.quantity && formValue.price_per_tree && formValue.plot_id && formValue.variety_name && formValue.purchase_location) {
           details = { 
-            purchaseDate: formValue.purchaseDate,
+            purchase_date: formValue.purchase_date,
             quantity: formValue.quantity,
-            pricePerTree: formValue.pricePerTree,
-            plotId: formValue.plotId,
-            varietyName: formValue.varietyName,
-            purchaseLocation: formValue.purchaseLocation,
+            price_per_tree: formValue.price_per_tree,
+            plot_id: formValue.plot_id,
+            variety_name: formValue.variety_name,
+            purchase_location: formValue.purchase_location,
             totalPrice: this.calculatedTotalPrice
           };
         }
         break;
       case 'ค่าซ่อมอุปกรณ์':
-        if (formValue.repairDate && formValue.repairNames && formValue.repairCost && formValue.shopName) {
+        if (formValue.repair_date && formValue.repair_names && formValue.repair_cost && formValue.shop_name) {
           details = { 
-            repairDate: formValue.repairDate,
-            repairNames: formValue.repairNames,
+            repair_date: formValue.repair_date,
+            repair_names: formValue.repair_names,
             details: formValue.details,
-            repairCost: formValue.repairCost, 
-            shopName: formValue.shopName
+            repair_cost: formValue.repair_cost, 
+            shop_name: formValue.shop_name
           };
         }
         break;
       case 'ค่าอุปกรณ์':
-        if (formValue.purchaseDate && formValue.itemName && formValue.shopName && formValue.purchasePrice) {
+        if (formValue.purchase_date && formValue.item_name && formValue.shop_name && formValue.purchase_price) {
           details = { 
-            purchaseDate: formValue.purchaseDate,
-            itemName: formValue.itemName,
-            shopName: formValue.shopName,
-            purchasePrice: formValue.purchasePrice,
-            remarks: formValue.remarks
+            purchase_date: formValue.purchase_date,
+            item_name: formValue.item_name,
+            shop_name: formValue.shop_name,
+            purchase_price: formValue.purchase_price,
+            descript: formValue.descript
           };
         }
         break;
       case 'ค่าเช่าที่ดิน':
-        if (formValue.rentalDate && formValue.ownerName && formValue.ownerPhone && formValue.area && formValue.pricePerRai && formValue.rentalPeriod && formValue.plotId) {
+        if (formValue.rental_date && formValue.owner_name && formValue.owner_phone && formValue.area && formValue.price_per_rai && formValue.rental_period && formValue.plot_id) {
           details = { 
-            rentalDate: formValue.rentalDate,
-            ownerName: formValue.ownerName,
-            ownerPhone: formValue.ownerPhone,
+            rental_date: formValue.rental_date,
+            owner_name: formValue.owner_name,
+            owner_phone: formValue.owner_phone,
             area: formValue.area,
-            pricePerRai: formValue.pricePerRai,
-            rentalPeriod: formValue.rentalPeriod,
-            plotId: formValue.plotId,
+            price_per_rai: formValue.price_per_rai,
+            rental_period: formValue.rental_period,
+            plot_id: formValue.plot_id,
             totalPrice: this.calculatedTotalPrice
           };
         }
         break;
       case 'ค่าขุด':
-        if (formValue.paymentDate && formValue.weight && formValue.pricePerTon) {
+        if (formValue.payment_date && formValue.weight && formValue.price_per_ton) {
           details = { 
-            paymentDate: formValue.paymentDate,
+            payment_date: formValue.payment_date,
             weight: formValue.weight,
-            pricePerTon: formValue.pricePerTon, 
+            price_per_ton: formValue.price_per_ton, 
             totalPrice: this.calculatedTotalPrice
           };
         }
@@ -425,51 +431,51 @@ export class AddexpensesComponent implements OnInit {
   }
 
   calculateFertilizerCost(): number {
-    const pricePerBag = this.expenseForm.get('pricePerBag')?.value || 0;
+    const price_per_bag = this.expenseForm.get('price_per_bag')?.value || 0;
     const quantity = this.expenseForm.get('quantity')?.value || 0;
-    return pricePerBag * quantity;
+    return price_per_bag * quantity;
   }
 
   calculateWeedKillerCost(): number {
-    const pricePerCan = this.expenseForm.get('pricePerCan')?.value || 0;
+    const price_per_bottle = this.expenseForm.get('price_per_bottle')?.value || 0;
     const quantity = this.expenseForm.get('quantity')?.value || 0;
-    return pricePerCan * quantity;
+    return price_per_bottle * quantity;
   }
 
   calculateTreeCuttingCost(): number {
-    const pricePerTree = this.expenseForm.get('pricePerTree')?.value || 0;
-    const numberOfTrees = this.expenseForm.get('numberOfTrees')?.value || 0;
-    return pricePerTree * numberOfTrees;
+    const price_per_tree = this.expenseForm.get('price_per_tree')?.value || 0;
+    const number_of_trees = this.expenseForm.get('number_of_trees')?.value || 0;
+    return price_per_tree * number_of_trees;
   }
 
   calculateTreePlantingCost(): number {
-    const pricePerTree = this.expenseForm.get('pricePerTree')?.value || 0;
-    const numberOfTrees = this.expenseForm.get('numberOfTrees')?.value || 0;
-    return pricePerTree * numberOfTrees;
+    const price_per_rai = this.expenseForm.get('price_per_rai')?.value || 0;
+    const land_area = this.expenseForm.get('land_area')?.value || 0;
+    return price_per_rai * land_area;
   }
 
   calculateWeedSprayingCost(): number {
-    const pricePerSpray = this.expenseForm.get('pricePerSpray')?.value || 0;
-    const quantity = this.expenseForm.get('quantity')?.value || 0;
-    return pricePerSpray * quantity;
+    const price_per_can = this.expenseForm.get('price_per_can')?.value || 0;
+    const number_of_cans = this.expenseForm.get('number_of_cans')?.value || 0;
+    return price_per_can * number_of_cans;
   }
 
   calculateHormoneSprayingCost(): number {
-    const pricePerSpray = this.expenseForm.get('pricePerSpray')?.value || 0;
-    const quantity = this.expenseForm.get('quantity')?.value || 0;
-    return pricePerSpray * quantity;
+    const price_per_can = this.expenseForm.get('price_per_can')?.value || 0;
+    const number_of_cans = this.expenseForm.get('number_of_cans')?.value || 0;
+    return price_per_can * number_of_cans;
   }
 
   calculateFuelCost(): number {
-    const pricePerLiter = this.expenseForm.get('pricePerLiter')?.value || 0;
-    const quantity = this.expenseForm.get('quantity')?.value || 0;
-    return pricePerLiter * quantity;
+    const price_per_liter = this.expenseForm.get('price_per_liter')?.value || 0;
+    const quantity_liters = this.expenseForm.get('quantity_liters')?.value || 0;
+    return price_per_liter * quantity_liters;
   }
 
   calculateSeedCost(): number {
-    const pricePerSeed = this.expenseForm.get('pricePerSeed')?.value || 0;
+    const price_per_tree = this.expenseForm.get('price_per_tree')?.value || 0;
     const quantity = this.expenseForm.get('quantity')?.value || 0;
-    return pricePerSeed * quantity;
+    return price_per_tree * quantity;
   }
 
   calculateRepairCost(): number {
@@ -481,12 +487,14 @@ export class AddexpensesComponent implements OnInit {
   }
 
   calculateRentCost(): number {
-    return this.expenseForm.get('rentCost')?.value || 0;
+    const price_per_rai = this.expenseForm.get('price_per_rai')?.value || 0;
+    const area = this.expenseForm.get('area')?.value || 0;
+    return price_per_rai * area;
   }
 
   calculateDiggingCost(): number {
-    const pricePerTon = this.expenseForm.get('pricePerTon')?.value || 0;
+    const price_per_ton = (this.expenseForm.get('price_per_ton')?.value || 0) / 1000;
     const weight = this.expenseForm.get('weight')?.value || 0;
-    return pricePerTon * weight;
+    return price_per_ton * weight;
   }
 }
