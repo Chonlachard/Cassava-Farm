@@ -31,7 +31,8 @@ exports.getExpense = async (req, res) => {
     LEFT JOIN Planting pl ON e.expense_id = pl.expense_id
     LEFT JOIN WeedSpraying ws ON e.expense_id = ws.expense_id
     LEFT JOIN HormoneSpraying hs ON e.expense_id = hs.expense_id
-    WHERE e.user_id = ?;`;
+    WHERE e.user_id = ?
+    AND is_deleted = 0;`;
 
     // ตัวแปร values สำหรับกรอกพารามิเตอร์
     const values = [user_id];
@@ -332,12 +333,12 @@ exports.deleteExpense = async (req, res) => {
         return res.status(400).json({ message: 'กรุณาระบุ expense_id' });
     }
 
-    const query = 'DELETE FROM expenses WHERE expense_id = ?';
+    const query = 'UPDATE expenses SET is_deleted = 1 WHERE expense_id = ?';
     try {
         const result = await new Promise((resolve, reject) => {
             db.query(query, [expenseId], (err, results) => {
                 if (err) {
-                    console.error('Database query error:', err);
+                    console.error('ข้อผิดพลาดในการ query ข้อมูลจากฐานข้อมูล:', err);
                     reject(err);
                 } else {
                     resolve(results);
@@ -350,12 +351,13 @@ exports.deleteExpense = async (req, res) => {
             return res.status(404).json({ message: 'ไม่พบข้อมูลค่าใช้จ่ายที่ต้องการลบ' });
         }
 
-        res.json({ message: 'ลบข้อมูลค่าใช้จ่ายสำเร็จ' });
+        res.json({ message: 'ข้อมูลค่าใช้จ่ายถูกตั้งค่าเป็นลบสำเร็จ' });
     } catch (err) {
-        console.error('Error executing query:', err.stack);
-        res.status(500).json({ message: 'เกิดข้อผิดพลาดในการลบข้อมูลค่าใช้จ่าย' });
+        console.error('เกิดข้อผิดพลาดในการทำงานกับฐานข้อมูล:', err.stack);
+        res.status(500).json({ message: 'เกิดข้อผิดพลาดในการอัพเดตข้อมูลค่าใช้จ่าย' });
     }
 };
+
 
 exports.updateExpense = async (req, res) => {
     const { expense_id, user_id, plot_id, expense_date, category, amount, details } = req.body;

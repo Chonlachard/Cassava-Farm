@@ -58,8 +58,7 @@ export class ExpensesService {
   // ฟังก์ชันสำหรับลบค่าใช้จ่าย
   deleteExpense(expenseId: number): Observable<any> {
     const url = `${this.apiUrl}/expenses/${expenseId}`;
-    console.log(url);
-    return this.http.delete<any>(url);
+    return this.http.put<any>(url, { is_deleted: 1 });
   }
 
   updateExpense(expense: any): Observable<any> {

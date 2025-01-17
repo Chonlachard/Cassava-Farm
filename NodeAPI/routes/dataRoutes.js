@@ -88,7 +88,7 @@ router.put('/editWorker', workerController.editWorker);
 router.get('/getExpenses', expensesController.getExpense);
 router.get('/getDeopdowplot', expensesController.getDeopdowplot);
 router.post('/addExpenses', expensesController.addExpense);
-router.delete('/expenses/:expense_id', expensesController.deleteExpense);
+router.put('/expenses/:expense_id', expensesController.deleteExpense);
 router.put('/editExpenses', expensesController.updateExpense);
 router.get('/getExpenseEdit/:expense_id', expensesController.getExpenseEdit);
 router.get('/expenses/date-range', expensesController.getExpensesByDateRange);
