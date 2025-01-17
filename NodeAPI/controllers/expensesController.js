@@ -3,7 +3,7 @@ const db = require('../config/db'); // ใช้ db สำหรับเชื�
 
 // ฟังก์ชันสำหรับดึงข้อมูลค่าใช้จ่าย
 exports.getExpense = async (req, res) => {
-    const { user_id, startDate, endDate, plot_id, category } = req.query;
+    const { user_id } = req.query;
 
     // ตรวจสอบว่ามีการส่ง user_id มาหรือไม่
     if (!user_id) {
@@ -11,34 +11,31 @@ exports.getExpense = async (req, res) => {
     }
 
     // เริ่มต้นคำสั่ง SQL
-    let query = `SELECT a.expense_id, a.expense_date, b.plot_name, a.category, a.amount, a.details
-                    FROM expenses a
-                    LEFT JOIN plots b on a.plot_id = b.plot_id
-                    WHERE a.user_id = ?`;
+    let query = `SELECT 
+        e.expense_id,
+        e.category,
+        COALESCE(h.total_price, f.total_price, he.total_price, fu.total_price, cv.total_price, 
+                 er.repair_cost, ep.purchase_price, l.total_price, ex.total_price, 
+                 tc.total_price, pl.total_price, ws.total_price, hs.total_price) AS total_price
+    FROM expenses e
+    LEFT JOIN HormoneData h ON e.expense_id = h.expense_id
+    LEFT JOIN FertilizerData f ON e.expense_id = f.expense_id
+    LEFT JOIN HerbicideData he ON e.expense_id = he.expense_id
+    LEFT JOIN FuelData fu ON e.expense_id = fu.expense_id
+    LEFT JOIN CassavaVarietyData cv ON e.expense_id = cv.expense_id
+    LEFT JOIN EquipmentRepairData er ON e.expense_id = er.expense_id
+    LEFT JOIN EquipmentPurchaseData ep ON e.expense_id = ep.expense_id
+    LEFT JOIN LandRentalData l ON e.expense_id = l.expense_id
+    LEFT JOIN ExcavationData ex ON e.expense_id = ex.expense_id
+    LEFT JOIN TreeCutting tc ON e.expense_id = tc.expense_id
+    LEFT JOIN Planting pl ON e.expense_id = pl.expense_id
+    LEFT JOIN WeedSpraying ws ON e.expense_id = ws.expense_id
+    LEFT JOIN HormoneSpraying hs ON e.expense_id = hs.expense_id
+    WHERE e.user_id = ?;`;
 
     // ตัวแปร values สำหรับกรอกพารามิเตอร์
     const values = [user_id];
-
-    // การเพิ่มเงื่อนไขต่าง ๆ ใน SQL
-    if (plot_id) {
-        query += ' AND a.plot_id = ?';
-        values.push(plot_id);
-    }
-    if (startDate) {
-        query += ' AND a.expense_date >= ?';
-        values.push(startDate); // ค่าของ startDate
-    }
-    if (endDate) {
-        query += ' AND a.expense_date <= ?';
-        values.push(endDate); // ค่าของ endDate
-    }
-    if (category) {
-        query += ' AND a.category = ?';
-        values.push(category); // ค่าของ category
-    }
-
-    query += ' ORDER BY a.expense_date DESC';  // การเรียงลำดับผลลัพธ์
-
+    
     // การรันคำสั่ง SQL
     db.query(query, values, (err, results) => {
         if (err) {
@@ -46,23 +43,18 @@ exports.getExpense = async (req, res) => {
             return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการดึงข้อมูลค่าใช้จ่าย' });
         }
 
-        // แปลงวันที่จาก yyyy-mm-dd เป็น dd-mm-yyyy
-        const formattedResults = results.map(expense => ({
-            ...expense,
-            expense_date: moment(expense.expense_date).format('DD-MM-YYYY')  // ใช้ moment.js เพื่อจัดรูปแบบวันที่
-        }));
-
-        // ส่งผลลัพธ์กลับไปในรูปแบบ JSON
-        res.json(formattedResults);
+        // ส่งผลลัพธ์กลับไปในรูปแบบ JSON โดยไม่แปลงวันที่
+        res.json(results);
     });
 };
+
 // ฟังก์ชันสำหรับเพิ่มข้อมูลค่าใช้จ่าย
 exports.addExpense = async (req, res) => {
     const { user_id, category, details } = req.body;
     console.log('User ID:', user_id);
     console.log('Category:', category);
     console.log('Details:', details);
-    
+
 
     // ตรวจสอบข้อมูลที่ส่งมา
     if (!user_id || !category || !details) {
@@ -127,7 +119,7 @@ exports.addExpense = async (req, res) => {
                     fertilizerTotalPrice,  // คำนวณ total_price
                     details.plot_id,
                     details.purchase_location
-                    
+
                 ];
                 break;
 
@@ -184,7 +176,7 @@ exports.addExpense = async (req, res) => {
                 break;
 
             case 'ค่าซ่อมอุปกรณ์':
-               
+
                 detailQuery = `
                     INSERT INTO EquipmentRepairData (expense_id, repair_date, repair_names, details, repair_cost, shop_name)
                     VALUES (?, ?, ?, ?, ?, ?)
@@ -234,7 +226,7 @@ exports.addExpense = async (req, res) => {
                 break;
 
             case 'ค่าขุด':
-                const excavationTotalPrice = details.weight * (details.price_per_ton/1000);
+                const excavationTotalPrice = details.weight * (details.price_per_ton / 1000);
                 detailQuery = `
                     INSERT INTO ExcavationData (expense_id, payment_date, weight, price_per_ton, total_price, plot_id)
                     VALUES (?, ?, ?, ?, ?, ?)
@@ -366,7 +358,7 @@ exports.deleteExpense = async (req, res) => {
 };
 
 exports.updateExpense = async (req, res) => {
-    const { expense_id, user_id,plot_id, expense_date, category, amount, details } = req.body;
+    const { expense_id, user_id, plot_id, expense_date, category, amount, details } = req.body;
 
     try {
         // ตรวจสอบข้อมูลที่มีอยู่
@@ -379,7 +371,7 @@ exports.updateExpense = async (req, res) => {
         // อัพเดตข้อมูล
         await db.promise().query(
             `UPDATE expenses SET user_id = ?,plot_id = ?, expense_date = ?, category = ?, amount = ?, details = ? WHERE expense_id = ?`,
-            [user_id,plot_id, expense_date, category, amount, details, expense_id]
+            [user_id, plot_id, expense_date, category, amount, details, expense_id]
         );
 
         res.status(200).json({ message: 'อัพเดตข้อมูลค่าใช้จ่ายสำเร็จ' });
