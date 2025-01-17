@@ -16,7 +16,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
   styleUrls: ['./expenses.component.css']
 })
 export class ExpensesComponent implements OnInit, AfterViewInit {
-  displayedColumns: string[] = ['expense_date', 'plot_name', 'category', 'amount', 'details', 'actions'];
+  displayedColumns: string[] = ['category','total_price','actions'];
   dataSource = new MatTableDataSource<any>([]);
 
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
@@ -46,9 +46,6 @@ export class ExpensesComponent implements OnInit, AfterViewInit {
     private translate: TranslateService
   ) {
     this.searchForm = this.fb.group({
-      startDate: [''],
-      endDate: [''],
-      plot_id: [''],
       category: ['']
     });
   }
