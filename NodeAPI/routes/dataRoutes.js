@@ -52,10 +52,7 @@ router.put('/profileuser', profileController.updateProfile);
 router.post('/change-password', profileController.changePassword);
 
 // 3. Dashboard Routes
-// ─────────────────────────────────────────
-router.get('/getPlotAnalytics', dashbordController.getPlotAnalytics);
-router.get('/availableYears', dashbordController.availableYears);
-router.get('/financialData', dashbordController.financialData);
+
 
 // 4. Plot Management Routes
 // ─────────────────────────────────────────

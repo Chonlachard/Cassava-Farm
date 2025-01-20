@@ -7,7 +7,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { NavbarComponent } from './navbar/navbar.component';
-import { DashbordComponent } from './dashbord/dashbord.component';
 import { ProfileComponent } from './profile/profile.component';
 import { ExpensesComponent } from './expenses/expenses.component';
 import { AddexpensesComponent } from './expenses/addexpenses/addexpenses.component';
@@ -37,14 +36,15 @@ import { EditHarvestComponent } from './harvests/edit-harvest/edit-harvest.compo
 import { WorkerComponent } from './worker/worker.component';
 import { AddWorkerComponent } from './worker/add-worker/add-worker.component';
 import { EditWorkerComponent } from './worker/edit-worker/edit-worker.component';
-import { BaseChartDirective  } from 'ng2-charts';
 import { CommonModule } from '@angular/common';
+import { ChartModule } from 'primeng/chart';
 import { NgApexchartsModule } from "ng-apexcharts";
 import { EditExpensesComponent } from './expenses/edit-expenses/edit-expenses.component';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { EnterOtpComponent } from './forgot-password/enter-otp/enter-otp.component';
 import { ChangePasswordComponent } from './forgot-password/change-password/change-password.component';
 import { EditPlantedComponent } from './cassava-planted-area/edit-planted/edit-planted.component';
+import { DashbordComponent } from './dashbord/dashbord.component';
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
@@ -54,7 +54,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     AppComponent,
     LoginComponent,
     NavbarComponent,
-    DashbordComponent,
     ProfileComponent,
     ExpensesComponent,
     AddexpensesComponent,
@@ -71,12 +70,13 @@ export function HttpLoaderFactory(http: HttpClient) {
     EnterOtpComponent,
     ChangePasswordComponent,
     EditPlantedComponent,
+    DashbordComponent,
   ],
   imports: [
     BrowserModule,
     NgApexchartsModule,
     HttpClientModule,
-    BaseChartDirective,
+    ChartModule ,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
