@@ -49,6 +49,7 @@ export class AddexpensesComponent implements OnInit {
       details: [''],
       descript : [''],
       equipmentCost: [''],
+      expenses_date: [''],  
       fuel_date: [''],
       formula: ['', Validators.required],  // ต้องการตรวจสอบการกรอกข้อมูล
       land_area: [''],
@@ -154,6 +155,7 @@ export class AddexpensesComponent implements OnInit {
     const expenseData = {
       user_id: formValue.user_id,
       category: category,
+      expenses_date : formValue.expenses_date,
       details: details, // ส่งข้อมูลที่เกี่ยวข้องกับประเภท
     };
   
@@ -231,9 +233,9 @@ export class AddexpensesComponent implements OnInit {
         }
         break;
       case 'ค่าคนตัดต้น':
-        if (formValue.cutting_date && formValue.price_per_tree && formValue.number_of_trees && formValue.plot_id) {
+        if ( formValue.price_per_tree && formValue.number_of_trees && formValue.plot_id) {
           details = { 
-            cutting_date: formValue.cutting_date,
+      
             price_per_tree: formValue.price_per_tree, 
             number_of_trees: formValue.number_of_trees, 
             totalPrice: this.calculatedTotalPrice,
@@ -242,9 +244,9 @@ export class AddexpensesComponent implements OnInit {
         }
         break;
       case 'ค่าคนปลูก':
-        if (formValue.payment_date  && formValue.worker_name && formValue.land_area && formValue.price_per_rai && formValue.plot_id) {
+        if ( formValue.worker_name && formValue.land_area && formValue.price_per_rai && formValue.plot_id) {
           details = { 
-            payment_date: formValue.payment_date,
+           
             worker_name: formValue.worker_name,
             land_area: formValue.land_area,
             price_per_rai: formValue.price_per_rai,
@@ -254,9 +256,9 @@ export class AddexpensesComponent implements OnInit {
         }
         break;
       case 'ค่าคนฉีดยาฆ่าหญ่า':
-        if (formValue.spray_date && formValue.number_of_cans && formValue.price_per_can && formValue.plot_id) {
+        if ( formValue.number_of_cans && formValue.price_per_can && formValue.plot_id) {
           details = { 
-            spray_date: formValue.spray_date,
+            
             number_of_cans: formValue.number_of_cans,
             price_per_can: formValue.price_per_can,
             plot_id: formValue.plot_id,
@@ -265,9 +267,9 @@ export class AddexpensesComponent implements OnInit {
         }
         break;
       case 'ค่าคนฉีดยาฮอโมน':
-        if (formValue.spray_date && formValue.number_of_cans && formValue.price_per_can && formValue.plot_id) {
+        if ( formValue.number_of_cans && formValue.price_per_can && formValue.plot_id) {
           details = { 
-            spray_date: formValue.spray_date,
+           
             number_of_cans: formValue.number_of_cans,
             price_per_can: formValue.price_per_can,
             plot_id: formValue.plot_id,
@@ -276,9 +278,9 @@ export class AddexpensesComponent implements OnInit {
         }
         break;
       case 'ค่าน้ำมัน':
-        if (formValue.fuel_date && formValue.price_per_liter && formValue.quantity_liters && formValue.plot_id) {
+        if ( formValue.price_per_liter && formValue.quantity_liters && formValue.plot_id) {
           details = { 
-            fuel_date: formValue.fuel_date,
+          
             price_per_liter: formValue.price_per_liter, 
             quantity_liters: formValue.quantity_liters, 
             plot_id: formValue.plot_id,
@@ -287,9 +289,9 @@ export class AddexpensesComponent implements OnInit {
         }
         break;
       case 'ค่าพันธุ์มัน':
-        if (formValue.purchase_date && formValue.quantity && formValue.price_per_tree && formValue.plot_id && formValue.variety_name && formValue.purchase_location) {
+        if ( formValue.quantity && formValue.price_per_tree && formValue.plot_id && formValue.variety_name && formValue.purchase_location) {
           details = { 
-            purchase_date: formValue.purchase_date,
+           
             quantity: formValue.quantity,
             price_per_tree: formValue.price_per_tree,
             plot_id: formValue.plot_id,
@@ -300,9 +302,9 @@ export class AddexpensesComponent implements OnInit {
         }
         break;
       case 'ค่าซ่อมอุปกรณ์':
-        if (formValue.repair_date && formValue.repair_names && formValue.repair_cost && formValue.shop_name) {
+        if ( formValue.repair_names && formValue.repair_cost && formValue.shop_name) {
           details = { 
-            repair_date: formValue.repair_date,
+        
             repair_names: formValue.repair_names,
             details: formValue.details,
             repair_cost: formValue.repair_cost, 
@@ -311,9 +313,9 @@ export class AddexpensesComponent implements OnInit {
         }
         break;
       case 'ค่าอุปกรณ์':
-        if (formValue.purchase_date && formValue.item_name && formValue.shop_name && formValue.purchase_price) {
+        if ( formValue.item_name && formValue.shop_name && formValue.purchase_price) {
           details = { 
-            purchase_date: formValue.purchase_date,
+            
             item_name: formValue.item_name,
             shop_name: formValue.shop_name,
             purchase_price: formValue.purchase_price,
@@ -322,9 +324,9 @@ export class AddexpensesComponent implements OnInit {
         }
         break;
       case 'ค่าเช่าที่ดิน':
-        if (formValue.rental_date && formValue.owner_name && formValue.owner_phone && formValue.area && formValue.price_per_rai && formValue.rental_period && formValue.plot_id) {
+        if (formValue.owner_name && formValue.owner_phone && formValue.area && formValue.price_per_rai && formValue.rental_period && formValue.plot_id) {
           details = { 
-            rental_date: formValue.rental_date,
+            
             owner_name: formValue.owner_name,
             owner_phone: formValue.owner_phone,
             area: formValue.area,
@@ -336,9 +338,9 @@ export class AddexpensesComponent implements OnInit {
         }
         break;
       case 'ค่าขุด':
-        if (formValue.payment_date && formValue.weight && formValue.price_per_ton) {
+        if ( formValue.weight && formValue.price_per_ton) {
           details = { 
-            payment_date: formValue.payment_date,
+           
             weight: formValue.weight,
             price_per_ton: formValue.price_per_ton, 
             totalPrice: this.calculatedTotalPrice

@@ -51,9 +51,10 @@ exports.getExpense = async (req, res) => {
 
 // ฟังก์ชันสำหรับเพิ่มข้อมูลค่าใช้จ่าย
 exports.addExpense = async (req, res) => {
-    const { user_id, category, details } = req.body;
+    const { user_id, category,expenses_date , details } = req.body;
     console.log('User ID:', user_id);
     console.log('Category:', category);
+    console.log('Expense Date:', expenses_date);
     console.log('Details:', details);
 
 
@@ -73,9 +74,10 @@ exports.addExpense = async (req, res) => {
     }
 
     // เพิ่มข้อมูลลงในฐานข้อมูล Expenses
-    const query = `INSERT INTO expenses (user_id, category) VALUES (?, ?)`;
+    const query = `INSERT INTO expenses (user_id, category, expenses_date) VALUES (?, ?, ?)`;
 
-    db.query(query, [user_id, category], (err, expenseResult) => {
+
+    db.query(query, [user_id, category, expenses_date], (err, expenseResult) => {
         if (err) {
             console.error('Error executing query:', err.stack);
             return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการเพิ่มข้อมูลค่าใช้จ่าย' });
@@ -145,12 +147,11 @@ exports.addExpense = async (req, res) => {
             case 'ค่าน้ำมัน':
                 const fuelTotalPrice = details.price_per_liter * details.quantity_liters;
                 detailQuery = `
-                    INSERT INTO FuelData (expense_id, fuel_date, price_per_liter, quantity_liters, total_price, plot_id)
+                    INSERT INTO FuelData (expense_id, price_per_liter, quantity_liters, total_price, plot_id)
                     VALUES (?, ?, ?, ?, ?, ?)
                 `;
                 params = [
                     expenseId,
-                    details.fuel_date,
                     details.price_per_liter,
                     details.quantity_liters,
                     fuelTotalPrice,  // คำนวณ total_price
@@ -161,12 +162,12 @@ exports.addExpense = async (req, res) => {
             case 'ค่าพันธุ์มัน':
                 const cassavaTotalPrice = details.price_per_tree * details.quantity;
                 detailQuery = `
-                    INSERT INTO CassavaVarietyData (expense_id, purchase_date, quantity, price_per_tree, total_price, plot_id, variety_name, purchase_location)
+                    INSERT INTO CassavaVarietyData (expense_id, quantity, price_per_tree, total_price, plot_id, variety_name, purchase_location)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 `;
                 params = [
                     expenseId,
-                    details.purchase_date,
+                   
                     details.quantity,
                     details.price_per_tree,
                     cassavaTotalPrice,  // คำนวณ total_price
@@ -179,12 +180,12 @@ exports.addExpense = async (req, res) => {
             case 'ค่าซ่อมอุปกรณ์':
 
                 detailQuery = `
-                    INSERT INTO EquipmentRepairData (expense_id, repair_date, repair_names, details, repair_cost, shop_name)
+                    INSERT INTO EquipmentRepairData (expense_id, repair_names, details, repair_cost, shop_name)
                     VALUES (?, ?, ?, ?, ?, ?)
                 `;
                 params = [
                     expenseId,
-                    details.repair_date,
+                    
                     details.repair_names,
                     details.details,
                     details.repair_cost,
@@ -194,12 +195,12 @@ exports.addExpense = async (req, res) => {
 
             case 'ค่าอุปกรณ์':
                 detailQuery = `
-                    INSERT INTO EquipmentPurchaseData (expense_id, purchase_date, item_name, shop_name, purchase_price, descript)
+                    INSERT INTO EquipmentPurchaseData (expense_id,  item_name, shop_name, purchase_price, descript)
                     VALUES (?, ?, ?, ?, ?, ?)
                 `;
                 params = [
                     expenseId,
-                    details.purchase_date,
+                   
                     details.item_name,
                     details.shop_name,
                     details.purchase_price,
@@ -210,12 +211,12 @@ exports.addExpense = async (req, res) => {
             case 'ค่าเช่าที่ดิน':
                 const rentalTotalPrice = details.price_per_rai * details.area;
                 detailQuery = `
-                    INSERT INTO LandRentalData (expense_id, rental_date, owner_name, owner_phone, area, price_per_rai, rental_period, total_price, plot_id)
+                    INSERT INTO LandRentalData (expense_id, owner_name, owner_phone, area, price_per_rai, rental_period, total_price, plot_id)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                 `;
                 params = [
                     expenseId,
-                    details.rental_date,
+                    
                     details.owner_name,
                     details.owner_phone,
                     details.area,
@@ -229,12 +230,12 @@ exports.addExpense = async (req, res) => {
             case 'ค่าขุด':
                 const excavationTotalPrice = details.weight * (details.price_per_ton / 1000);
                 detailQuery = `
-                    INSERT INTO ExcavationData (expense_id, payment_date, weight, price_per_ton, total_price, plot_id)
+                    INSERT INTO ExcavationData (expense_id,  weight, price_per_ton, total_price, plot_id)
                     VALUES (?, ?, ?, ?, ?, ?)
                 `;
                 params = [
                     expenseId,
-                    details.payment_date,
+                  
                     details.weight,
                     details.price_per_ton,
                     excavationTotalPrice,  // ใช้ total_price ที่ส่งมาจากหน้า
@@ -245,12 +246,12 @@ exports.addExpense = async (req, res) => {
             case 'ค่าคนตัดต้น':
                 const cuttingTotalPrice = details.price_per_tree * details.number_of_trees;
                 detailQuery = `
-                    INSERT INTO TreeCutting (expense_id, cutting_date, number_of_trees, price_per_tree, total_price, plot_id)
+                    INSERT INTO TreeCutting (expense_id,  number_of_trees, price_per_tree, total_price, plot_id)
                     VALUES (?, ?, ?, ?, ?, ?)
                 `;
                 params = [
                     expenseId,
-                    details.cutting_date,
+                   
                     details.number_of_trees,
                     details.price_per_tree,
                     cuttingTotalPrice,
@@ -262,12 +263,12 @@ exports.addExpense = async (req, res) => {
             case 'ค่าคนปลูก':
                 const plantingTotalPrice = details.price_per_rai * details.land_area;
                 detailQuery = `
-                    INSERT INTO Planting (expense_id, payment_date, worker_name, land_area, price_per_rai, total_price, plot_id)
+                    INSERT INTO Planting (expense_id, worker_name, land_area, price_per_rai, total_price, plot_id)
                     VALUES (?, ?, ?, ?, ?, ?, ?)
                 `;
                 params = [
                     expenseId,
-                    details.payment_date,
+                    
                     details.worker_name,
                     details.land_area,
                     details.price_per_rai,
@@ -279,12 +280,12 @@ exports.addExpense = async (req, res) => {
             case 'ค่าคนฉีดยาฆ่าหญ่า':
                 const sprayingTotalPrice = details.price_per_can * details.number_of_cans;
                 detailQuery = `
-                    INSERT INTO WeedSpraying (expense_id, spray_date, number_of_cans, price_per_can, total_price, plot_id)
+                    INSERT INTO WeedSpraying (expense_id,  number_of_cans, price_per_can, total_price, plot_id)
                     VALUES (?, ?, ?, ?, ?, ?)
                 `;
                 params = [
                     expenseId,
-                    details.spray_date,
+                    
                     details.number_of_cans,
                     details.price_per_can,
                     sprayingTotalPrice,  // ใช้ total_price ที่ส่งมาจากหน้า
@@ -295,12 +296,12 @@ exports.addExpense = async (req, res) => {
             case 'ค่าคนฉีดยาฮอโมน':
                 const hormoneSprayingTotalPrice = details.price_per_can * details.number_of_cans;
                 detailQuery = `
-                    INSERT INTO HormoneSpraying (expense_id, spray_date, number_of_cans, price_per_can, total_price, plot_id)
+                    INSERT INTO HormoneSpraying (expense_id, number_of_cans, price_per_can, total_price, plot_id)
                     VALUES (?, ?, ?, ?, ?, ?)
                 `;
                 params = [
                     expenseId,
-                    details.spray_date,
+                    
                     details.number_of_cans,
                     details.price_per_can,
                     hormoneSprayingTotalPrice,  // ใช้ total_price ที่ส่งมาจากหน้า
@@ -360,27 +361,7 @@ exports.deleteExpense = async (req, res) => {
 
 
 exports.updateExpense = async (req, res) => {
-    const { expense_id, user_id, plot_id, expense_date, category, amount, details } = req.body;
-
-    try {
-        // ตรวจสอบข้อมูลที่มีอยู่
-        const [rows] = await db.promise().query('SELECT * FROM expenses WHERE expense_id = ?', [expense_id]);
-
-        if (rows.length === 0) {
-            return res.status(404).json({ message: 'ไม่พบข้อมูลค่าใช้จ่าย' });
-        }
-
-        // อัพเดตข้อมูล
-        await db.promise().query(
-            `UPDATE expenses SET user_id = ?,plot_id = ?, expense_date = ?, category = ?, amount = ?, details = ? WHERE expense_id = ?`,
-            [user_id, plot_id, expense_date, category, amount, details, expense_id]
-        );
-
-        res.status(200).json({ message: 'อัพเดตข้อมูลค่าใช้จ่ายสำเร็จ' });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'เกิดข้อผิดพลาดในการอัพเดตข้อมูลค่าใช้จ่าย', error });
-    }
+   
 };
 
 exports.getExpenseEdit = async (req, res) => {
