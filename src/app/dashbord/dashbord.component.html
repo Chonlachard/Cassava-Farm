@@ -27,7 +27,36 @@
             <strong>{{ summary.totalHarvest || 0 }} กิโลกรัม</strong>
         </div>
     </div>
-    <h3>รายรับ-รายจ่ายรายเดือน</h3>
+    <!-- ✅ รายรับ-รายจ่ายรวม -->
+    <h3>รายรับ-รายจ่ายรวม</h3>
+    <div class="income-expense">
+        <div class="income">
+            <i class="pi pi-dollar"></i>
+            <p>รายรับ</p>
+            <strong>{{ incomeExpense.totalIncome | number }} บาท</strong>
+        </div>
+        <div class="expense">
+            <i class="pi pi-wallet"></i>
+            <p>รายจ่าย</p>
+            <strong>{{ incomeExpense.totalExpense | number }} บาท</strong>
+        </div>
+        <div class="net-income">
+            <i class="pi pi-money-bill"></i>
+            <p>กำไร/ขาดทุน</p>
+            <strong [ngClass]="{'profit': incomeExpense.netIncome >= 0, 'loss': incomeExpense.netIncome < 0}">
+                {{ incomeExpense.netIncome | number }} บาท
+            </strong>
+        </div>
+    </div>
 
+
+
+ <!-- ✅ กล่องแสดงกราฟที่ใหญ่ขึ้น -->
+<div class="chart-container">
+    <h3>
+        <i class="pi pi-chart-bar"></i> รายรับ-รายจ่ายรายเดือน
+    </h3>
+    <p-chart type="bar" [data]="chartData" [options]="chartOptions"></p-chart>
+</div>
 
 </div>

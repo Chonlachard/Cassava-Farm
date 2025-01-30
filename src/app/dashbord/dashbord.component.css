@@ -1,118 +1,328 @@
 /* ✅ กล่องหลัก (Main Container) */
 .container {
-    max-width: 1200px; /* กำหนดความกว้างสูงสุดของคอนเทนเนอร์ */
-    margin: 0 auto; /* จัดกึ่งกลางหน้าจอ */
-    padding: 20px; /* เพิ่มช่องว่างด้านในให้ดูสวยงาม */
-    font-family: Arial, sans-serif; /* ใช้ฟอนต์อ่านง่าย */
-    color: #333; /* กำหนดสีข้อความเป็นสีเทาเข้ม */
-    background-color: #fff; /* สีพื้นหลังเป็นสีขาว */
-    border-radius: 10px; /* ทำให้ขอบมน */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* เพิ่มเงาเบา ๆ เพื่อให้ UI ดูมีมิติ */
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    color: #333;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* ✅ หัวข้อหลัก */
 .container h2 {
-    text-align: center; /* จัดข้อความตรงกลาง */
-    font-size: 28px; /* ขนาดตัวอักษรใหญ่ขึ้น */
-    margin-bottom: 20px; /* เพิ่มช่องว่างด้านล่าง */
-    font-weight: bold; /* ทำให้ตัวหนา */
-    color: #007ad9; /* ใช้สีน้ำเงินสำหรับหัวข้อ */
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 20px;
+    font-weight: bold;
+    color: #007ad9;
 }
 
-/* ✅ ไอคอนของหัวข้อ */
 .container h2 i {
-    color: #007ad9; /* กำหนดสีให้ไอคอน */
-    font-size: 28px; /* กำหนดขนาดไอคอน */
-    margin-right: 10px; /* เพิ่มระยะห่างระหว่างไอคอนกับข้อความ */
+    color: #007ad9;
+    font-size: 28px;
+    margin-right: 10px;
 }
 
 /* ✅ ส่วนของฟิลเตอร์เลือกปี */
 .filter-section {
-    display: flex; /* ใช้ Flexbox จัดให้อยู่ในแนวระนาบ */
-    justify-content: center; /* จัดให้อยู่ตรงกลาง */
-    align-items: center; /* จัดให้อยู่ตรงกลางแนวตั้ง */
-    gap: 15px; /* เพิ่มระยะห่างระหว่าง label และ select */
-    margin-bottom: 30px; /* เพิ่มช่องว่างด้านล่าง */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 30px;
 }
 
-/* ✅ Label ของตัวเลือกปี */
 .filter-section label {
-    font-size: 16px; /* กำหนดขนาดตัวอักษร */
-    font-weight: bold; /* ทำให้ตัวหนา */
+    font-size: 16px;
+    font-weight: bold;
 }
 
-/* ✅ Select Dropdown */
 .filter-section select {
-    min-width: 150px; /* กำหนดความกว้างขั้นต่ำ */
-    padding: 8px; /* เพิ่มช่องว่างด้านใน */
-    border-radius: 5px; /* ทำให้มุมมน */
-    border: 1px solid #ccc; /* กำหนดเส้นขอบ */
-    font-size: 14px; /* กำหนดขนาดตัวอักษร */
-    cursor: pointer; /* เปลี่ยนเมาส์เป็น pointer เมื่อโฮเวอร์ */
-    transition: border 0.3s ease; /* เพิ่มเอฟเฟกต์การเปลี่ยนสีเส้นขอบ */
+    min-width: 150px;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    cursor: pointer;
+    transition: border 0.3s ease;
 }
 
-/* ✅ เมื่อกดที่ Dropdown */
 .filter-section select:focus {
-    border-color: #007ad9; /* เปลี่ยนสีเส้นขอบเมื่อเลือก */
-    outline: none; /* เอาขอบสีฟ้าที่เป็นค่าเริ่มต้นออก */
+    border-color: #007ad9;
+    outline: none;
 }
 
 /* ✅ ส่วนสรุปข้อมูล (Summary Section) */
 .summary {
-    display: flex; /* ใช้ Flexbox จัดเรียงข้อมูลในแถวเดียวกัน */
-    justify-content: space-between; /* กระจายข้อมูลให้เต็มพื้นที่ */
-    flex-wrap: wrap; /* ให้แถวใหม่เมื่อหน้าจอเล็ก */
-    margin-bottom: 20px; /* เพิ่มช่องว่างด้านล่าง */
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
 }
 
 /* ✅ กล่องแต่ละข้อมูล */
 .summary-item {
-    flex: 1; /* ให้ขยายได้เท่ากัน */
+    flex: 1;
+    text-align: center;
+    border: 1px solid #ccc;
+    padding: 15px;
+    margin: 10px;
+    font-size: 16px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.summary-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.summary-item i {
+    display: block;
+    font-size: 30px;
+    margin-bottom: 8px;
+    color: #007ad9;
+}
+
+.summary-item p {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.summary-item strong {
+    font-size: 20px;
+    color: #000;
+}
+
+/* ✅ ตารางรายรับ-รายจ่าย */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: center;
+    font-size: 14px;
+}
+
+th {
+    background-color: #007ad9;
+    color: white;
+}
+
+td {
+    background-color: #f9f9f9;
+}
+
+/* ✅ สีของตัวเลขในรายรับ-รายจ่าย */
+.profit {
+    color: green;
+    font-weight: bold;
+}
+
+.loss {
+    color: red;
+    font-weight: bold;
+}
+
+/* ✅ กราฟรายรับ-รายจ่าย */
+.chart-container {
+    width: 100%;
+    height: 400px;
+    margin: 20px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* ✅ ปรับแต่งปุ่ม */
+button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007ad9;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+button:hover {
+    background-color: #005bb5;
+}
+/* ✅ กล่องรายรับ-รายจ่ายรวม */
+.income-expense {
+    display: flex; /* จัดเรียงให้อยู่ในแนวนอน */
+    justify-content: space-between; /* กระจายข้อมูลให้เต็มพื้นที่ */
+    flex-wrap: wrap; /* ให้ขึ้นบรรทัดใหม่เมื่อหน้าจอเล็ก */
+    margin-bottom: 20px; /* เพิ่มช่องว่างด้านล่าง */
+}
+
+/* ✅ กล่องแต่ละข้อมูล */
+.income, .expense, .net-income {
+    flex: 1; /* ขยายขนาดให้เท่ากัน */
     text-align: center; /* จัดข้อความตรงกลาง */
     border: 1px solid #ccc; /* เพิ่มเส้นขอบ */
     padding: 15px; /* เพิ่มช่องว่างด้านใน */
-    margin: 10px; /* เพิ่มช่องว่างรอบ ๆ กล่อง */
-    font-size: 16px; /* กำหนดขนาดตัวอักษร */
-    background-color: #f9f9f9; /* พื้นหลังสีเทาอ่อน */
-    border-radius: 8px; /* ทำให้มุมมน */
+    margin: 10px; /* เพิ่มช่องว่างรอบๆ กล่อง */
+    font-size: 16px; /* ขนาดตัวอักษร */
+    background-color: #f9f9f9; /* สีพื้นหลังอ่อน */
+    border-radius: 8px; /* ทำให้มุมโค้งมน */
     transition: transform 0.3s ease, box-shadow 0.3s ease; /* เอฟเฟกต์ Hover */
 }
 
 /* ✅ เมื่อโฮเวอร์ที่กล่องข้อมูล */
-.summary-item:hover {
+.income:hover, .expense:hover, .net-income:hover {
     transform: translateY(-5px); /* ขยับขึ้นเล็กน้อย */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* เพิ่มเงา */
 }
 
-/* ✅ ไอคอนในกล่องข้อมูล */
-.summary-item i {
-    display: block; /* จัดให้อยู่คนละบรรทัดกับข้อความ */
-    font-size: 30px; /* ขนาดไอคอนใหญ่ขึ้น */
-    margin-bottom: 8px; /* เพิ่มช่องว่างด้านล่าง */
-    color: #007ad9; /* ใช้สีน้ำเงิน */
+/* ✅ รายรับ (Income) */
+.income {
+    background-color: #e3fcef; /* สีเขียวอ่อน */
+    color: #16a34a; /* สีเขียวเข้ม */
+    border: 1px solid #16a34a; /* ขอบสีเขียว */
 }
 
-/* ✅ คำอธิบายใต้ไอคอน */
-.summary-item p {
-    font-size: 16px; /* กำหนดขนาดตัวอักษร */
-    color: #666; /* สีเทาอ่อน */
-    margin-bottom: 5px; /* เพิ่มช่องว่างด้านล่าง */
+/* ✅ รายจ่าย (Expense) */
+.expense {
+    background-color: #fee2e2; /* สีแดงอ่อน */
+    color: #dc2626; /* สีแดงเข้ม */
+    border: 1px solid #dc2626; /* ขอบสีแดง */
 }
 
-/* ✅ ค่าตัวเลขในกล่อง */
-.summary-item strong {
-    font-size: 20px; /* กำหนดขนาดตัวอักษรใหญ่ขึ้น */
-    color: #000; /* กำหนดให้เป็นสีดำ */
+/* ✅ กำไร/ขาดทุน (Net Income) */
+.net-income {
+    background-color: #e0f2fe; /* สีฟ้าอ่อน */
+    border: 1px solid #007ad9; /* ขอบสีน้ำเงิน */
 }
 
-/* ✅ ทำให้รองรับการใช้งานบนมือถือ */
+/* ✅ สีของตัวเลขในกำไร/ขาดทุน */
+.profit {
+    color: green;
+    font-weight: bold;
+}
+
+.loss {
+    color: red;
+    font-weight: bold;
+}
+/* ✅ กำหนดสไตล์ไอคอน */
+.income-expense i {
+    display: block; /* จัดให้ไอคอนอยู่ด้านบน */
+    font-size: 28px; /* ปรับขนาดใหญ่ขึ้น */
+    margin-bottom: 5px; /* เพิ่มระยะห่างจากข้อความ */
+}
+
+/* ✅ ไอคอนสำหรับรายรับ (Income) */
+.income i {
+    color: #16a34a; /* สีเขียว */
+}
+
+/* ✅ ไอคอนสำหรับรายจ่าย (Expense) */
+.expense i {
+    color: #dc2626; /* สีแดง */
+}
+
+/* ✅ ไอคอนสำหรับกำไร/ขาดทุน (Net Income) */
+.net-income i {
+    color: #007ad9; /* สีน้ำเงิน */
+}
+
+
+
+
+/* ✅ ปรับแต่งกล่องแสดงกราฟ */
+.chart-container {
+    width: 100%;
+    height: 400px;
+    margin: 20px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ✅ ปรับแต่ง p-chart */
+p-chart {
+    width: 100% !important;
+    max-width: 900px;
+    height: 400px !important;
+    display: block;
+    margin: 0 auto;
+}
+/* ✅ กล่องแสดงกราฟ */
+.chart-container {
+    width: 100%;
+    height: auto;
+    margin: 30px auto;
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+/* ✅ ปรับขนาด p-chart ให้อยู่ตรงกลาง */
+.chart-container p-chart {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+}
+
+/* ✅ ทำให้รองรับมือถือ */
 @media (max-width: 768px) {
     .summary {
-        flex-direction: column; /* เรียงเป็นแนวตั้งเมื่อหน้าจอเล็ก */
+        flex-direction: column;
     }
 
     .summary-item {
+        margin: 10px 0;
+    }
+
+    .filter-section {
+        flex-direction: column;
+    }
+
+    .chart-container {
+        height: 300px;
+    }
+
+    th, td {
+        font-size: 12px;
+        padding: 8px;
+    }
+    .income-expense {
+        flex-direction: column; /* เรียงเป็นแนวตั้งเมื่อหน้าจอเล็ก */
+    }
+
+    .income, .expense, .net-income {
         margin: 10px 0; /* เพิ่มช่องว่างระหว่างกล่อง */
+    }
+
+    .chart-container {
+        height: 300px;
+    }
+
+    p-chart {
+        height: 250px !important;
     }
 }
