@@ -66,7 +66,7 @@ router.put('/updateplot', getPlotController.EditPlot);
 // ─────────────────────────────────────────
 router.post('/addharvest', harvestController.addHarvest);
 router.get('/getHarvestImage/:harvest_id', harvestController.getHarvestImage);
-router.delete('/deleteharvest/:harvest_id', harvestController.deleteHarvest);
+router.put('/deleteharvest/:harvest_id', harvestController.deleteHarvest);
 router.get('/getEditHarvest/:harvest_id', harvestController.getUpdateHarvest);
 router.put('/updateharvest', harvestController.updateHarvest);
 router.get('/getharvests', harvestController.getHarvests);

@@ -16,7 +16,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
   styleUrls: ['./expenses.component.css']
 })
 export class ExpensesComponent implements OnInit, AfterViewInit {
-  displayedColumns: string[] = ['category','total_price','actions'];
+  displayedColumns: string[] = ['expenses_date','category','total_price','actions'];
   dataSource = new MatTableDataSource<any>([]);
 
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;

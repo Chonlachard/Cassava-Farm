@@ -8,7 +8,7 @@ exports.getWorker = async (req, res) => {
         return res.status(400).json({ message: 'กรุณาระบุ user_id' });
     }
 
-    let query = 'SELECT * FROM workers WHERE user_id = ?';
+    let query = 'SELECT * FROM workers WHERE user_id = ? AND is_delete = 0;';
     const params = [user_id];
 
     // ค้นหาชื่อหรือเบอร์โทร

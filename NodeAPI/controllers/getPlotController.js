@@ -13,7 +13,7 @@ exports.getPlots = async (req, res) => {
     }
 
     try {
-        const query = 'SELECT * FROM plots WHERE user_id = ?';
+        const query = 'SELECT * FROM plots WHERE user_id = ? AND is_delete = 0;';
         
         db.query(query, [userId], (err, results) => {
             if (err) {

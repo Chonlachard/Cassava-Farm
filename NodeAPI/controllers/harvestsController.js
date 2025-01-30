@@ -21,82 +21,51 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // ฟังก์ชันสำหรับเพิ่มข้อมูลการเก็บเกี่ยว
-exports.addHarvest = function (req, res) {
-    // ใช้ multer middleware สำหรับการอัปโหลดไฟล์
-    upload.single('image')(req, res, function (err) {
-        if (err) {
-            return res.status(400).json({ message: 'เกิดข้อผิดพลาดในการอัปโหลดภาพ: ' + err.message });
-        }
+exports.addHarvest = async function (req, res) {
+    try {
+        // ✅ ใช้ Promise รอให้ `multer` อัปโหลดไฟล์เสร็จก่อน
+        await new Promise((resolve, reject) => {
+            upload.single('image')(req, res, function (err) {
+                if (err) return reject(err);
+                resolve();
+            });
+        });
 
-        // รับข้อมูลจาก req.body
-        const {
-            user_id,
-            plot_id,
-            harvest_date,
-            company_name,
-            weight_in,
-            weight_out,
-            weight_product,
-            weight_deduct,
-            net_weight_kg,
-            starch_percentage,
-            price,
-            amount
-        } = req.body;
-
+        const { user_id, plot_id, harvest_date, company_name, net_weight_kg, starch_percentage, price, amount } = req.body;
         const image_path = req.file ? `/uploads/${req.file.filename}` : null;
 
-        // ตรวจสอบข้อมูลที่จำเป็น
-        if (
-            !user_id || !plot_id || !harvest_date || !company_name ||
-            !weight_in || !weight_out || !weight_product || !weight_deduct ||
-            !net_weight_kg || !starch_percentage || !price || !amount
-        ) {
+        if (!user_id || !plot_id || !harvest_date || !company_name || !net_weight_kg || !starch_percentage || !price || !amount) {
             return res.status(400).json({ message: 'กรุณาระบุข้อมูลให้ครบถ้วน' });
         }
 
-        // คำสั่ง SQL สำหรับการเพิ่มข้อมูล
-        const query = `
+        console.log("🚀 Received Data:", req.body);
+
+        const checkDuplicateQuery = `SELECT * FROM harvests WHERE user_id = ? AND plot_id = ? AND harvest_date = ?`;
+        const [duplicate] = await db.promise().query(checkDuplicateQuery, [user_id, plot_id, harvest_date]);
+
+        if (duplicate.length > 0) {
+            return res.status(400).json({ message: 'ข้อมูลนี้มีอยู่แล้ว' });
+        }
+
+        const insertQuery = `
             INSERT INTO harvests (
-                user_id, 
-                plot_id, 
-                harvest_date, 
-                company_name, 
-                weight_in, 
-                weight_out, 
-                weight_product, 
-                weight_deduct, 
-                net_weight_kg, 
-                starch_percentage, 
-                price, 
-                amount, 
-                image_path
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                user_id, plot_id, harvest_date, company_name, net_weight_kg, 
+                starch_percentage, price, amount, image_path
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
 
-        // ทำการเพิ่มข้อมูลไปยังฐานข้อมูล
-        db.query(query, [
-            user_id,
-            plot_id,
-            harvest_date,
-            company_name,
-            weight_in,
-            weight_out,
-            weight_product,
-            weight_deduct,
-            net_weight_kg,
-            starch_percentage,
-            price,
-            amount,
-            image_path
-        ], (err, results) => {
-            if (err) {
-                console.error('ข้อผิดพลาดในการทำคำสั่ง SQL:', err);
-                return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการเพิ่มข้อมูลการเก็บเกี่ยว' });
-            }
-            res.json({ message: 'เพิ่มข้อมูลการเก็บเกี่ยวสำเร็จ' });
-        });
-    });
+        const [results] = await db.promise().query(insertQuery, [
+            user_id, plot_id, harvest_date, company_name, net_weight_kg,
+            starch_percentage, price, amount, image_path
+        ]);
+
+        console.log("✅ Data Inserted:", results);
+        res.json({ message: 'เพิ่มข้อมูลการเก็บเกี่ยวสำเร็จ' });
+
+    } catch (err) {
+        console.error('❌ Error:', err);
+        res.status(500).json({ message: 'เกิดข้อผิดพลาดในการเพิ่มข้อมูลการเก็บเกี่ยว' });
+    }
 };
 
 
@@ -112,6 +81,7 @@ exports.getHarvests = async (req, res) => {
         FROM harvests a
         LEFT JOIN plots b ON a.plot_id = b.plot_id
         WHERE a.user_id = ?
+        AND a.is_delete = 0
     `;
     const params = [user_id];
 
@@ -183,7 +153,7 @@ exports.deleteHarvest = async (req, res) => {
         return res.status(400).json({ message: 'กรุณาระบุ harvest_id' });
     }
 
-    const query = 'DELETE FROM harvests WHERE harvest_id = ?';
+    const query = 'UPDATE harvests SET is_delete = 1 WHERE harvest_id = ?';
     try {
         db.query(query, [harvestId], (err, results) => {
             if (err) {
@@ -209,10 +179,6 @@ exports.updateHarvest = async (req, res) => {
         plot_id,
         harvest_date,
         company_name,
-        weight_in,
-        weight_out,
-        weight_product,
-        weight_deduct,
         net_weight_kg,
         starch_percentage,
         price,
@@ -247,10 +213,6 @@ exports.updateHarvest = async (req, res) => {
             !plot_id ||
             !harvest_date ||
             !company_name ||
-            !weight_in ||
-            !weight_out ||
-            !weight_product ||
-            !weight_deduct ||
             !net_weight_kg ||
             !starch_percentage ||
             !price ||
@@ -265,10 +227,6 @@ exports.updateHarvest = async (req, res) => {
                 plot_id = ?, 
                 harvest_date = ?, 
                 company_name = ?, 
-                weight_in = ?, 
-                weight_out = ?, 
-                weight_product = ?, 
-                weight_deduct = ?, 
                 net_weight_kg = ?, 
                 starch_percentage = ?, 
                 price = ?, 
@@ -281,10 +239,6 @@ exports.updateHarvest = async (req, res) => {
             plot_id,
             harvest_date,
             company_name,
-            weight_in,
-            weight_out,
-            weight_product,
-            weight_deduct,
             net_weight_kg,
             starch_percentage,
             price,
@@ -321,7 +275,7 @@ exports.getUpdateHarvest = async (req, res) => {
     }
 
     const query = `
-    SELECT a.harvest_id , a.harvest_date, b.plot_name, a.company_name,a.weight_in,a.weight_out, a.weight_product,a.weight_deduct, a.net_weight_kg, a.starch_percentage,a.price, a.amount , a.image_path
+    SELECT a.harvest_id , a.harvest_date, b.plot_name, a.company_name, a.net_weight_kg, a.starch_percentage,a.price, a.amount , a.image_path
     FROM harvests a
     LEFT JOIN plots b ON a.plot_id = b.plot_id
     WHERE a.harvest_id = ?

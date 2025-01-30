@@ -9,7 +9,7 @@
                 </label>
                 <input type="date" id="harvest_date" formControlName="harvest_date">
             </div>
-            
+
             <!-- แปลง -->
             <div class="form-field">
                 <label for="plot">
@@ -29,7 +29,7 @@
                 <input type="text" id="company_name" formControlName="company_name">
             </div>
 
-           
+
 
             <!-- น้ำหนักสุทธิ -->
             <div class="form-field">
@@ -72,9 +72,13 @@
             </div>
 
             <!-- ปุ่มบันทึก -->
-            <button type="submit" [disabled]="!harvestForm.valid" class="submit-button">
+            <button type="submit" 
+                [disabled]="!harvestForm.valid" 
+                class="submit-button" 
+                (click)="onSubmit()">
                 <i class="fas fa-save"></i> {{ 'harvest.save' | translate }}
             </button>
+
         </form>
     </div>
 </div>

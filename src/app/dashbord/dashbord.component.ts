@@ -6,56 +6,43 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./dashbord.component.css'],
 })
 export class DashbordComponent implements OnInit {
-  chartData: any; // กำหนดข้อมูลกราฟ
-  chartOptions: any; // กำหนดการตั้งค่ากราฟ
+  basicData: any; // กำหนดข้อมูลกราฟ
+  basicOptions: any; // กำหนดการตั้งค่ากราฟ
 
   ngOnInit(): void {
-    // กำหนดข้อมูลเริ่มต้นสำหรับกราฟ
-    this.chartData = {
-      labels: ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน'],
+    this.loadChart();
+  }
+
+  loadChart() {
+    this.basicData = {
+      labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
       datasets: [
         {
-          label: 'รายรับ',
-          data: [5000, 8000, 6000, 10000],
-          backgroundColor: 'rgba(75, 192, 192, 0.2)',
-          borderColor: 'rgba(75, 192, 192, 1)',
-          borderWidth: 1,
+          label: 'My First dataset',
+          backgroundColor: '#42A5F5',
+          data: [65, 59, 80, 81, 56, 55, 40],
         },
         {
-          label: 'รายจ่าย',
-          data: [3000, 4000, 2000, 5000],
-          backgroundColor: 'rgba(255, 99, 132, 0.2)',
-          borderColor: 'rgba(255, 99, 132, 1)',
-          borderWidth: 1,
+          label: 'My Second dataset',
+          backgroundColor: '#9CCC65',
+          data: [28, 48, 40, 19, 86, 27, 90],
         },
       ],
     };
 
-    // ตั้งค่าการแสดงผลของกราฟ
-    this.chartOptions = {
-      responsive: true,
-      scales: {
-        x: {
-          title: {
-            display: true,
-            text: 'เดือน',
-          },
-        },
-        y: {
-          title: {
-            display: true,
-            text: 'Amount (thousands)',
-          },
-          beginAtZero: true,
-        },
+    this.basicOptions = {
+      title: {
+        display: true,
+        text: 'Line Chart',
       },
-      plugins: {
-        legend: {
-          position: 'top',
-          labels: {
-            boxWidth: 20,
+      scales: {
+        yAxes: [
+          {
+            ticks: {
+              beginAtZero: true,
+            },
           },
-        },
+        ],
       },
     };
   }

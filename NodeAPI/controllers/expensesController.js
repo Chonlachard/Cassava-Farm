@@ -12,7 +12,8 @@ exports.getExpense = async (req, res) => {
 
     // เริ่มต้นคำสั่ง SQL
     let query = `SELECT 
-        e.expense_id,
+    e.expenses_date,
+       DATE_FORMAT(e.expenses_date, '%d/%m/%y') AS expenses_date, 
         e.category,
         COALESCE(h.total_price, f.total_price, he.total_price, fu.total_price, cv.total_price, 
                  er.repair_cost, ep.purchase_price, l.total_price, ex.total_price, 

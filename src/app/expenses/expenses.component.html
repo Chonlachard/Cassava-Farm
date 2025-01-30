@@ -50,6 +50,17 @@
             <div class="table-container">
                 <table mat-table [dataSource]="dataSource" matSort class="expense-table">
                     <!-- Category Column -->
+                    <ng-container matColumnDef="expenses_date">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: bold;">
+                            วันที่จ่ายเงิน
+                            <!-- {{ 'expense.table.categoryHeader' | translate }} -->
+                        </th>
+                        <td mat-cell *matCellDef="let expense">
+                            {{ expense.expenses_date }}
+                        </td>
+                    </ng-container>
+
+                    <!-- Category Column -->
                     <ng-container matColumnDef="category">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: bold;">
                             ประเภทรายจ่าย

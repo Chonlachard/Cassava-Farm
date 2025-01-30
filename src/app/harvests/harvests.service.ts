@@ -36,12 +36,14 @@ export class HarvestsService {
   }
 
   addHarvest(formData: FormData): Observable<any> {
+    console.log('formData:', formData);
     return this.http.post<any>(`${this.apiUrl}/addharvest`, formData);
   }
 
   deleteHarvest(harvestId: number): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/deleteharvest/${harvestId}`);
-  }
+    return this.http.put<any>(`${this.apiUrl}/deleteharvest/${harvestId}`, { isDeleted: true });
+}
+
   // อัปเดตข้อมูลเก็บเกี่ยว
   updateHarvest(formData: FormData): Observable<any> {
     return this.http.put(`${this.apiUrl}/updateharvest`, formData); // ใช้ PUT สำหรับการอัปเดต
