@@ -1,3 +1,33 @@
 <app-navbar></app-navbar>
+<div class="container">
+    <h2><i class="pi pi-chart-bar"></i> รายงานกระแสเงินสดไร่มันสำปะหลัง</h2>
 
-<p-chart type="bar" [data]="basicData" [options]="basicOptions" />
+    <!-- ✅ เมนูเลือกปี -->
+    <div class="filter-section">
+        <label for="yearSelect">เลือกปี:</label>
+        <select id="yearSelect" [(ngModel)]="selectedYear" (change)="loadCashFlowReport()">
+            <option *ngFor="let year of availableYears" [value]="year">{{ year }}</option>
+        </select>
+    </div>
+
+    <div class="summary">
+        <div class="summary-item">
+            <i class="pi pi-sitemap"></i>
+            <p>จำนวนแปลง</p>
+            <strong>{{ summary.plotCount || 0 }} แปลง</strong>
+        </div>
+        <div class="summary-item">
+            <i class="pi pi-map"></i>
+            <p>พื้นที่ทั้งหมด</p>
+            <strong>{{ summary.totalArea || 0 }} ไร่</strong>
+        </div>
+        <div class="summary-item">
+            <i class="pi pi-chart-bar"></i>
+            <p>ผลผลิตรวม</p>
+            <strong>{{ summary.totalHarvest || 0 }} กิโลกรัม</strong>
+        </div>
+    </div>
+    <h3>รายรับ-รายจ่ายรายเดือน</h3>
+
+
+</div>

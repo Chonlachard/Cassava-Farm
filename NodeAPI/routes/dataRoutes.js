@@ -14,7 +14,7 @@ const plotController = require('../controllers/plotsController');
 const getPlotController = require('../controllers/getPlotController');
 const harvestController = require('../controllers/harvestsController');
 const workerController = require('../controllers/workerController');
-const dashbordController = require('../controllers/dashbordController');
+const dashboardController = require('../controllers/dashbordController');
 const { sendOTP, verifyOTP, changePassword, resendOTP } = require('../controllers/passwordController');
 
 // Multer Configuration
@@ -52,7 +52,7 @@ router.put('/profileuser', profileController.updateProfile);
 router.post('/change-password', profileController.changePassword);
 
 // 3. Dashboard Routes
-
+router.get('/getCashFlowReport', dashboardController.getCashFlowReport);
 
 // 4. Plot Management Routes
 // ─────────────────────────────────────────
