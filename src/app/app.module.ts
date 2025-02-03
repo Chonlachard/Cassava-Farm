@@ -45,6 +45,7 @@ import { EnterOtpComponent } from './forgot-password/enter-otp/enter-otp.compone
 import { ChangePasswordComponent } from './forgot-password/change-password/change-password.component';
 import { EditPlantedComponent } from './cassava-planted-area/edit-planted/edit-planted.component';
 import { DashbordComponent } from './dashbord/dashbord.component';
+import { TableModule } from 'primeng/table';
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
@@ -103,6 +104,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     MatFormFieldModule,      // สำหรับ mat-form-field
     GoogleMapsModule,
     MatTooltipModule,
+    TableModule
   ],
   providers: [],
   bootstrap: [AppComponent]

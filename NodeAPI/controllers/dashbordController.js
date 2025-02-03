@@ -68,7 +68,7 @@ FROM (
 ) AS combined_data; 
             `, [userId, selectedYear, userId, selectedYear]);
 
-            // ✅ ดึงข้อมูลรายรับ-รายจ่ายแยกตามเดือน
+        // ✅ ดึงข้อมูลรายรับ-รายจ่ายแยกตามเดือน
         const [monthlyIncomeExpense] = await db.promise().query(`
             SELECT 
                 months.month AS month,
@@ -122,10 +122,80 @@ FROM (
 
             `, [userId, selectedYear, userId, selectedYear]);
 
+        const [categoryExpents] = await db.promise().query(`
+                SELECT 
+    e.category AS expenseCategory, 
+    COUNT(e.expense_id) AS totalRecords,  -- ✅ จำนวนครั้งที่มีค่าใช้จ่ายในประเภทนี้
+    SUM(
+        COALESCE(h.total_price, f.total_price, he.total_price, fu.total_price, cv.total_price, 
+                 er.repair_cost, ep.purchase_price, l.total_price, ex.total_price, 
+                 tc.total_price, pl.total_price, ws.total_price, hs.total_price, 0)
+    ) AS totalAmount
+FROM expenses e
+LEFT JOIN HormoneData h ON e.expense_id = h.expense_id
+LEFT JOIN FertilizerData f ON e.expense_id = f.expense_id
+LEFT JOIN HerbicideData he ON e.expense_id = he.expense_id
+LEFT JOIN FuelData fu ON e.expense_id = fu.expense_id
+LEFT JOIN CassavaVarietyData cv ON e.expense_id = cv.expense_id
+LEFT JOIN EquipmentRepairData er ON e.expense_id = er.expense_id
+LEFT JOIN EquipmentPurchaseData ep ON e.expense_id = ep.expense_id
+LEFT JOIN LandRentalData l ON e.expense_id = l.expense_id
+LEFT JOIN ExcavationData ex ON e.expense_id = ex.expense_id
+LEFT JOIN TreeCutting tc ON e.expense_id = tc.expense_id
+LEFT JOIN Planting pl ON e.expense_id = pl.expense_id
+LEFT JOIN WeedSpraying ws ON e.expense_id = ws.expense_id
+LEFT JOIN HormoneSpraying hs ON e.expense_id = hs.expense_id
+WHERE e.user_id = ?  -- ✅ กรองตาม user_id
+AND YEAR(e.expenses_date) = ? -- ✅ กรองเฉพาะปีที่เลือก
+GROUP BY e.category
+ORDER BY totalAmount DESC;  -- ✅ เรียงจากประเภทที่ใช้จ่ายมากที่สุด
+                `, [userId, selectedYear]);
+
+
+                const [expenseDetails] = await db.promise().query(`
+                    WITH ExpenseDetails AS (
+                        SELECT 
+                            e.category AS expense_detail, -- ✅ เปลี่ยนชื่อให้ใช้งานง่าย
+                            COALESCE(h.total_price, f.total_price, he.total_price, fu.total_price, cv.total_price, 
+                                     er.repair_cost, ep.purchase_price, l.total_price, ex.total_price, 
+                                     tc.total_price, pl.total_price, ws.total_price, hs.total_price, 0) AS total_amount
+                        FROM expenses e
+                        LEFT JOIN HormoneData h ON e.expense_id = h.expense_id
+                        LEFT JOIN FertilizerData f ON e.expense_id = f.expense_id
+                        LEFT JOIN HerbicideData he ON e.expense_id = he.expense_id
+                        LEFT JOIN FuelData fu ON e.expense_id = fu.expense_id
+                        LEFT JOIN CassavaVarietyData cv ON e.expense_id = cv.expense_id
+                        LEFT JOIN EquipmentRepairData er ON e.expense_id = er.expense_id
+                        LEFT JOIN EquipmentPurchaseData ep ON e.expense_id = ep.expense_id
+                        LEFT JOIN LandRentalData l ON e.expense_id = l.expense_id
+                        LEFT JOIN ExcavationData ex ON e.expense_id = ex.expense_id
+                        LEFT JOIN TreeCutting tc ON e.expense_id = tc.expense_id
+                        LEFT JOIN Planting pl ON e.expense_id = pl.expense_id
+                        LEFT JOIN WeedSpraying ws ON e.expense_id = ws.expense_id
+                        LEFT JOIN HormoneSpraying hs ON e.expense_id = hs.expense_id
+                        WHERE e.user_id = ?
+                        AND YEAR(e.expenses_date) = ?
+                    ),
+                    TotalSum AS (
+                        SELECT COALESCE(SUM(total_amount), 0) AS total_sum FROM ExpenseDetails -- ✅ ป้องกัน NULL
+                    )
+                    SELECT 
+                        e.expense_detail,
+                        e.total_amount,
+                        ROUND((e.total_amount / t.total_sum) * 100, 2) AS percentage_of_expense -- ✅ เปลี่ยนชื่อให้ใช้งานง่าย
+                    FROM ExpenseDetails e
+                    CROSS JOIN TotalSum t
+                    ORDER BY e.total_amount DESC;
+                `, [userId, selectedYear]);
+                
+        
+
         res.json({
             summary: summary[0] || {},
             IncomExpent: IncomExpent[0] || {},
             monthlyIncomeExpense: monthlyIncomeExpense || [],
+            categoryExpents: categoryExpents || [],
+            expenseDetails: expenseDetails || [],
             selectedYear,
             userId
         });

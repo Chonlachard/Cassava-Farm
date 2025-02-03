@@ -25,7 +25,7 @@
     margin-right: 10px;
 }
 
-/* ✅ ส่วนของฟิลเตอร์เลือกปี */
+/* ✅ ฟิลเตอร์เลือกปี */
 .filter-section {
     display: flex;
     justify-content: center;
@@ -54,7 +54,7 @@
     outline: none;
 }
 
-/* ✅ ส่วนสรุปข้อมูล (Summary Section) */
+/* ✅ ส่วนสรุปข้อมูล */
 .summary {
     display: flex;
     justify-content: space-between;
@@ -62,7 +62,6 @@
     margin-bottom: 20px;
 }
 
-/* ✅ กล่องแต่ละข้อมูล */
 .summary-item {
     flex: 1;
     text-align: center;
@@ -87,164 +86,63 @@
     color: #007ad9;
 }
 
-.summary-item p {
-    font-size: 16px;
-    color: #666;
-    margin-bottom: 5px;
-}
-
-.summary-item strong {
-    font-size: 20px;
-    color: #000;
-}
-
-/* ✅ ตารางรายรับ-รายจ่าย */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-th, td {
-    border: 1px solid #ddd;
-    padding: 12px;
-    text-align: center;
-    font-size: 14px;
-}
-
-th {
-    background-color: #007ad9;
-    color: white;
-}
-
-td {
-    background-color: #f9f9f9;
-}
-
-/* ✅ สีของตัวเลขในรายรับ-รายจ่าย */
-.profit {
-    color: green;
-    font-weight: bold;
-}
-
-.loss {
-    color: red;
-    font-weight: bold;
-}
-
-/* ✅ กราฟรายรับ-รายจ่าย */
-.chart-container {
-    width: 100%;
-    height: 400px;
-    margin: 20px auto;
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* ✅ ปรับแต่งปุ่ม */
-button {
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
-    background-color: #007ad9;
-    color: white;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background 0.3s ease;
-}
-
-button:hover {
-    background-color: #005bb5;
-}
 /* ✅ กล่องรายรับ-รายจ่ายรวม */
 .income-expense {
-    display: flex; /* จัดเรียงให้อยู่ในแนวนอน */
-    justify-content: space-between; /* กระจายข้อมูลให้เต็มพื้นที่ */
-    flex-wrap: wrap; /* ให้ขึ้นบรรทัดใหม่เมื่อหน้าจอเล็ก */
-    margin-bottom: 20px; /* เพิ่มช่องว่างด้านล่าง */
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
 }
 
 /* ✅ กล่องแต่ละข้อมูล */
 .income, .expense, .net-income {
-    flex: 1; /* ขยายขนาดให้เท่ากัน */
-    text-align: center; /* จัดข้อความตรงกลาง */
-    border: 1px solid #ccc; /* เพิ่มเส้นขอบ */
-    padding: 15px; /* เพิ่มช่องว่างด้านใน */
-    margin: 10px; /* เพิ่มช่องว่างรอบๆ กล่อง */
-    font-size: 16px; /* ขนาดตัวอักษร */
-    background-color: #f9f9f9; /* สีพื้นหลังอ่อน */
-    border-radius: 8px; /* ทำให้มุมโค้งมน */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* เอฟเฟกต์ Hover */
+    flex: 1;
+    text-align: center;
+    border: 1px solid #ccc;
+    padding: 15px;
+    margin: 10px;
+    font-size: 16px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* ✅ เมื่อโฮเวอร์ที่กล่องข้อมูล */
 .income:hover, .expense:hover, .net-income:hover {
-    transform: translateY(-5px); /* ขยับขึ้นเล็กน้อย */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* เพิ่มเงา */
+    transform: translateY(-5px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-/* ✅ รายรับ (Income) */
+/* ✅ สีพื้นหลังของแต่ละหมวดหมู่ */
 .income {
-    background-color: #e3fcef; /* สีเขียวอ่อน */
-    color: #16a34a; /* สีเขียวเข้ม */
-    border: 1px solid #16a34a; /* ขอบสีเขียว */
+    background-color: #e3fcef;
+    color: #16a34a;
+    border: 1px solid #16a34a;
 }
 
-/* ✅ รายจ่าย (Expense) */
 .expense {
-    background-color: #fee2e2; /* สีแดงอ่อน */
-    color: #dc2626; /* สีแดงเข้ม */
-    border: 1px solid #dc2626; /* ขอบสีแดง */
+    background-color: #fee2e2;
+    color: #dc2626;
+    border: 1px solid #dc2626;
 }
 
-/* ✅ กำไร/ขาดทุน (Net Income) */
 .net-income {
-    background-color: #e0f2fe; /* สีฟ้าอ่อน */
-    border: 1px solid #007ad9; /* ขอบสีน้ำเงิน */
+    background-color: #e0f2fe;
+    border: 1px solid #007ad9;
 }
 
-/* ✅ สีของตัวเลขในกำไร/ขาดทุน */
-.profit {
-    color: green;
-    font-weight: bold;
-}
-
-.loss {
-    color: red;
-    font-weight: bold;
-}
 /* ✅ กำหนดสไตล์ไอคอน */
 .income-expense i {
-    display: block; /* จัดให้ไอคอนอยู่ด้านบน */
-    font-size: 28px; /* ปรับขนาดใหญ่ขึ้น */
-    margin-bottom: 5px; /* เพิ่มระยะห่างจากข้อความ */
+    display: block;
+    font-size: 28px;
+    margin-bottom: 5px;
 }
 
-/* ✅ ไอคอนสำหรับรายรับ (Income) */
-.income i {
-    color: #16a34a; /* สีเขียว */
-}
+/* ✅ ไอคอนแต่ละประเภท */
+.income i { color: #16a34a; }
+.expense i { color: #dc2626; }
+.net-income i { color: #007ad9; }
 
-/* ✅ ไอคอนสำหรับรายจ่าย (Expense) */
-.expense i {
-    color: #dc2626; /* สีแดง */
-}
-
-/* ✅ ไอคอนสำหรับกำไร/ขาดทุน (Net Income) */
-.net-income i {
-    color: #007ad9; /* สีน้ำเงิน */
-}
-
-
-
-
-/* ✅ ปรับแต่งกล่องแสดงกราฟ */
+/* ✅ กราฟรายรับ-รายจ่าย */
 .chart-container {
     width: 100%;
     height: 400px;
@@ -267,59 +165,106 @@ p-chart {
     display: block;
     margin: 0 auto;
 }
-/* ✅ กล่องแสดงกราฟ */
-.chart-container {
-    width: 100%;
-    height: auto;
-    margin: 30px auto;
-    background-color: #fff;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+
+/* ✅ จัดตำแหน่ง Pie Chart และ ตารางให้เหมือนภาพ */
+.expense-report-container {
     display: flex;
-    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+/* ✅ ตกแต่งกล่อง Pie Chart */
+/* ✅ ขยายขนาด Pie Chart Section ให้ใหญ่กว่า */
+.chart-section {
+    flex: 2; /* ✅ ใช้พื้นที่มากขึ้น */
+    min-width: 600px;
+    max-width: 700px; /* ✅ ขยายขนาดให้กว้างขึ้น */
+    text-align: center;
+    padding: 30px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* ✅ ลดขนาดของ Table Section */
+.table-section {
+    flex: 1; /* ✅ ใช้พื้นที่น้อยลง */
+    min-width: 350px;
+    max-width: 500px; /* ✅ ปรับให้เล็กลง */
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+
+/* ✅ ปรับแต่งตาราง PrimeNG */
+.custom-table thead tr {
+    background-color: #007ad9;
+    color: white;
+}
+
+.custom-table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+/* ✅ ปรับขนาดกรอบ Pie Chart */
+.pie-chart-container {
+    width: 100%;
+    max-width: 800px;  /* ✅ กำหนดความกว้างใหญ่ขึ้น */
+    height: 650px;     /* ✅ ปรับความสูงของกราฟ */
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;  /* ✅ เพิ่มพื้นหลังสีขาว */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* ✅ เพิ่มเงา */
+    display: flex;
     align-items: center;
     justify-content: center;
 }
-/* ✅ ปรับขนาด p-chart ให้อยู่ตรงกลาง */
-.chart-container p-chart {
-    width: 100%;
-    max-width: 100%;
-    height: auto;
+
+p-chart {
+    width: 100% !important;
+    max-width: 750px !important;  /* ✅ เพิ่มขนาด Pie Chart */
+    height: 500px !important; /* ✅ เพิ่มความสูงของ Pie Chart */
+    display: block;
+    margin: 0 auto;
 }
 
-/* ✅ ทำให้รองรับมือถือ */
+
+/* ✅ Responsive สำหรับมือถือ */
 @media (max-width: 768px) {
     .summary {
         flex-direction: column;
-    }
-
-    .summary-item {
-        margin: 10px 0;
     }
 
     .filter-section {
         flex-direction: column;
     }
 
-    .chart-container {
-        height: 300px;
-    }
-
-    th, td {
-        font-size: 12px;
-        padding: 8px;
-    }
     .income-expense {
-        flex-direction: column; /* เรียงเป็นแนวตั้งเมื่อหน้าจอเล็ก */
+        flex-direction: column;
     }
 
     .income, .expense, .net-income {
-        margin: 10px 0; /* เพิ่มช่องว่างระหว่างกล่อง */
+        margin: 10px 0;
     }
 
     .chart-container {
         height: 300px;
+    }
+
+    .expense-report-container {
+        flex-direction: column;
+    }
+
+    .chart-section, .table-section {
+        width: 100%;
+        max-width: 100%;
     }
 
     p-chart {

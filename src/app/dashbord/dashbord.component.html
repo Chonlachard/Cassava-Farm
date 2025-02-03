@@ -10,6 +10,7 @@
         </select>
     </div>
 
+    <!-- ✅ ส่วนสรุปข้อมูล -->
     <div class="summary">
         <div class="summary-item">
             <i class="pi pi-sitemap"></i>
@@ -27,6 +28,7 @@
             <strong>{{ summary.totalHarvest || 0 }} กิโลกรัม</strong>
         </div>
     </div>
+
     <!-- ✅ รายรับ-รายจ่ายรวม -->
     <h3>รายรับ-รายจ่ายรวม</h3>
     <div class="income-expense">
@@ -49,14 +51,54 @@
         </div>
     </div>
 
+    <!-- ✅ กราฟรายรับ-รายจ่ายรายเดือน -->
+    <div class="chart-container">
+        <h3><i class="pi pi-chart-bar"></i> รายรับ-รายจ่ายรายเดือน</h3>
+        <p-chart type="bar" [data]="chartData" [options]="chartOptions"></p-chart>
+    </div>
 
+    <!-- ✅ Pie Chart + ตาราง รายจ่าย -->
+    <div class="expense-report-container">
+        <!-- ✅ Pie Chart -->
+        <div class="chart-section">
+            <h3><i class="pi pi-chart-pie"></i> สัดส่วนประเภทรายจ่าย</h3>
+            <p-chart type="pie" [data]="pieChartData" [options]="pieChartOptions"></p-chart>
+        </div>
 
- <!-- ✅ กล่องแสดงกราฟที่ใหญ่ขึ้น -->
-<div class="chart-container">
-    <h3>
-        <i class="pi pi-chart-bar"></i> รายรับ-รายจ่ายรายเดือน
-    </h3>
-    <p-chart type="bar" [data]="chartData" [options]="chartOptions"></p-chart>
-</div>
+        <!-- ✅ ตารางรายละเอียดรายจ่าย -->
+        <div class="table-section">
+            <h3><i class="pi pi-list"></i> รายละเอียดรายจ่าย</h3>
+            <p-table [value]="expenseList" [responsive]="true" class="custom-table" sortMode="multiple">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pSortableColumn="expense_detail">
+                            ประเภทรายจ่าย <p-sortIcon field="expense_detail"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="total_amount">
+                            จำนวนเงิน (บาท) <p-sortIcon field="total_amount"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="percentage_of_expense">
+                            % รายจ่าย <p-sortIcon field="percentage_of_expense"></p-sortIcon>
+                        </th>
+                    </tr>
+                </ng-template>
 
+                <ng-template pTemplate="body" let-expense>
+                    <tr>
+                        <td>{{ expense.expense_detail }}</td>
+                        <td>{{ expense.total_amount | currency:'THB' }}</td>
+                        <td>{{ expense.percentage_of_expense | percent:'1.2-2' }}</td>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="footer">
+                    <tr>
+                        <td><strong>รวมทั้งหมด</strong></td>
+                        <td><strong>{{ totalExpense | currency:'THB' }}</strong></td>
+                        <td><strong>100%</strong></td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
 </div>
