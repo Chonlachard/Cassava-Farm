@@ -116,27 +116,32 @@ export class DashbordComponent implements OnInit {
     };
 
     this.pieChartOptions = {
-      responsive: true, // ✅ ปรับขนาด Pie Chart ให้ตอบสนองตามหน้าจอ
+      responsive: true, // ✅ ทำให้ Pie Chart ปรับขนาดตามหน้าจอ
       maintainAspectRatio: false, // ✅ ป้องกันไม่ให้กราฟถูกบีบ
+      aspectRatio: 0.7, // ✅ ปรับความสูงของ Pie Chart ให้สมดุล
+      animation: {
+        duration: 1000, // ✅ เพิ่ม Animation ให้ Pie Chart ค่อยๆ แสดงผล
+        easing: 'easeInOutQuad' // ✅ ทำให้การเคลื่อนไหวดู Smooth
+      },
       layout: {
         padding: {
-            top: 30,
-            bottom: 30,
-            left: 30,
-            right: 30
-        } // ✅ เพิ่ม padding รอบกราฟเพื่อให้ดูสวยขึ้น
+          top: 30,
+          bottom: 30,
+          left: 30,
+          right: 30
+        } // ✅ เพิ่ม padding รอบกราฟเพื่อให้ดูสมดุล
       },
       plugins: {
         legend: {
-            display: true,
-            position: 'bottom',
-            labels: {
-                font: {
-                    size: 14  // ✅ ขยายขนาดตัวอักษร
-                },
-                padding: 20, // ✅ เพิ่มระยะห่างของ legend
-                boxWidth: 20  // ✅ ขยายขนาดกล่องสีใน legend
-            }
+          display: true,
+          position: 'bottom', // ✅ ย้าย Legend ไปด้านล่าง
+          labels: {
+            font: {
+              size: 14 // ✅ ปรับขนาดตัวอักษรของ Legend ให้ใหญ่ขึ้น
+            },
+            padding: 15, // ✅ เพิ่มระยะห่างของ legend
+            boxWidth: 20 // ✅ ขยายขนาดกล่องสีใน legend
+          }
         },
         tooltip: {
           callbacks: {
@@ -151,23 +156,90 @@ export class DashbordComponent implements OnInit {
       }
     };
     
-
+    
     this.chartOptions = {
-      responsive: true,
-      maintainAspectRatio: false,
+      responsive: true, // ✅ ทำให้ Bar Chart ปรับขนาดได้
+      maintainAspectRatio: false, // ✅ ปิดการรักษาสัดส่วนเพื่อให้สามารถกำหนดความสูงเองได้
+      aspectRatio: 1, // ✅ กำหนดอัตราส่วน (ค่ามากขึ้น = กราฟสูงขึ้น)
+      animation: {
+        duration: 1000, // ✅ เพิ่ม Animation ให้กราฟค่อยๆ แสดงผล
+        easing: 'easeInOutQuad'
+      },
       plugins: {
-        legend: { position: 'top' }
+        legend: {
+          position: 'top',
+          labels: {
+            font: {
+              size: 14
+            },
+            padding: 10
+          }
+        },
+        tooltip: {
+          callbacks: {
+            label: function (context: any) {
+              let value = context.raw.toLocaleString();
+              return `${context.label}: ${value} บาท`;
+            }
+          }
+        }
       },
       scales: {
+        x: {
+          grid: {
+            display: false
+          },
+          title: {
+            display: true,
+            text: "เดือน",
+            font: {
+              size: 16,
+              weight: 'bold'
+            }
+          },
+          ticks: {
+            font: {
+              size: 14
+            }
+          }
+        },
         y: {
-          beginAtZero: true
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: "จำนวนเงิน (บาท)",
+            font: {
+              size: 16,
+              weight: 'bold'
+            }
+          },
+          grid: {
+            color: "rgba(0, 0, 0, 0.1)",
+            borderColor: "rgba(0, 0, 0, 0.2)"
+          },
+          ticks: {
+            font: {
+              size: 14
+            },
+            callback: function (value: number) {
+              return value.toLocaleString() + " บาท";
+            }
+          }
         }
       }
     };
+    
+    
+    
   }
 
    // ✅ ฟังก์ชันแปลงตัวเลขเดือนเป็นชื่อเดือน
   getMonthName(monthNumber: number): string {
     return this.monthNames[monthNumber - 1] || 'ไม่ระบุเดือน'; // ✅ ลบ 1 เพราะ Array เริ่มที่ index 0
   }
+
+
+  selectExpense(expense: any) {
+    
+}
 }

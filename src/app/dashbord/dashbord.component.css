@@ -1,28 +1,23 @@
-/* ✅ กล่องหลัก (Main Container) */
+/* ✅ คอนเทนเนอร์หลัก */
 .container {
+    width: 90%;
     max-width: 1200px;
-    margin: 0 auto;
+    margin: 20px auto;
     padding: 20px;
     font-family: Arial, sans-serif;
     color: #333;
     background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 /* ✅ หัวข้อหลัก */
-.container h2 {
+.container h2, .container h3 {
     text-align: center;
-    font-size: 28px;
+    font-size: 24px;
     margin-bottom: 20px;
     font-weight: bold;
     color: #007ad9;
-}
-
-.container h2 i {
-    color: #007ad9;
-    font-size: 28px;
-    margin-right: 10px;
 }
 
 /* ✅ ฟิลเตอร์เลือกปี */
@@ -30,28 +25,15 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 15px;
-    margin-bottom: 30px;
-}
-
-.filter-section label {
-    font-size: 16px;
-    font-weight: bold;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
 }
 
 .filter-section select {
-    min-width: 150px;
+    min-width: 100px;
     padding: 8px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
     font-size: 14px;
-    cursor: pointer;
-    transition: border 0.3s ease;
-}
-
-.filter-section select:focus {
-    border-color: #007ad9;
-    outline: none;
 }
 
 /* ✅ ส่วนสรุปข้อมูล */
@@ -59,26 +41,27 @@
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
+    gap: 10px;
     margin-bottom: 20px;
 }
 
 .summary-item {
     flex: 1;
     text-align: center;
-    border: 1px solid #ccc;
+    border: 1px solid #ddd;
     padding: 15px;
     margin: 10px;
     font-size: 16px;
     background-color: #f9f9f9;
-    border-radius: 8px;
+    border-radius: 10px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
 
+    
+}
 .summary-item:hover {
     transform: translateY(-5px);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
-
 .summary-item i {
     display: block;
     font-size: 30px;
@@ -86,31 +69,33 @@
     color: #007ad9;
 }
 
-/* ✅ กล่องรายรับ-รายจ่ายรวม */
+
+/* ✅ รายรับ-รายจ่ายรวม */
 .income-expense {
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
+    gap: 10px;
     margin-bottom: 20px;
 }
 
-/* ✅ กล่องแต่ละข้อมูล */
 .income, .expense, .net-income {
     flex: 1;
     text-align: center;
-    border: 1px solid #ccc;
+    border: 1px solid #ddd;
     padding: 15px;
     margin: 10px;
     font-size: 16px;
     background-color: #f9f9f9;
-    border-radius: 8px;
+    border-radius: 10px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .income:hover, .expense:hover, .net-income:hover {
     transform: translateY(-5px);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
+
 
 /* ✅ สีพื้นหลังของแต่ละหมวดหมู่ */
 .income {
@@ -118,55 +103,30 @@
     color: #16a34a;
     border: 1px solid #16a34a;
 }
-
 .expense {
     background-color: #fee2e2;
     color: #dc2626;
     border: 1px solid #dc2626;
 }
-
 .net-income {
     background-color: #e0f2fe;
     border: 1px solid #007ad9;
 }
 
-/* ✅ กำหนดสไตล์ไอคอน */
-.income-expense i {
-    display: block;
-    font-size: 28px;
-    margin-bottom: 5px;
-}
-
-/* ✅ ไอคอนแต่ละประเภท */
-.income i { color: #16a34a; }
-.expense i { color: #dc2626; }
-.net-income i { color: #007ad9; }
-
-/* ✅ กราฟรายรับ-รายจ่าย */
+/* ✅ ปรับขนาดของ Chart Container */
 .chart-container {
     width: 100%;
     height: 400px;
     margin: 20px auto;
     background-color: #fff;
     padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     align-items: center;
     justify-content: center;
 }
 
-/* ✅ ปรับแต่ง p-chart */
-p-chart {
-    width: 100% !important;
-    max-width: 900px;
-    height: 400px !important;
-    display: block;
-    margin: 0 auto;
-}
-
-/* ✅ จัดตำแหน่ง Pie Chart และ ตารางให้เหมือนภาพ */
+/* ✅ จัดตำแหน่ง Pie Chart และ ตาราง */
 .expense-report-container {
     display: flex;
     justify-content: center;
@@ -177,73 +137,64 @@ p-chart {
 }
 
 /* ✅ ตกแต่งกล่อง Pie Chart */
-/* ✅ ขยายขนาด Pie Chart Section ให้ใหญ่กว่า */
 .chart-section {
-    flex: 2; /* ✅ ใช้พื้นที่มากขึ้น */
-    min-width: 600px;
-    max-width: 700px; /* ✅ ขยายขนาดให้กว้างขึ้น */
+    flex: 2;
+    width: 90%;
+    min-width: 500px;
+    max-width: 700px;
+    min-height: 550px;
     text-align: center;
-    padding: 30px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background-color: #fff;
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-/* ✅ ลดขนาดของ Table Section */
-.table-section {
-    flex: 1; /* ✅ ใช้พื้นที่น้อยลง */
-    min-width: 350px;
-    max-width: 500px; /* ✅ ปรับให้เล็กลง */
     padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
+    border: 1px solid #ddd;
+    border-radius: 15px;
     background-color: #fff;
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 3px 3px 15px rgba(0, 0, 0, 0.15);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
+/* ✅ ตารางรายละเอียดรายจ่าย */
+.table-section {
+    flex: 1;
+    min-width: 350px;
+    max-width: 450px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    background-color: #fff;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.15);
+}
 
 /* ✅ ปรับแต่งตาราง PrimeNG */
 .custom-table thead tr {
     background-color: #007ad9;
     color: white;
+    text-align: center;
 }
 
 .custom-table tbody tr:nth-child(even) {
     background-color: #f9f9f9;
 }
-/* ✅ ปรับขนาดกรอบ Pie Chart */
-.pie-chart-container {
-    width: 100%;
-    max-width: 800px;  /* ✅ กำหนดความกว้างใหญ่ขึ้น */
-    height: 650px;     /* ✅ ปรับความสูงของกราฟ */
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #fff;  /* ✅ เพิ่มพื้นหลังสีขาว */
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* ✅ เพิ่มเงา */
-    display: flex;
-    align-items: center;
-    justify-content: center;
+
+/* ✅ ทำให้แถวสามารถคลิกได้ */
+.clickable-row {
+    cursor: pointer;
+    transition: background 0.2s ease-in-out;
 }
 
-p-chart {
-    width: 100% !important;
-    max-width: 750px !important;  /* ✅ เพิ่มขนาด Pie Chart */
-    height: 500px !important; /* ✅ เพิ่มความสูงของ Pie Chart */
-    display: block;
-    margin: 0 auto;
+.clickable-row:hover {
+    background-color: #f0f8ff; /* ✅ เปลี่ยนสีเมื่อ Hover */
 }
 
-
-/* ✅ Responsive สำหรับมือถือ */
+/* ✅ Responsive สำหรับมือถือและแท็บเล็ต */
 @media (max-width: 768px) {
     .summary {
         flex-direction: column;
     }
 
-    .filter-section {
-        flex-direction: column;
+    .summary-item {
+        width: 100%;
     }
 
     .income-expense {
@@ -251,23 +202,22 @@ p-chart {
     }
 
     .income, .expense, .net-income {
-        margin: 10px 0;
-    }
-
-    .chart-container {
-        height: 300px;
-    }
-
-    .expense-report-container {
-        flex-direction: column;
-    }
-
-    .chart-section, .table-section {
         width: 100%;
+    }
+
+    .chart-section {
+        min-width: 100%;
+        max-width: 100%;
+        min-height: 400px;
+        padding: 15px;
+    }
+
+    .table-section {
+        min-width: 100%;
         max-width: 100%;
     }
 
-    p-chart {
-        height: 250px !important;
+    .chart-container {
+        height: 350px;
     }
 }

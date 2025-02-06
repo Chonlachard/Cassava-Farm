@@ -60,7 +60,7 @@
     <!-- ✅ Pie Chart + ตาราง รายจ่าย -->
     <div class="expense-report-container">
         <!-- ✅ Pie Chart -->
-        <div class="chart-section">
+        <div class="chart-section" style="width: 700px; height: 400px;">
             <h3><i class="pi pi-chart-pie"></i> สัดส่วนประเภทรายจ่าย</h3>
             <p-chart type="pie" [data]="pieChartData" [options]="pieChartOptions"></p-chart>
         </div>
@@ -84,10 +84,10 @@
                 </ng-template>
 
                 <ng-template pTemplate="body" let-expense>
-                    <tr>
+                    <tr (click)="selectExpense(expense)" class="clickable-row">
                         <td>{{ expense.expense_detail }}</td>
                         <td>{{ expense.total_amount | currency:'THB' }}</td>
-                        <td>{{ expense.percentage_of_expense | percent:'1.2-2' }}</td>
+                        <td>{{ expense.percentage_of_expense }}</td>
                     </tr>
                 </ng-template>
 
@@ -100,5 +100,7 @@
                 </ng-template>
             </p-table>
         </div>
+
+
     </div>
 </div>
