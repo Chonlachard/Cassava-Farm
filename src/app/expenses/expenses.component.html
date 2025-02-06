@@ -26,7 +26,26 @@
                                 </option>
                             </select>
                         </div>
+
+                        <div class="col-md-3">
+                            <label for="startDate" class="form-label">
+                                วันทีเริ่มต้น
+                            </label>
+                            <input type="date" id="startDate" class="form-control" formControlName="startDate">
+                        </div>
+        
+                        <!-- End Date Field (วันที่สิ้นสุด) -->
+                        <div class="col-md-3">
+                            <label for="endDate" class="form-label">
+                                วันที่สิ้นสุด
+                            </label>
+                            <input type="date" id="endDate" class="form-control" formControlName="endDate">
+                        </div>
+
+
+                       
                     </div>
+                    
 
                     <!-- Action Buttons -->
                     <div class="row mt-4">
@@ -49,14 +68,14 @@
         <mat-card-content>
             <div class="table-container">
                 <table mat-table [dataSource]="dataSource" matSort class="expense-table">
-                    <!-- Category Column -->
+                    <!-- Date Column -->
                     <ng-container matColumnDef="expenses_date">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: bold;">
                             วันที่จ่ายเงิน
                             <!-- {{ 'expense.table.categoryHeader' | translate }} -->
                         </th>
                         <td mat-cell *matCellDef="let expense">
-                            {{ expense.expenses_date }}
+                            {{ expense.expenses_date | date: 'dd/MM/yyyy' }}
                         </td>
                     </ng-container>
 

@@ -16,25 +16,27 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
   styleUrls: ['./expenses.component.css']
 })
 export class ExpensesComponent implements OnInit, AfterViewInit {
-  displayedColumns: string[] = ['expenses_date','category','total_price','actions'];
+  displayedColumns: string[] = ['expenses_date', 'category', 'total_price', 'actions'];
   dataSource = new MatTableDataSource<any>([]);
 
-  @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   searchForm: FormGroup;
   plots: any[] = [];
   categories = [
-    { value: 'ค่าฮอร์โมน', label: 'expense.categories.hormone' },
-    { value: 'ค่าปุ๋ย', label: 'expense.categories.fertilizer' },
-    { value: 'ค่ายาฆ่าหญ่า', label: 'expense.categories.herbicide' },
-    { value: 'ค่าแรงงาน', label: 'expense.categories.labor' },
-    { value: 'ค่าน้ำมัน', label: 'expense.categories.fuel' },
-    { value: 'ค่าพันธุ์มัน', label: 'expense.categories.seed' },
-    { value: 'ค่าซ่อมอุปกรณ์', label: 'expense.categories.equipmentRepair' },
-    { value: 'ค่าอุปกรณ์', label: 'expense.categories.equipment' },
-    { value: 'ค่าเช่าที่ดิน', label: 'expense.categories.landRent' },
-    { value: 'ค่าขุด(ค่าเก็บเกี่ยว)', label: 'expense.categories.harvestCost' },
-    { value: 'อื่นๆ', label: 'expense.categories.other' }
+    { value: 'ค่าฮอร์โมน', label: 'ค่าฮอร์โมน' },
+    { value: 'ค่าปุ๋ย', label: 'ค่าปุ๋ย' },
+    { value: 'ค่ายาฆ่าหญ่า', label: 'ค่ายาฆ่าหญ่า' },
+    { value: 'ค่าคนตัดต้น', label: 'ค่าคนตัดต้น' },
+    { value: 'ค่าคนปลูก', label: 'ค่าคนปลูก' },
+    { value: 'ค่าคนฉีดยาฆ่าหญ่า', label: 'ค่าคนฉีดยาฆ่าหญ่า' },
+    { value: 'ค่าคนฉีดยาฮอโมน', label: 'ค่าคนฉีดยาฮอโมน' },
+    { value: 'ค่าน้ำมัน', label: 'ค่าน้ำมัน' },
+    { value: 'ค่าพันธุ์มัน', label: 'ค่าพันธุ์มัน' },
+    { value: 'ค่าซ่อมอุปกรณ์', label: 'ค่าซ่อมอุปกรณ์' },
+    { value: 'ค่าอุปกรณ์', label: 'ค่าอุปกรณ์' },
+    { value: 'ค่าเช่าที่ดิน', label: 'ค่าเช่าที่ดิน' },
+    { value: 'ค่าขุด', label: 'ค่าขุด' }
   ];
 
   userId: string = '';
@@ -46,7 +48,9 @@ export class ExpensesComponent implements OnInit, AfterViewInit {
     private translate: TranslateService
   ) {
     this.searchForm = this.fb.group({
-      category: ['']
+      category: [''],
+      startDate: [''],
+      endDate: ['']
     });
   }
 
@@ -65,12 +69,8 @@ export class ExpensesComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    if (this.paginator) {
-      this.dataSource.paginator = this.paginator;
-    }
+    this.dataSource.paginator = this.paginator;
   }
-
-
 
   fetchPlots(): void {
     this.expensesService.getDeopPlot(this.userId).subscribe({
