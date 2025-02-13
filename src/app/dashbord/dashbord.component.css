@@ -20,21 +20,55 @@
     color: #007ad9;
 }
 
-/* ✅ ฟิลเตอร์เลือกปี */
+/* ✅ ฟิลเตอร์เลือกปี - ปรับให้ดูสวยขึ้น */
 .filter-section {
     display: flex;
     justify-content: center;
     align-items: center;
     flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 20px;
+    gap: 15px;
+    margin-bottom: 25px;
+    padding: 15px 25px;
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb); /* ✅ เพิ่ม Gradient สีฟ้า */
+    border: 2px solid #007ad9; /* ✅ ขอบสีน้ำเงินสดใส */
+    border-radius: 12px; /* ✅ ขอบโค้งมน */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* ✅ เพิ่มเงาให้ดูมีมิติ */
 }
 
-.filter-section select {
-    min-width: 100px;
-    padding: 8px;
-    font-size: 14px;
+/* ✅ ป้ายกำกับ (Label) */
+.filter-section label {
+    font-size: 18px;
+    font-weight: bold;
+    color: #007ad9; /* ✅ เปลี่ยนสีให้สดใส */
 }
+
+/* ✅ ปรับแต่ง Dropdown */
+.filter-section select {
+    min-width: 150px; /* ✅ ขยายขนาดให้ใหญ่ขึ้น */
+    padding: 12px 18px; /* ✅ ปรับ padding ให้ดูสมดุล */
+    font-size: 16px; /* ✅ เพิ่มขนาดตัวอักษรให้เด่นขึ้น */
+    border: 2px solid #007ad9; /* ✅ เพิ่มขอบสีน้ำเงิน */
+    border-radius: 8px; /* ✅ ทำให้มุมโค้งมน */
+    background-color: white;
+    font-weight: bold;
+    color: #007ad9; /* ✅ เปลี่ยนสีตัวอักษร */
+    cursor: pointer;
+    transition: all 0.3s ease-in-out; /* ✅ เพิ่มเอฟเฟกต์นุ่มนวล */
+}
+
+/* ✅ เอฟเฟกต์เมื่อโฟกัส */
+.filter-section select:focus {
+    border-color: #0056b3;
+    outline: none;
+    box-shadow: 0 0 12px rgba(0, 86, 179, 0.5); /* ✅ เพิ่ม Glow Effect */
+}
+
+/* ✅ เอฟเฟกต์เมื่อ Hover */
+.filter-section select:hover {
+    background-color: #e3f2fd;
+    border-color: #0056b3;
+}
+
 
 /* ✅ ส่วนสรุปข้อมูล */
 .summary {

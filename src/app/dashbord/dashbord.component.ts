@@ -118,7 +118,7 @@ export class DashbordComponent implements OnInit {
     this.pieChartOptions = {
       responsive: true, // ✅ ทำให้ Pie Chart ปรับขนาดตามหน้าจอ
       maintainAspectRatio: false, // ✅ ป้องกันไม่ให้กราฟถูกบีบ
-      aspectRatio: 0.7, // ✅ ปรับความสูงของ Pie Chart ให้สมดุล
+      aspectRatio: 0.8, // ✅ ปรับความสูงของ Pie Chart ให้สมดุล
       animation: {
         duration: 1000, // ✅ เพิ่ม Animation ให้ Pie Chart ค่อยๆ แสดงผล
         easing: 'easeInOutQuad' // ✅ ทำให้การเคลื่อนไหวดู Smooth
