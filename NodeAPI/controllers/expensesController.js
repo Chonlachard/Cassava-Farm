@@ -401,6 +401,7 @@ exports.getDeopdowplot = async (req, res) => {
 exports.getExpenseEdit = async (req, res) => {
     const expenseId = req.query.expense_id;
     console.log('Expense ID:', expenseId);
+
     // ตรวจสอบว่ามีการส่ง expense_id มาหรือไม่
     if (!expenseId) {
         return res.status(400).json({ message: 'กรุณาระบุ expense_id' });
@@ -422,7 +423,7 @@ exports.getExpenseEdit = async (req, res) => {
         const category = categoryResult[0].category;
         let detailQuery = '';
 
-        // สร้าง Query ตามประเภทค่าใช้จ่าย
+        // กำหนด Query ตามประเภทค่าใช้จ่าย
         const expenseQueries = {
             'ค่าฮอร์โมน': `
                 SELECT e.*, h.brand, h.volume, h.price_per_bottle, h.quantity, h.total_price, h.plot_id, h.purchase_location
@@ -436,10 +437,10 @@ exports.getExpenseEdit = async (req, res) => {
                 LEFT JOIN FertilizerData f ON e.expense_id = f.expense_id
                 WHERE e.expense_id = ?`,
 
-            'ค่ายาฆ่าหญ้า': ` 
+            'ค่ายาฆ่าหญ้า': `
                 SELECT e.*, he.brand, he.volume, he.price_per_bottle, he.quantity, he.total_price, he.plot_id, he.purchase_location
                 FROM expenses e
-                LEFT JOIN Herbicidedata he ON e.expense_id = he.expense_id
+                LEFT JOIN HerbicideData he ON e.expense_id = he.expense_id
                 WHERE e.expense_id = ?`,
 
             'ค่าน้ำมัน': `
@@ -502,6 +503,7 @@ exports.getExpenseEdit = async (req, res) => {
                 LEFT JOIN HormoneSpraying hs ON e.expense_id = hs.expense_id
                 WHERE e.expense_id = ?`
         };
+
         // ตรวจสอบว่ามี Query ตรงกับ category หรือไม่
         if (!expenseQueries[category]) {
             return res.status(400).json({ message: 'ไม่สามารถดึงข้อมูลประเภทนี้ได้' });
@@ -521,10 +523,12 @@ exports.getExpenseEdit = async (req, res) => {
                 return res.status(404).json({ message: 'ไม่พบข้อมูลค่าใช้จ่าย' });
             }
 
-            // แปลงวันที่ก่อนส่งกลับ
+            // ✅ เปลี่ยน expense_date เป็น expenses_date และแปลงวันที่
             const formattedResult = {
                 ...results[0],
-                expense_date: moment(results[0].expense_date).format('YYYY-MM-DD')
+                expenses_date: results[0].expenses_date
+                    ? new Date(results[0].expenses_date).toISOString().split('T')[0]
+                    : null // ตรวจสอบค่าว่างก่อนแปลง
             };
 
             // ส่งผลลัพธ์กลับไปในรูปแบบ JSON
@@ -532,7 +536,6 @@ exports.getExpenseEdit = async (req, res) => {
         });
     });
 };
-
 
 
 

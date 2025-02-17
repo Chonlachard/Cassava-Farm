@@ -93,7 +93,8 @@ export class EditExpensesComponent implements OnInit {
       weight: [''],
       worker_name: [''],
       item_name : [''],
-      total_price : ['']
+      total_price : [''],
+      expenses_date: [''],
 
     });
 
@@ -163,6 +164,7 @@ export class EditExpensesComponent implements OnInit {
             formula: expenseData.formula ?? '',
             price_per_bag: parseFloat(expenseData.price_per_bag) || 0,
             quantity: parseFloat(expenseData.quantity) || 0,
+            purchase_location: expenseData.purchase_location ?? '',
           }),
 
           // ✅ ค่าฮอร์โมน
