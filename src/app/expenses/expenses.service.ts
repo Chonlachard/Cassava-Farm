@@ -42,10 +42,6 @@ export class ExpensesService {
   }
 
 
-  // ดึงข้อมูลค่าใช้จ่ายตาม expenseId
-  getExpense(expenseId: number): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/getExpenseEdit/${expenseId}`);
-  }
   addExpense(expense: any): Observable<any> {
     debugger
     console.log(expense);
@@ -53,7 +49,10 @@ export class ExpensesService {
     return this.http.post<any>(`${this.apiUrl}/addExpenses`, expense);
   
   }
-  
+  getExpenseById(expenseId: string): Observable<any> {
+    debugger
+    return this.http.get(`${this.apiUrl}/getExpenseEdit?expense_id=${expenseId}`);
+  }
 
   // ฟังก์ชันสำหรับลบค่าใช้จ่าย
   deleteExpense(expenseId: number): Observable<any> {
@@ -62,9 +61,10 @@ export class ExpensesService {
     return this.http.put<any>(url, { is_deleted: 1 });
   }
 
-  updateExpense(expense: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/editExpenses`, expense);
+  updateExpense(expenseId: string, expenseData: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/editExpenses/${expenseId}`, expenseData);
   }
+  
   getExpensesByDateRange(userId: string, startDate: string, endDate: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/expenses/date-range`, {
       params: new HttpParams()

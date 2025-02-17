@@ -22,11 +22,12 @@ export class ExpensesComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   searchForm: FormGroup;
+  
   plots: any[] = [];
   categories = [
     { value: 'ค่าฮอร์โมน', label: 'ค่าฮอร์โมน' },
     { value: 'ค่าปุ๋ย', label: 'ค่าปุ๋ย' },
-    { value: 'ค่ายาฆ่าหญ่า', label: 'ค่ายาฆ่าหญ่า' },
+    { value: 'ค่ายาฆ่าหญ้า', label: 'ค่ายาฆ่าหญ้า' },
     { value: 'ค่าคนตัดต้น', label: 'ค่าคนตัดต้น' },
     { value: 'ค่าคนปลูก', label: 'ค่าคนปลูก' },
     { value: 'ค่าคนฉีดยาฆ่าหญ่า', label: 'ค่าคนฉีดยาฆ่าหญ่า' },
@@ -108,10 +109,11 @@ export class ExpensesComponent implements OnInit, AfterViewInit {
     });
   }
 
-  editExpense(expenseId: number): void {
+  editExpense(expenseId: number, category: string): void {
+    debugger
     const dialogRef = this.dialog.open(EditExpensesComponent, {
       width: '600px',
-      data: { id: expenseId }
+      data: { id: expenseId, category: category } // ✅ ส่ง category ไปด้วย
     });
 
     dialogRef.afterClosed().subscribe((result) => {
@@ -119,7 +121,7 @@ export class ExpensesComponent implements OnInit, AfterViewInit {
         this.loadExpenses();
       }
     });
-  }
+}
 
   deleteExpense(expenseId: number): void {
     Swal.fire({
@@ -151,6 +153,7 @@ export class ExpensesComponent implements OnInit, AfterViewInit {
   }
 
   clearSearch() {
+    debugger
     this.searchForm.reset();
     this.loadExpenses();
   }

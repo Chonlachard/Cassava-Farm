@@ -68,8 +68,6 @@ exports.getExpense = async (req, res) => {
         res.json(results);
     });
 };
-
-
 // ฟังก์ชันสำหรับเพิ่มข้อมูลค่าใช้จ่าย
 exports.addExpense = async (req, res) => {
     const { user_id, category,expenses_date , details } = req.body;
@@ -85,7 +83,7 @@ exports.addExpense = async (req, res) => {
     }
     // ตรวจสอบประเภทข้อมูลว่าเป็นประเภทที่ถูกต้องหรือไม่
     const validCategories = [
-        'ค่าฮอร์โมน', 'ค่าปุ๋ย', 'ค่ายาฆ่าหญ่า', 'ค่าน้ำมัน',
+        'ค่าฮอร์โมน', 'ค่าปุ๋ย', 'ค่ายาฆ่าหญ้า', 'ค่าน้ำมัน',
         'ค่าพันธุ์มัน', 'ค่าซ่อมอุปกรณ์', 'ค่าอุปกรณ์', 'ค่าเช่าที่ดิน',
         'ค่าขุด', 'ค่าคนตัดต้น', 'ค่าคนปลูก', 'ค่าคนฉีดยาฆ่าหญ่า', 'ค่าคนฉีดยาฮอโมน'
     ];
@@ -147,7 +145,7 @@ exports.addExpense = async (req, res) => {
                 ];
                 break;
 
-            case 'ค่ายาฆ่าหญ่า':
+            case 'ค่ายาฆ่าหญ้า':
                 const herbicideTotalPrice = details.price_per_bottle * details.quantity;
                 detailQuery = `
                     INSERT INTO HerbicideData (expense_id, brand, volume, price_per_bottle, quantity, total_price, plot_id ,purchase_location)
@@ -166,10 +164,11 @@ exports.addExpense = async (req, res) => {
                 break;
 
             case 'ค่าน้ำมัน':
+                console.log('details:', details, 'expenseId:', expenseId);
                 const fuelTotalPrice = details.price_per_liter * details.quantity_liters;
                 detailQuery = `
-                    INSERT INTO FuelData (expense_id, price_per_liter, quantity_liters, total_price, plot_id)
-                    VALUES (?, ?, ?, ?, ?, ?)
+                    INSERT INTO fuelData (expense_id, price_per_liter, quantity_liters, total_price, plot_id)
+                    VALUES (?, ?, ?, ?, ?)
                 `;
                 params = [
                     expenseId,
@@ -184,7 +183,7 @@ exports.addExpense = async (req, res) => {
                 const cassavaTotalPrice = details.price_per_tree * details.quantity;
                 detailQuery = `
                     INSERT INTO CassavaVarietyData (expense_id, quantity, price_per_tree, total_price, plot_id, variety_name, purchase_location)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
                 `;
                 params = [
                     expenseId,
@@ -202,7 +201,7 @@ exports.addExpense = async (req, res) => {
 
                 detailQuery = `
                     INSERT INTO EquipmentRepairData (expense_id, repair_names, details, repair_cost, shop_name)
-                    VALUES (?, ?, ?, ?, ?, ?)
+                    VALUES (?, ?, ?, ?, ?)
                 `;
                 params = [
                     expenseId,
@@ -217,7 +216,7 @@ exports.addExpense = async (req, res) => {
             case 'ค่าอุปกรณ์':
                 detailQuery = `
                     INSERT INTO EquipmentPurchaseData (expense_id,  item_name, shop_name, purchase_price, descript)
-                    VALUES (?, ?, ?, ?, ?, ?)
+                    VALUES (?, ?, ?, ?, ?)
                 `;
                 params = [
                     expenseId,
@@ -233,7 +232,7 @@ exports.addExpense = async (req, res) => {
                 const rentalTotalPrice = details.price_per_rai * details.area;
                 detailQuery = `
                     INSERT INTO LandRentalData (expense_id, owner_name, owner_phone, area, price_per_rai, rental_period, total_price, plot_id)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 `;
                 params = [
                     expenseId,
@@ -252,7 +251,7 @@ exports.addExpense = async (req, res) => {
                 const excavationTotalPrice = details.weight * (details.price_per_ton / 1000);
                 detailQuery = `
                     INSERT INTO ExcavationData (expense_id,  weight, price_per_ton, total_price, plot_id)
-                    VALUES (?, ?, ?, ?, ?, ?)
+                    VALUES (?, ?, ?, ?, ?)
                 `;
                 params = [
                     expenseId,
@@ -268,7 +267,7 @@ exports.addExpense = async (req, res) => {
                 const cuttingTotalPrice = details.price_per_tree * details.number_of_trees;
                 detailQuery = `
                     INSERT INTO TreeCutting (expense_id,  number_of_trees, price_per_tree, total_price, plot_id)
-                    VALUES (?, ?, ?, ?, ?, ?)
+                    VALUES (?, ?, ?, ?, ?)
                 `;
                 params = [
                     expenseId,
@@ -285,7 +284,7 @@ exports.addExpense = async (req, res) => {
                 const plantingTotalPrice = details.price_per_rai * details.land_area;
                 detailQuery = `
                     INSERT INTO Planting (expense_id, worker_name, land_area, price_per_rai, total_price, plot_id)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                    VALUES (?, ?, ?, ?, ?, ?)
                 `;
                 params = [
                     expenseId,
@@ -302,7 +301,7 @@ exports.addExpense = async (req, res) => {
                 const sprayingTotalPrice = details.price_per_can * details.number_of_cans;
                 detailQuery = `
                     INSERT INTO WeedSpraying (expense_id,  number_of_cans, price_per_can, total_price, plot_id)
-                    VALUES (?, ?, ?, ?, ?, ?)
+                    VALUES (?, ?, ?, ?, ?)
                 `;
                 params = [
                     expenseId,
@@ -318,7 +317,7 @@ exports.addExpense = async (req, res) => {
                 const hormoneSprayingTotalPrice = details.price_per_can * details.number_of_cans;
                 detailQuery = `
                     INSERT INTO HormoneSpraying (expense_id, number_of_cans, price_per_can, total_price, plot_id)
-                    VALUES (?, ?, ?, ?, ?, ?)
+                    VALUES (?, ?, ?, ?, ?)
                 `;
                 params = [
                     expenseId,
@@ -343,10 +342,6 @@ exports.addExpense = async (req, res) => {
         });
     });
 };
-
-
-
-
 // ฟังก์ชันสำหรับแก้ไขข้อมูลค่าใช้จ่าย
 exports.deleteExpense = async (req, res) => {
     const expenseId = req.params.expense_id;
@@ -379,85 +374,9 @@ exports.deleteExpense = async (req, res) => {
         res.status(500).json({ message: 'เกิดข้อผิดพลาดในการอัพเดตข้อมูลค่าใช้จ่าย' });
     }
 };
-
-
 exports.updateExpense = async (req, res) => {
    
 };
-
-exports.getExpenseEdit = async (req, res) => {
-    const expenseId = req.params.expense_id;
-
-    // ตรวจสอบว่ามีการส่ง expense_id มาหรือไม่
-    if (!expenseId) {
-        return res.status(400).json({ message: 'กรุณาระบุ expense_id' });
-    }
-
-    const query = ``;
-    db.query(query, [expenseId], (err, results) => {
-        if (err) {
-            console.error('Error executing query:', err.stack);
-            return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการดึงข้อมูลค่าใช้จ่าย' });
-        }
-
-        // ตรวจสอบว่าพบข้อมูลหรือไม่
-        if (results.length === 0) {
-            return res.status(404).json({ message: 'ไม่พบข้อมูลค่าใช้จ่าย' });
-        }
-
-        // แปลงวันที่
-        const formattedResult = {
-            ...results[0],
-            expense_date: moment(results[0].expense_date).format('YYYY-MM-DD')
-        };
-
-        // ส่งผลลัพธ์กลับไปในรูปแบบ JSON
-        res.json(formattedResult);
-    });
-};
-
-// ฟังก์ชันสำหรับดึงข้อมูลค่าใช้จ่ายตามช่วงวันที่
-exports.getExpensesByDateRange = async (req, res) => {
-    const userId = req.query.user_id;
-    const startDate = req.query.startDate;
-    const endDate = req.query.endDate;
-    console.log(userId, startDate, endDate);
-
-    // ตรวจสอบว่ามีการส่งข้อมูลที่จำเป็นมาหรือไม่
-    if (!userId || !startDate || !endDate) {
-        return res.status(400).json({ message: 'กรุณาระบุ user_id, startDate, และ endDate' });
-    }
-
-    // ตรวจสอบรูปแบบของวันที่
-    if (!moment(startDate, 'YYYY-MM-DD', true).isValid() || !moment(endDate, 'YYYY-MM-DD', true).isValid()) {
-        return res.status(400).json({ message: 'รูปแบบวันที่ไม่ถูกต้อง' });
-    }
-
-    const query = `
-        SELECT * FROM expenses 
-        WHERE user_id = ? 
-        AND expense_date BETWEEN ? AND ? 
-        ORDER BY expense_date ASC`;
-
-    db.query(query, [userId, startDate, endDate], (err, results) => {
-        if (err) {
-            console.error('Error executing query:', err.stack);
-            return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการดึงข้อมูลค่าใช้จ่าย' });
-        }
-
-        // แปลงวันที่ในผลลัพธ์ให้เป็นรูปแบบ dd-mm-yyyy
-        const formattedResults = results.map(expense => {
-            return {
-                ...expense,
-                expense_date: moment(expense.expense_date).format('DD-MM-YYYY') // แปลงรูปแบบวันที่
-            };
-        });
-
-        res.json(formattedResults);
-    });
-};
-
-
 exports.getDeopdowplot = async (req, res) => {
     const userId = req.query.user_id;
 
@@ -479,6 +398,140 @@ exports.getDeopdowplot = async (req, res) => {
 
 
 
+exports.getExpenseEdit = async (req, res) => {
+    const expenseId = req.query.expense_id;
+    console.log('Expense ID:', expenseId);
+    // ตรวจสอบว่ามีการส่ง expense_id มาหรือไม่
+    if (!expenseId) {
+        return res.status(400).json({ message: 'กรุณาระบุ expense_id' });
+    }
+
+    // ดึง category ของค่าใช้จ่ายนี้ก่อน
+    const categoryQuery = `SELECT category FROM expenses WHERE expense_id = ? AND is_deleted = 0`;
+
+    db.query(categoryQuery, [expenseId], (err, categoryResult) => {
+        if (err) {
+            console.error('Error fetching category:', err.stack);
+            return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการดึงข้อมูลประเภท' });
+        }
+
+        if (categoryResult.length === 0) {
+            return res.status(404).json({ message: 'ไม่พบข้อมูลค่าใช้จ่าย' });
+        }
+
+        const category = categoryResult[0].category;
+        let detailQuery = '';
+
+        // สร้าง Query ตามประเภทค่าใช้จ่าย
+        const expenseQueries = {
+            'ค่าฮอร์โมน': `
+                SELECT e.*, h.brand, h.volume, h.price_per_bottle, h.quantity, h.total_price, h.plot_id, h.purchase_location
+                FROM expenses e
+                LEFT JOIN HormoneData h ON e.expense_id = h.expense_id
+                WHERE e.expense_id = ?`,
+
+            'ค่าปุ๋ย': `
+                SELECT e.*, f.brand, f.formula, f.price_per_bag, f.quantity, f.total_price, f.plot_id, f.purchase_location
+                FROM expenses e
+                LEFT JOIN FertilizerData f ON e.expense_id = f.expense_id
+                WHERE e.expense_id = ?`,
+
+            'ค่ายาฆ่าหญ้า': ` 
+                SELECT e.*, he.brand, he.volume, he.price_per_bottle, he.quantity, he.total_price, he.plot_id, he.purchase_location
+                FROM expenses e
+                LEFT JOIN Herbicidedata he ON e.expense_id = he.expense_id
+                WHERE e.expense_id = ?`,
+
+            'ค่าน้ำมัน': `
+                SELECT e.*, fu.price_per_liter, fu.quantity_liters, fu.total_price, fu.plot_id
+                FROM expenses e
+                LEFT JOIN FuelData fu ON e.expense_id = fu.expense_id
+                WHERE e.expense_id = ?`,
+
+            'ค่าพันธุ์มัน': `
+                SELECT e.*, cv.variety_name, cv.quantity, cv.price_per_tree, cv.total_price, cv.plot_id, cv.purchase_location
+                FROM expenses e
+                LEFT JOIN CassavaVarietyData cv ON e.expense_id = cv.expense_id
+                WHERE e.expense_id = ?`,
+
+            'ค่าซ่อมอุปกรณ์': `
+                SELECT e.*, er.repair_names, er.details, er.repair_cost, er.shop_name
+                FROM expenses e
+                LEFT JOIN EquipmentRepairData er ON e.expense_id = er.expense_id
+                WHERE e.expense_id = ?`,
+
+            'ค่าอุปกรณ์': `
+                SELECT e.*, ep.item_name, ep.shop_name, ep.purchase_price, ep.descript
+                FROM expenses e
+                LEFT JOIN EquipmentPurchaseData ep ON e.expense_id = ep.expense_id
+                WHERE e.expense_id = ?`,
+
+            'ค่าเช่าที่ดิน': `
+                SELECT e.*, l.owner_name, l.owner_phone, l.area, l.price_per_rai, l.rental_period, l.total_price, l.plot_id
+                FROM expenses e
+                LEFT JOIN LandRentalData l ON e.expense_id = l.expense_id
+                WHERE e.expense_id = ?`,
+
+            'ค่าขุด': `
+                SELECT e.*, ex.weight, ex.price_per_ton, ex.total_price, ex.plot_id
+                FROM expenses e
+                LEFT JOIN ExcavationData ex ON e.expense_id = ex.expense_id
+                WHERE e.expense_id = ?`,
+
+            'ค่าคนตัดต้น': `
+                SELECT e.*, tc.number_of_trees, tc.price_per_tree, tc.total_price, tc.plot_id
+                FROM expenses e
+                LEFT JOIN TreeCutting tc ON e.expense_id = tc.expense_id
+                WHERE e.expense_id = ?`,
+
+            'ค่าคนปลูก': `
+                SELECT e.*, pl.worker_name, pl.land_area, pl.price_per_rai, pl.total_price, pl.plot_id
+                FROM expenses e
+                LEFT JOIN Planting pl ON e.expense_id = pl.expense_id
+                WHERE e.expense_id = ?`,
+
+            'ค่าคนฉีดยาฆ่าหญ่า': `
+                SELECT e.*, ws.number_of_cans, ws.price_per_can, ws.total_price, ws.plot_id
+                FROM expenses e
+                LEFT JOIN WeedSpraying ws ON e.expense_id = ws.expense_id
+                WHERE e.expense_id = ?`,
+
+            'ค่าคนฉีดยาฮอโมน': `
+                SELECT e.*, hs.number_of_cans, hs.price_per_can, hs.total_price, hs.plot_id
+                FROM expenses e
+                LEFT JOIN HormoneSpraying hs ON e.expense_id = hs.expense_id
+                WHERE e.expense_id = ?`
+        };
+        // ตรวจสอบว่ามี Query ตรงกับ category หรือไม่
+        if (!expenseQueries[category]) {
+            return res.status(400).json({ message: 'ไม่สามารถดึงข้อมูลประเภทนี้ได้' });
+        }
+
+        detailQuery = expenseQueries[category];
+
+        // ดึงข้อมูลค่าใช้จ่ายพร้อมรายละเอียด
+        db.query(detailQuery, [expenseId], (err, results) => {
+            if (err) {
+                console.error('Error executing query:', err.stack);
+                return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการดึงข้อมูลค่าใช้จ่าย' });
+            }
+
+            // ตรวจสอบว่าพบข้อมูลหรือไม่
+            if (results.length === 0) {
+                return res.status(404).json({ message: 'ไม่พบข้อมูลค่าใช้จ่าย' });
+            }
+
+            // แปลงวันที่ก่อนส่งกลับ
+            const formattedResult = {
+                ...results[0],
+                expense_date: moment(results[0].expense_date).format('YYYY-MM-DD')
+            };
+
+            // ส่งผลลัพธ์กลับไปในรูปแบบ JSON
+            res.json(formattedResult);
+        });
+    });
+};
 
 
 

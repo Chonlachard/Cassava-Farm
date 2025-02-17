@@ -18,7 +18,7 @@ export class AddexpensesComponent implements OnInit {
   categories = [
     { value: 'ค่าฮอร์โมน', label: 'ค่าฮอร์โมน' },
     { value: 'ค่าปุ๋ย', label: 'ค่าปุ๋ย' },
-    { value: 'ค่ายาฆ่าหญ่า', label: 'ค่ายาฆ่าหญ่า' },
+    { value: 'ค่ายาฆ่าหญ้า', label: 'ค่ายาฆ่าหญ้า' },
     { value: 'ค่าคนตัดต้น', label: 'ค่าคนตัดต้น' },
     { value: 'ค่าคนปลูก', label: 'ค่าคนปลูก' },
     { value: 'ค่าคนฉีดยาฆ่าหญ่า', label: 'ค่าคนฉีดยาฆ่าหญ่า' },
@@ -220,7 +220,7 @@ export class AddexpensesComponent implements OnInit {
           };
         }
         break;
-      case 'ค่ายาฆ่าหญ่า':
+      case 'ค่ายาฆ่าหญ้า':
         if (formValue.brand && formValue.volume && formValue.price_per_bottle && formValue.quantity &&  formValue.plot_id) {
           details = { 
             brand: formValue.brand,
@@ -386,7 +386,7 @@ export class AddexpensesComponent implements OnInit {
         case 'ค่าปุ๋ย':
           totalPrice = this.calculateFertilizerCost();
           break;
-        case 'ค่ายาฆ่าหญ่า':
+        case 'ค่ายาฆ่าหญ้า':
           totalPrice = this.calculateWeedKillerCost();
           break;
         case 'ค่าคนตัดต้น':

@@ -3,24 +3,35 @@ const fs = require('fs');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const db = require('../config/db');
+const { console } = require('inspector');
 
 // ฟังก์ชันคำนวณพื้นที่จากพิกัด
+// ฟังก์ชันคำนวณพื้นที่จากพิกัด
 function calculateAreaRai(latlngs) {
-    // ตรวจสอบและแก้ไขพิกัดให้พอลิกอนปิดสนิท
-    if (latlngs.length > 1 && (
-        latlngs[0].lat !== latlngs[latlngs.length - 1].lat ||
-        latlngs[0].lng !== latlngs[latlngs.length - 1].lng
-    )) {
-        latlngs.push(latlngs[0]); // เพิ่มจุดเริ่มต้นไปที่จุดสิ้นสุด
+    if (!latlngs || latlngs.length < 3) {
+        throw new Error("ต้องมีพิกัดอย่างน้อย 3 จุดขึ้นไปเพื่อสร้างพื้นที่");
     }
-    
-    const polygon = turf.polygon([latlngs.map(p => [p.lng, p.lat])]);
-    const area = turf.area(polygon); // พื้นที่ในตารางเมตร
-    return area / 1600; // แปลงเป็นไร่
+
+    // ตรวจสอบและแก้ไขพิกัดให้พอลิกอนปิดสนิท
+    const firstPoint = latlngs[0];
+    const lastPoint = latlngs[latlngs.length - 1];
+
+    if (firstPoint.lat !== lastPoint.lat || firstPoint.lng !== lastPoint.lng) {
+        latlngs.push({ lat: firstPoint.lat, lng: firstPoint.lng });
+    }
+
+    try {
+        const polygon = turf.polygon([latlngs.map(p => [p.lng, p.lat])]);
+        const area = turf.area(polygon); // คำนวณพื้นที่เป็นตารางเมตร
+        return area / 1600; // แปลงเป็นไร่ (1 ไร่ = 1600 ตร.ม.)
+        
+    } catch (error) {
+        console.error("เกิดข้อผิดพลาดในการคำนวณพื้นที่:", error);
+        return null;
+    }
 }
 
 
-// ฟังก์ชันจัดการการอัปโหลด plot
 async function handlePlotUpload(req, res) {
     const { user_id, plot_name, latlngs, fileData } = req.body;
 
@@ -35,23 +46,19 @@ async function handlePlotUpload(req, res) {
         parsedLatlngs = latlngs;
     }
 
-    // ตรวจสอบและเติมข้อมูลพิกัดให้ครบ 20 ค่า
-    if (!parsedLatlngs || parsedLatlngs.length < 20) {
-        while (parsedLatlngs.length < 20) {
-            parsedLatlngs.push({ lat: null, lng: null }); // เติมค่าว่าง
-        }
-    } else if (parsedLatlngs.length > 20) {
-        parsedLatlngs = parsedLatlngs.slice(0, 20); // ตัดเหลือ 20 ค่า
+    // ตรวจสอบว่าพิกัดมีมากกว่า 3 จุด (ต้องมีอย่างน้อย 3 จุดเพื่อสร้าง Polygon)
+    if (!parsedLatlngs || parsedLatlngs.length < 3) {
+        return res.status(400).json({ message: 'ต้องมีพิกัดอย่างน้อย 3 จุดขึ้นไป' });
     }
 
     try {
-        // คำนวณพื้นที่
+        // คำนวณพื้นที่ (เป็นไร่)
         const area_rai = calculateAreaRai(parsedLatlngs);
 
         let imagePath = null;
         if (fileData) {
             // แปลง Base64 เป็นไฟล์
-            const base64Data = fileData.replace(/^data:image\/png;base64,/, "");
+            const base64Data = fileData.replace(/^data:image\/\w+;base64,/, "");
             const filename = `plot-${uuidv4()}.png`; // ใช้ UUID เพื่อให้ชื่อไฟล์ไม่ซ้ำ
             const filepath = path.join('public', 'uploads', filename);
             fs.writeFileSync(filepath, base64Data, 'base64');
@@ -95,7 +102,6 @@ async function handlePlotUpload(req, res) {
         res.status(500).json({ message: 'เกิดข้อผิดพลาดในการบันทึกข้อมูล', error: err.message });
     }
 }
-
 
 module.exports = { handlePlotUpload };
 

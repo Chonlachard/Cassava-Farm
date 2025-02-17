@@ -87,7 +87,7 @@ router.get('/getDeopdowplot', expensesController.getDeopdowplot);
 router.post('/addExpenses', expensesController.addExpense);
 router.put('/expenses/:expense_id', expensesController.deleteExpense);
 router.put('/editExpenses', expensesController.updateExpense);
-router.get('/getExpenseEdit/:expense_id', expensesController.getExpenseEdit);
-router.get('/expenses/date-range', expensesController.getExpensesByDateRange);
+router.get('/getExpenseEdit', expensesController.getExpenseEdit);
+
 
 module.exports = router;
