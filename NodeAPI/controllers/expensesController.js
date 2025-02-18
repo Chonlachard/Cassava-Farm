@@ -85,7 +85,7 @@ exports.addExpense = async (req, res) => {
     const validCategories = [
         'ค่าฮอร์โมน', 'ค่าปุ๋ย', 'ค่ายาฆ่าหญ้า', 'ค่าน้ำมัน',
         'ค่าพันธุ์มัน', 'ค่าซ่อมอุปกรณ์', 'ค่าอุปกรณ์', 'ค่าเช่าที่ดิน',
-        'ค่าขุด', 'ค่าคนตัดต้น', 'ค่าคนปลูก', 'ค่าคนฉีดยาฆ่าหญ่า', 'ค่าคนฉีดยาฮอโมน'
+        'ค่าขุด', 'ค่าคนตัดต้น', 'ค่าคนปลูก', 'ค่าคนฉีดยาฆ่าหญ้า', 'ค่าคนฉีดยาฮอโมน'
     ];
 
     if (!validCategories.includes(category)) {
@@ -297,7 +297,7 @@ exports.addExpense = async (req, res) => {
                 ];
                 break;
 
-            case 'ค่าคนฉีดยาฆ่าหญ่า':
+            case 'ค่าคนฉีดยาฆ่าหญ้า':
                 const sprayingTotalPrice = details.price_per_can * details.number_of_cans;
                 detailQuery = `
                     INSERT INTO WeedSpraying (expense_id,  number_of_cans, price_per_can, total_price, plot_id)
@@ -491,7 +491,7 @@ exports.getExpenseEdit = async (req, res) => {
                 LEFT JOIN Planting pl ON e.expense_id = pl.expense_id
                 WHERE e.expense_id = ?`,
 
-            'ค่าคนฉีดยาฆ่าหญ่า': `
+            'ค่าคนฉีดยาฆ่าหญ้า': `
                 SELECT e.*, ws.number_of_cans, ws.price_per_can, ws.total_price, ws.plot_id
                 FROM expenses e
                 LEFT JOIN WeedSpraying ws ON e.expense_id = ws.expense_id

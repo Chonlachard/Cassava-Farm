@@ -46,11 +46,11 @@
 
         <div class="form-field">
           <label for="totalPrice">ราคารวม</label>
-          <input id="totalPrice" type="number" [value]="calculatedTotalPrice" readonly
+          <input id="totalPrice" type="number" formControlName="total_price" readonly
             placeholder="ราคารวมจะคำนวณอัตโนมัติ" />
         </div>
         <div class="form-field">
-          <label for="purchaseLocation">สถานที่ซื่อ"</label>
+          <label for="purchaseLocation">สถานที่ซื่อ</label>
           <input id="purchase_location" type="text" formControlName="purchase_location" placeholder="กรอกสถานที่ซื่อ" />
         </div>
 
@@ -93,11 +93,11 @@
         </div>
         <div class="form-field">
           <label for="totalPrice">ราคารวม</label>
-          <input id="totalPrice" type="number" [value]="calculatedTotalPrice" readonly
+          <input id="totalPrice" type="number" formControlName="total_price" readonly
             placeholder="ราคารวมจะคำนวณอัตโนมัติ" />
         </div>
         <div class="form-field">
-          <label for="purchaseLocation">สถานที่ซื่อ"</label>
+          <label for="purchaseLocation">สถานที่ซื่อ</label>
           <input id="purchase_location" type="" formControlName="purchase_location" placeholder="กรอกสถานที่ซื่อ" />
         </div>
         <!-- แปลง -->
@@ -137,11 +137,11 @@
         </div>
         <div class="form-field">
           <label for="totalPrice">ราคารวม</label>
-          <input id="total_price" type="number" [value]="calculatedTotalPrice" readonly
+          <input id="total_price" type="number" formControlName="total_price" readonly
             placeholder="ราคารวมจะคำนวณอัตโนมัติ" />
         </div>
         <div class="form-field">
-          <label for="purchaseLocation">สถานที่ซื่อ"</label>
+          <label for="purchaseLocation">สถานที่ซื่อ</label>
           <input id="purchase_location" type="text" formControlName="purchase_location" placeholder="กรอกสถานที่ซื่อ" />
         </div>
         <!-- แปลง -->
@@ -169,12 +169,13 @@
         </div>
 
         <div class="form-field">
-          <label for="cuttingPricePerTree">ราคาต่อต้น</label>
-          <input id="cuttingPricePerTree" type="number" formControlName="cutting_price_per_tree" />
+          <label for="pricePerTree">ราคาต่อต้น</label>
+          <input id="pricePerTree" type="number" formControlName="price_per_tree" /> price_per_tree
+
         </div>
         <div class="form-field">
           <label for="totalPrice">ราคารวม</label>
-          <input id="totalPrice" type="number" [value]="calculatedTotalPrice" readonly
+          <input id="totalPrice" type="number" formControlName="total_price" readonly
             placeholder="ราคารวมจะคำนวณอัตโนมัติ" />
         </div>
         <!-- แปลง -->
@@ -211,7 +212,7 @@
 
         <div class="form-field">
           <label for="totalPrice">ราคารวม</label>
-          <input id="totalPrice" type="number" [value]="calculatedTotalPrice" readonly
+          <input id="totalPrice" type="number" formControlName="total_price" readonly
             placeholder="ราคารวมจะคำนวณอัตโนมัติ" />
         </div>
 
@@ -225,7 +226,7 @@
       </div>
 
       <!-- ค่าคนฉีดยาฆ่าหญ่า -->
-      <div *ngIf="selectedCategory === 'ค่าคนฉีดยาฆ่าหญ่า'">
+      <div *ngIf="selectedCategory === 'ค่าคนฉีดยาฆ่าหญ้า'">
         <div class="form-field">
           <label for="expenseDate">วันที่ฉีด</label>
           <input id="expenses_date" type="date" formControlName="expenses_date" />
@@ -243,7 +244,7 @@
 
         <div class="form-field">
           <label for="totalPrice">ราคารวม</label>
-          <input id="totalPrice" type="number" [value]="calculatedTotalPrice" readonly
+          <input id="totalPrice" type="number" formControlName="total_price" readonly
             placeholder="ราคารวมจะคำนวณอัตโนมัติ" />
         </div>
 
@@ -279,7 +280,7 @@
         <!-- ราคารวม (คำนวณ) -->
         <div class="form-field">
           <label for="totalPrice">ราคารวม</label>
-          <input id="totalPrice" type="number" [value]="calculatedTotalPrice" readonly
+          <input id="totalPrice" type="number" formControlName="total_price" readonly
             placeholder="ราคารวมจะคำนวณอัตโนมัติ" />
         </div>
 
@@ -316,7 +317,7 @@
         <!-- ราคาที่จ่าย (คำนวณ) -->
         <div class="form-field">
           <label for="totalPrice">ราคาที่จ่าย</label>
-          <input id="totalPrice" type="number" [value]="calculatedTotalPrice" readonly
+          <input id="totalPrice" type="number" formControlName="total_price" readonly
             placeholder="ราคาที่จ่ายจะคำนวณอัตโนมัติ" />
         </div>
 
@@ -346,14 +347,14 @@
 
         <!-- ราคาต่อต้น -->
         <div class="form-field">
-          <label for="cassavaPricePerTree">ราคาต่อต้น</label>
-          <input id="cassavaPricePerTree" type="number" formControlName="cassava_price_per_tree" />
+          <label for="pricePerTree">ราคาต่อต้น</label>
+          <input id="pricePerTree" type="number" formControlName="price_per_tree" />
         </div>
 
         <!-- ราคาที่จ่าย (คำนวณ) -->
         <div class="form-field">
           <label for="totalPrice">ราคาที่จ่าย</label>
-          <input id="totalPrice" type="number" [value]="calculatedTotalPrice" readonly
+          <input id="totalPrice" type="number" formControlName="total_price" readonly
             placeholder="ราคาที่จ่ายจะคำนวณอัตโนมัติ" />
         </div>
 
@@ -486,7 +487,7 @@
         <!-- ราคารวม -->
         <div class="form-field">
           <label for="totalPrice">ราคารวม</label>
-          <input id="totalPrice" type="number" [value]="calculatedTotalPrice" readonly
+          <input id="totalPrice" type="number" formControlName="total_price" readonly
             placeholder="ราคารวมจะคำนวณอัตโนมัติ" />
         </div>
 
@@ -523,7 +524,7 @@
         <!-- ราคาที่จ่าย(คำนวณ) -->
         <div class="form-field">
           <label for="totalPrice">ราคาที่จ่าย</label>
-          <input id="totalPrice" type="number" [value]="calculatedTotalPrice" readonly
+          <input id="totalPrice" type="number" formControlName="total_price" readonly
             placeholder="ราคาที่จ่ายจะคำนวณอัตโนมัติ" />
         </div>
       </div>

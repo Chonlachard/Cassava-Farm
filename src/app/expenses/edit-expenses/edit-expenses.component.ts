@@ -23,7 +23,7 @@ export class EditExpensesComponent implements OnInit {
     { value: 'ค่ายาฆ่าหญ้า', label: 'ค่ายาฆ่าหญ้า' },
     { value: 'ค่าคนตัดต้น', label: 'ค่าคนตัดต้น' },
     { value: 'ค่าคนปลูก', label: 'ค่าคนปลูก' },
-    { value: 'ค่าคนฉีดยาฆ่าหญ้า', label: 'ค่าคนฉีดยาฆ่าหญ่า' },
+    { value: 'ค่าคนฉีดยาฆ่าหญ้า', label: 'ค่าคนฉีดยาฆ่าหญ้า' },
     { value: 'ค่าคนฉีดยาฮอโมน', label: 'ค่าคนฉีดยาฮอโมน' },
     { value: 'ค่าน้ำมัน', label: 'ค่าน้ำมัน' },
     { value: 'ค่าพันธุ์มัน', label: 'ค่าพันธุ์มัน' },
@@ -111,6 +111,10 @@ export class EditExpensesComponent implements OnInit {
       this.selectedCategory = this.data.category;
       this.updateFormFields(this.data.category);
     }
+    // ✅ ตรวจจับการเปลี่ยนแปลงค่าในฟอร์มและคำนวณราคารวมใหม่
+    this.expenseForm.valueChanges.subscribe(() => {
+      this.calculateTotalPrice();
+    });
   
     // เมื่อเปลี่ยนประเภทค่าใช้จ่าย ฟอร์มจะอัปเดตอัตโนมัติ
     this.expenseForm.get('category')?.valueChanges.subscribe(value => {
@@ -148,6 +152,7 @@ export class EditExpensesComponent implements OnInit {
             variety_name: expenseData.variety_name ?? '',
             price_per_tree: parseFloat(expenseData.price_per_tree) || 0,
             purchase_location: expenseData.purchase_location ?? '',
+            quantity: parseFloat(expenseData.quantity) || 0,
           }),
 
           // ✅ ค่าอุปกรณ์
@@ -199,6 +204,27 @@ export class EditExpensesComponent implements OnInit {
             weight: parseFloat(expenseData.weight) || 0,
             price_per_ton: parseFloat(expenseData.price_per_ton) || 0,
           }),
+
+          ...(expenseData.category === 'ค่าคนปลูก' &&{
+            worker_name: expenseData.worker_name ?? '',
+            land_area: parseFloat(expenseData.land_area) || 0,
+            price_per_rai: parseFloat(expenseData.price_per_rai) || 0,
+          }),
+          ...(expenseData.category === 'ค่าคนฉีดยาฆ่าหญ้า' &&{
+            number_of_cans: parseFloat(expenseData.number_of_cans) || 0,
+            price_per_can: parseFloat(expenseData.price_per_can) || 0,
+          }),
+          ...(expenseData.category === 'ค่าคนฉีดยาฮอโมน' &&{
+            number_of_cans: parseFloat(expenseData.number_of_cans) || 0,
+            price_per_can: parseFloat(expenseData.price_per_can) || 0,
+          }),
+          ...(expenseData.category === 'ค่าซ่อมอุปกรณ์' &&{
+            repair_date: expenseData.repair_date ?? '',
+            repair_names: expenseData.repair_names ?? '',
+            details: expenseData.details ?? '',
+            repair_cost: parseFloat(expenseData.repair_cost) || 0,
+            shop_name: expenseData.shop_name ?? '',
+          })
         };
 
         // เติมค่าลงในฟอร์ม
@@ -207,6 +233,7 @@ export class EditExpensesComponent implements OnInit {
         // ตั้งค่าหมวดหมู่ที่เลือก และอัปเดตฟอร์มตามหมวดหมู่
         this.selectedCategory = expenseData.category ?? '';
         this.updateFormFields(this.selectedCategory ?? '');
+        this.calculateTotalPrice();
       }
     });
 }
@@ -231,7 +258,7 @@ updateFormFields(category: string) {
     'ค่ายาฆ่าหญ้า': { brand: '', volume: '', price_per_bottle: '', quantity: '', total_price: '', purchase_location: '', plot_id: '' },
     'ค่าคนตัดต้น': { number_of_trees: '', cutting_price_per_tree: '', total_price: '', plot_id: '' },
     'ค่าคนปลูก': { worker_name: '', land_area: '', price_per_rai: '', total_price: '', plot_id: '' },
-    'ค่าคนฉีดยาฆ่าหญ่า': { spray_date: '', number_of_cans: '', price_per_can: '', total_price: '', plot_id: '' },
+    'ค่าคนฉีดยาฆ่าหญ้า': { spray_date: '', number_of_cans: '', price_per_can: '', total_price: '', plot_id: '' },
     'ค่าคนฉีดยาฮอโมน': { spray_date: '', number_of_cans: '', price_per_can: '', total_price: '', plot_id: '' },
     'ค่าน้ำมัน': { fuel_date: '', price_per_liter: '', quantity_liters: '', total_price: '', plot_id: '' },
     'ค่าพันธุ์มัน': { purchase_date: '', quantity: '', cassava_price_per_tree: '', total_price: '', variety_name: '', purchase_location: '', plot_id: '' },
@@ -256,11 +283,6 @@ updateFormFields(category: string) {
     this.expenseForm.patchValue(updatedFields, { emitEvent: false });
   }, 0);
 }
-
-
-
-
-  
   onSubmit() {
     if (this.expenseForm.valid) {
       const expenseData = this.expenseForm.value;
@@ -296,7 +318,6 @@ updateFormFields(category: string) {
       });
     }
   }
-
    // Fetch plots based on user ID
     fetchPlots(): void {
       const userId = localStorage.getItem('userId') || '';
@@ -318,10 +339,6 @@ updateFormFields(category: string) {
         }
       );
     }
-  
-  
-
-
 
   onFormulaInput(event: any): void {
     const inputValue = event.target.value;
@@ -331,5 +348,128 @@ updateFormFields(category: string) {
       .replace(/(^-|-$)/g, '')
       .replace(/(\d{2})(?=\d)/g, '$1-');
     this.expenseForm.get('formula')?.setValue(formattedValue, { emitEvent: false });
+  }
+  calculateTotalPrice(): void {
+    const category = this.expenseForm.get('category')?.value || '';
+    let totalPrice = 0;
+  
+    switch (category) {
+      case 'ค่าฮอร์โมน':
+        totalPrice = this.calculateHormoneCost();
+        break;
+      case 'ค่าปุ๋ย':
+        totalPrice = this.calculateFertilizerCost();
+        break;
+      case 'ค่ายาฆ่าหญ้า':
+        totalPrice = this.calculateWeedKillerCost();
+        break;
+      case 'ค่าคนตัดต้น':
+        totalPrice = this.calculateTreeCuttingCost();
+        break;
+      case 'ค่าคนปลูก':
+        totalPrice = this.calculateTreePlantingCost();
+        break;
+      case 'ค่าคนฉีดยาฆ่าหญ้า':
+        totalPrice = this.calculateWeedSprayingCost();
+        break;
+      case 'ค่าคนฉีดยาฮอโมน':
+        totalPrice = this.calculateHormoneSprayingCost();
+        break;
+      case 'ค่าน้ำมัน':
+        totalPrice = this.calculateFuelCost();
+        break;
+      case 'ค่าพันธุ์มัน':
+        totalPrice = this.calculateSeedCost();
+        break;
+      case 'ค่าซ่อมอุปกรณ์':
+        totalPrice = this.calculateRepairCost();
+        break;
+      case 'ค่าอุปกรณ์':
+        totalPrice = this.calculateEquipmentCost();
+        break;
+      case 'ค่าเช่าที่ดิน':
+        totalPrice = this.calculateRentCost();
+        break;
+      case 'ค่าขุด':
+        totalPrice = this.calculateDiggingCost();
+        break;
+    }
+  
+    // ✅ อัปเดตราคารวมในฟอร์มทุกครั้งที่มีการเปลี่ยนแปลงค่า
+    this.expenseForm.patchValue({ total_price: totalPrice }, { emitEvent: false });
+  }
+  // Separate cost calculation methods for each category (sample implementations)
+  calculateHormoneCost(): number {
+    const price_per_bottle = this.expenseForm.get('price_per_bottle')?.value || 0;
+    const quantity = this.expenseForm.get('quantity')?.value || 0;
+    return price_per_bottle * quantity;
+  }
+
+  calculateFertilizerCost(): number {
+    const price_per_bag = this.expenseForm.get('price_per_bag')?.value || 0;
+    const quantity = this.expenseForm.get('quantity')?.value || 0;
+    return price_per_bag * quantity;
+  }
+
+  calculateWeedKillerCost(): number {
+    const price_per_bottle = this.expenseForm.get('price_per_bottle')?.value || 0;
+    const quantity = this.expenseForm.get('quantity')?.value || 0;
+    return price_per_bottle * quantity;
+  }
+
+  calculateTreeCuttingCost(): number {
+    const price_per_tree = this.expenseForm.get('price_per_tree')?.value || 0;
+    const number_of_trees = this.expenseForm.get('number_of_trees')?.value || 0;
+    return price_per_tree * number_of_trees;
+  }
+
+  calculateTreePlantingCost(): number {
+    const price_per_rai = this.expenseForm.get('price_per_rai')?.value || 0;
+    const land_area = this.expenseForm.get('land_area')?.value || 0;
+    return price_per_rai * land_area;
+  }
+
+  calculateWeedSprayingCost(): number {
+    const price_per_can = this.expenseForm.get('price_per_can')?.value || 0;
+    const number_of_cans = this.expenseForm.get('number_of_cans')?.value || 0;
+    return price_per_can * number_of_cans;
+  }
+
+  calculateHormoneSprayingCost(): number {
+    const price_per_can = this.expenseForm.get('price_per_can')?.value || 0;
+    const number_of_cans = this.expenseForm.get('number_of_cans')?.value || 0;
+    return price_per_can * number_of_cans;
+  }
+
+  calculateFuelCost(): number {
+    const price_per_liter = this.expenseForm.get('price_per_liter')?.value || 0;
+    const quantity_liters = this.expenseForm.get('quantity_liters')?.value || 0;
+    return price_per_liter * quantity_liters;
+  }
+
+  calculateSeedCost(): number {
+    const price_per_tree = this.expenseForm.get('price_per_tree')?.value || 0;
+    const quantity = this.expenseForm.get('quantity')?.value || 0;
+    return price_per_tree * quantity;
+  }
+
+  calculateRepairCost(): number {
+    return this.expenseForm.get('repairCost')?.value || 0;
+  }
+
+  calculateEquipmentCost(): number {
+    return this.expenseForm.get('equipmentCost')?.value || 0;
+  }
+
+  calculateRentCost(): number {
+    const price_per_rai = this.expenseForm.get('price_per_rai')?.value || 0;
+    const area = this.expenseForm.get('area')?.value || 0;
+    return price_per_rai * area;
+  }
+
+  calculateDiggingCost(): number {
+    const price_per_ton = (this.expenseForm.get('price_per_ton')?.value || 0) / 1000;
+    const weight = this.expenseForm.get('weight')?.value || 0;
+    return price_per_ton * weight;
   }
 }

@@ -30,7 +30,7 @@ export class ExpensesComponent implements OnInit, AfterViewInit {
     { value: 'ค่ายาฆ่าหญ้า', label: 'ค่ายาฆ่าหญ้า' },
     { value: 'ค่าคนตัดต้น', label: 'ค่าคนตัดต้น' },
     { value: 'ค่าคนปลูก', label: 'ค่าคนปลูก' },
-    { value: 'ค่าคนฉีดยาฆ่าหญ่า', label: 'ค่าคนฉีดยาฆ่าหญ่า' },
+    { value: 'ค่าคนฉีดยาฆ่าหญ้า', label: 'ค่าคนฉีดยาฆ่าหญ้า' },
     { value: 'ค่าคนฉีดยาฮอโมน', label: 'ค่าคนฉีดยาฮอโมน' },
     { value: 'ค่าน้ำมัน', label: 'ค่าน้ำมัน' },
     { value: 'ค่าพันธุ์มัน', label: 'ค่าพันธุ์มัน' },
