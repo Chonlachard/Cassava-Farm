@@ -8,20 +8,22 @@ exports.getWorker = async (req, res) => {
         return res.status(400).json({ message: 'กรุณาระบุ user_id' });
     }
 
-    let query = 'SELECT * FROM workers WHERE user_id = ? AND is_delete = 0;';
+    let query = 'SELECT * FROM workers WHERE user_id = ? AND is_delete = 0';
     const params = [user_id];
 
     // ค้นหาชื่อหรือเบอร์โทร
     if (keyword) {
         query += ' AND (worker_name LIKE ? OR phone LIKE ?)';
-        const keywordParam = `%${keyword}%`;  // ใช้ % สำหรับการค้นหาพาร์เชียล
-        params.push(keywordParam, keywordParam);  // ส่งพารามิเตอร์สองตัวสำหรับ worker_name และ phone
+        const keywordParam = `%${keyword}%`; 
+        params.push(keywordParam, keywordParam);
     }
 
-    // ค้นหาทักษะ
+    // ค้นหาทักษะ (รองรับหลายทักษะ โดยใช้ OR)
     if (skills) {
-        query += ' AND skills LIKE ?'; // ใช้ LIKE เพื่อค้นหาทักษะ
-        params.push(`%${skills}%`);  
+        const skillsArray = skills.split(',').map(skill => skill.trim()); // แยกทักษะเป็น array
+        const skillConditions = skillsArray.map(() => 'skills LIKE ?').join(' OR '); // สร้างเงื่อนไข OR
+        query += ` AND (${skillConditions})`;
+        skillsArray.forEach(skill => params.push(`%${skill}%`)); 
     }
 
     // เรียงลำดับจาก worker_id ใหม่สุด
@@ -30,15 +32,15 @@ exports.getWorker = async (req, res) => {
     // คิวรี่ฐานข้อมูล
     db.query(query, params, (err, results) => {
         if (err) {
-            console.error('Database query error:', err.stack);
+            console.error('❌ Database query error:', err.stack);
             return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการดึงข้อมูลคนงาน' });
         }
 
-
-
+        console.log('✅ Worker data retrieved:', results.length, 'records');
         res.json(results);
     });
 };
+
 
 
 
