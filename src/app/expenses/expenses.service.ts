@@ -61,8 +61,9 @@ export class ExpensesService {
     return this.http.put<any>(url, { is_deleted: 1 });
   }
 
-  updateExpense(expenseId: string, expenseData: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/editExpenses/${expenseId}`, expenseData);
+  updateExpense(expenseData: any): Observable<any> {
+    debugger
+    return this.http.put(`${this.apiUrl}/editExpenses`, expenseData);
   }
   
   getExpensesByDateRange(userId: string, startDate: string, endDate: string): Observable<any> {

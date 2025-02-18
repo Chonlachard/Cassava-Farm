@@ -283,41 +283,98 @@ updateFormFields(category: string) {
     this.expenseForm.patchValue(updatedFields, { emitEvent: false });
   }, 0);
 }
-  onSubmit() {
-    if (this.expenseForm.valid) {
-      const expenseData = this.expenseForm.value;
-  
-      // ตรวจสอบว่ากำลังแก้ไขหรือเพิ่มใหม่
-      if (this.expenseId) {
-        // แก้ไขค่าใช้จ่ายที่มีอยู่
-        this.transactionService.updateExpense(this.expenseId, expenseData).subscribe(() => {
-          Swal.fire({
-            icon: 'success',
-            title: 'บันทึกสำเร็จ',
-            text: 'แก้ไขค่าใช้จ่ายเรียบร้อยแล้ว!'
-          });
-          this.dialogRef.close(true); // ปิด Dialog และรีโหลดข้อมูล
-        });
-      } else {
-        // เพิ่มค่าใช้จ่ายใหม่
-        this.transactionService.addExpense(expenseData).subscribe(() => {
-          Swal.fire({
-            icon: 'success',
-            title: 'เพิ่มข้อมูลสำเร็จ',
-            text: 'เพิ่มรายการค่าใช้จ่ายเรียบร้อยแล้ว!'
-          });
-          this.dialogRef.close(true); // ปิด Dialog และรีโหลดข้อมูล
-        });
-      }
-    } else {
-      // แจ้งเตือนหากฟอร์มไม่ถูกต้อง
+onSubmit(): void {
+  const category = this.expenseForm.get('category')?.value || '';
+  const expenseData = this.expenseForm.value; // ข้อมูลทั้งหมดจากฟอร์ม
+  const expenseId = this.expenseId || expenseData.expense_id; // ดึง expense_id
+
+  if (!expenseId) {
       Swal.fire({
-        icon: 'error',
-        title: 'กรุณากรอกข้อมูลให้ครบถ้วน',
-        text: 'โปรดตรวจสอบและกรอกข้อมูลให้ถูกต้อง'
+          icon: 'error',
+          title: 'เกิดข้อผิดพลาด',
+          text: 'ไม่พบข้อมูลค่าใช้จ่าย (expense_id)',
+          confirmButtonText: 'ตกลง'
       });
-    }
+      return;
   }
+
+  let requiredFields: string[] = [];
+
+  // 📝 กำหนดฟิลด์ที่ต้องตรวจสอบตามประเภทค่าใช้จ่าย
+  const categoryFields: { [key: string]: string[] } = {
+      'ค่าฮอร์โมน': ['brand', 'volume', 'price_per_bottle', 'quantity', 'purchase_location', 'plot_id'],
+      'ค่าปุ๋ย': ['brand', 'formula', 'price_per_bag', 'quantity', 'purchase_location', 'plot_id'],
+      'ค่ายาฆ่าหญ้า': ['brand', 'volume', 'price_per_bottle', 'quantity', 'purchase_location', 'plot_id'],
+      'ค่าคนตัดต้น': ['number_of_trees', 'price_per_tree', 'plot_id'],
+      'ค่าคนปลูก': ['worker_name', 'land_area', 'price_per_rai', 'plot_id'],
+      'ค่าคนฉีดยาฆ่าหญ้า': ['number_of_cans', 'price_per_can', 'plot_id'],
+      'ค่าคนฉีดยาฮอโมน': ['number_of_cans', 'price_per_can', 'plot_id'],
+      'ค่าน้ำมัน': ['price_per_liter', 'quantity_liters', 'plot_id'],
+      'ค่าพันธุ์มัน': ['variety_name', 'quantity', 'price_per_tree', 'purchase_location', 'plot_id'],
+      'ค่าซ่อมอุปกรณ์': ['repair_names', 'details', 'repair_cost', 'shop_name'],
+      'ค่าอุปกรณ์': ['item_name', 'shop_name', 'purchase_price', 'descript'],
+      'ค่าเช่าที่ดิน': ['owner_name', 'owner_phone', 'area', 'price_per_rai', 'rental_period', 'plot_id'],
+      'ค่าขุด': ['weight', 'price_per_ton', 'plot_id']
+  };
+
+  // 🔍 ดึงฟิลด์ที่ต้องตรวจสอบเฉพาะประเภทนั้น
+  if (categoryFields[category]) {
+      requiredFields = categoryFields[category];
+  } else {
+      Swal.fire({
+          icon: 'error',
+          title: 'เกิดข้อผิดพลาด',
+          text: 'ไม่สามารถตรวจสอบข้อมูลประเภทนี้ได้!',
+          confirmButtonText: 'ตกลง'
+      });
+      return;
+  }
+
+  // 🔍 ตรวจสอบว่าฟิลด์ที่จำเป็นมีค่าไหม
+  const missingFields = requiredFields.filter(field => !expenseData[field]);
+
+  if (missingFields.length > 0) {
+      Swal.fire({
+          icon: 'warning',
+          title: 'กรุณากรอกข้อมูลให้ครบถ้วน',
+          text: `กรุณากรอกข้อมูล: ${missingFields.join(', ')}`,
+          confirmButtonText: 'ตกลง'
+      });
+      return;
+  }
+
+  // 📝 เพิ่ม `expense_id` ลงไปในข้อมูลที่ส่งไป API
+  const updatedExpenseData = { ...expenseData, expense_id: expenseId };
+
+  console.log("📤 ส่งข้อมูลไปอัปเดต:", updatedExpenseData);
+  this.transactionService.updateExpense(updatedExpenseData).subscribe(
+      (response) => {
+          console.log("✅ อัปเดตค่าใช้จ่ายสำเร็จ:", response);
+          Swal.fire({
+              icon: 'success',
+              title: 'อัปเดตข้อมูลเรียบร้อย',
+              text: 'ข้อมูลค่าใช้จ่ายได้รับการอัปเดตแล้ว!',
+              confirmButtonText: 'ตกลง'
+          }).then(() => {
+              this.dialogRef.close(true);
+          });
+      },
+      (error) => {
+          console.error("❌ เกิดข้อผิดพลาดในการอัปเดตค่าใช้จ่าย:", error);
+          Swal.fire({
+              icon: 'error',
+              title: 'เกิดข้อผิดพลาด',
+              text: 'ไม่สามารถอัปเดตข้อมูลได้ กรุณาลองอีกครั้ง!',
+              confirmButtonText: 'ตกลง'
+          }).then(() => {
+              this.dialogRef.close(false);
+          });
+      }
+  );
+}
+
+
+
    // Fetch plots based on user ID
     fetchPlots(): void {
       const userId = localStorage.getItem('userId') || '';

@@ -374,9 +374,6 @@ exports.deleteExpense = async (req, res) => {
         res.status(500).json({ message: 'เกิดข้อผิดพลาดในการอัพเดตข้อมูลค่าใช้จ่าย' });
     }
 };
-exports.updateExpense = async (req, res) => {
-   
-};
 exports.getDeopdowplot = async (req, res) => {
     const userId = req.query.user_id;
 
@@ -395,8 +392,6 @@ exports.getDeopdowplot = async (req, res) => {
         res.json(results);
     });
 }
-
-
 
 exports.getExpenseEdit = async (req, res) => {
     const expenseId = req.query.expense_id;
@@ -537,5 +532,144 @@ exports.getExpenseEdit = async (req, res) => {
     });
 };
 
+exports.updateExpense = async (req, res) => {
+    const expenseId = req.body.expense_id;
+    const category = req.body.category;
+
+    console.log('🔄 Updating Expense ID:', expenseId);
+    console.log('📂 Category:', category);
+
+    if (!expenseId || !category) {
+        return res.status(400).json({ message: 'กรุณาระบุ expense_id และ category' });
+    }
+
+    // ข้อมูลที่อัปเดตในตาราง expenses
+    const commonFields = {
+        expenses_date: req.body.expenses_date,
+    };
+
+    const updateExpenseQuery = `UPDATE expenses SET ? WHERE expense_id = ? AND is_deleted = 0`;
+
+    db.query(updateExpenseQuery, [commonFields, expenseId], (err, result) => {
+        if (err) {
+            console.error('❌ Error updating expense:', err.stack);
+            return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการอัปเดตค่าใช้จ่าย' });
+        }
+
+        console.log('✅ Expense updated successfully');
+
+        // ตรวจสอบประเภทค่าใช้จ่ายและกำหนด SQL ที่ใช้สำหรับอัปเดตข้อมูล
+        const expenseDetails = {
+            'ค่าฮอร์โมน': {
+                query: `
+                UPDATE HormoneData 
+                SET brand = ?, volume = ?, price_per_bottle = ?, quantity = ?, total_price = ?, purchase_location = ?, plot_id = ? 
+                WHERE expense_id = ?`,
+                values: [req.body.brand, req.body.volume, req.body.price_per_bottle, req.body.quantity, req.body.total_price, req.body.purchase_location, req.body.plot_id, expenseId]
+            },
+            'ค่าปุ๋ย': {
+                query: `
+                UPDATE FertilizerData 
+                SET brand = ?, formula = ?, price_per_bag = ?, quantity = ?, total_price = ?, purchase_location = ?, plot_id = ? 
+                WHERE expense_id = ?`,
+                values: [req.body.brand, req.body.formula, req.body.price_per_bag, req.body.quantity, req.body.total_price, req.body.purchase_location, req.body.plot_id, expenseId]
+            },
+            'ค่ายาฆ่าหญ้า': {
+                query: `
+                UPDATE HerbicideData 
+                SET brand = ?, volume = ?, price_per_bottle = ?, quantity = ?, total_price = ?, purchase_location = ?, plot_id = ? 
+                WHERE expense_id = ?`,
+                values: [req.body.brand, req.body.volume, req.body.price_per_bottle, req.body.quantity, req.body.total_price, req.body.purchase_location, req.body.plot_id, expenseId]
+            },
+            'ค่าน้ำมัน': {
+                query: `
+                UPDATE FuelData 
+                SET price_per_liter = ?, quantity_liters = ?, total_price = ?, plot_id = ? 
+                WHERE expense_id = ?`,
+                values: [req.body.price_per_liter, req.body.quantity_liters, req.body.total_price, req.body.plot_id, expenseId]
+            },
+            'ค่าพันธุ์มัน': {
+                query: `
+                UPDATE CassavaVarietyData 
+                SET variety_name = ?, quantity = ?, price_per_tree = ?, total_price = ?, purchase_location = ?, plot_id = ? 
+                WHERE expense_id = ?`,
+                values: [req.body.variety_name, req.body.quantity, req.body.price_per_tree, req.body.total_price, req.body.purchase_location, req.body.plot_id, expenseId]
+            },
+            'ค่าซ่อมอุปกรณ์': {
+                query: `
+                UPDATE EquipmentRepairData 
+                SET repair_names = ?, details = ?, repair_cost = ?, shop_name = ? 
+                WHERE expense_id = ?`,
+                values: [req.body.repair_names, req.body.details, req.body.repair_cost, req.body.shop_name, expenseId]
+            },
+            'ค่าอุปกรณ์': {
+                query: `
+                UPDATE EquipmentPurchaseData 
+                SET item_name = ?, shop_name = ?, purchase_price = ?, descript = ?, total_price = ? 
+                WHERE expense_id = ?`,
+                values: [req.body.item_name, req.body.shop_name, req.body.purchase_price, req.body.descript, req.body.total_price, expenseId]
+            },
+            'ค่าเช่าที่ดิน': {
+                query: `
+                UPDATE LandRentalData 
+                SET owner_name = ?, owner_phone = ?, area = ?, price_per_rai = ?, rental_period = ?, total_price = ?, plot_id = ? 
+                WHERE expense_id = ?`,
+                values: [req.body.owner_name, req.body.owner_phone, req.body.area, req.body.price_per_rai, req.body.rental_period, req.body.total_price, req.body.plot_id, expenseId]
+            },
+            'ค่าขุด': {
+                query: `
+                UPDATE ExcavationData 
+                SET weight = ?, price_per_ton = ?, total_price = ?, plot_id = ? 
+                WHERE expense_id = ?`,
+                values: [req.body.weight, req.body.price_per_ton, req.body.total_price, req.body.plot_id, expenseId]
+            },
+            'ค่าคนตัดต้น': {
+                query: `
+                UPDATE TreeCutting 
+                SET number_of_trees = ?, price_per_tree = ?, total_price = ?, plot_id = ? 
+                WHERE expense_id = ?`,
+                values: [req.body.number_of_trees, req.body.price_per_tree, req.body.total_price, req.body.plot_id, expenseId]
+            },
+            'ค่าคนปลูก': {
+                query: `
+                UPDATE Planting 
+                SET worker_name = ?, land_area = ?, price_per_rai = ?, total_price = ?, plot_id = ? 
+                WHERE expense_id = ?`,
+                values: [req.body.worker_name, req.body.land_area, req.body.price_per_rai, req.body.total_price, req.body.plot_id, expenseId]
+            },
+            'ค่าคนฉีดยาฆ่าหญ้า': {
+                query: `
+                UPDATE WeedSpraying 
+                SET number_of_cans = ?, price_per_can = ?, total_price = ?, plot_id = ? 
+                WHERE expense_id = ?`,
+                values: [req.body.number_of_cans, req.body.price_per_can, req.body.total_price, req.body.plot_id, expenseId]
+            },
+            'ค่าคนฉีดยาฮอร์โมน': {
+                query: `
+                UPDATE HormoneSpraying 
+                SET number_of_cans = ?, price_per_can = ?, total_price = ?, plot_id = ? 
+                WHERE expense_id = ?`,
+                values: [req.body.number_of_cans, req.body.price_per_can, req.body.total_price, req.body.plot_id, expenseId]
+            }
+        };
+
+        // ตรวจสอบว่ามี query สำหรับประเภทค่าใช้จ่ายนี้หรือไม่
+        if (!expenseDetails[category]) {
+            return res.status(400).json({ message: 'ไม่สามารถอัปเดตข้อมูลประเภทนี้ได้' });
+        }
+
+        const { query, values } = expenseDetails[category];
+
+        db.query(query, values, (err, detailResult) => {
+            if (err) {
+                console.error('❌ Error updating expense details:', err.stack);
+                return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการอัปเดตรายละเอียดค่าใช้จ่าย' });
+            }
+
+            console.log('✅ Expense details updated successfully');
+            res.json({ message: 'อัปเดตค่าใช้จ่ายเรียบร้อยแล้ว' });
+        });
+    });
+};
 
 
