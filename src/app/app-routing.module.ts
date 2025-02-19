@@ -16,6 +16,7 @@ import { ForgotPasswordComponent } from './forgot-password/forgot-password.compo
 import { EnterOtpComponent } from './forgot-password/enter-otp/enter-otp.component';
 import { ChangePasswordComponent } from './forgot-password/change-password/change-password.component';
 import { EditPlantedComponent } from './cassava-planted-area/edit-planted/edit-planted.component';
+import { ExpensesDetailComponent } from './expenses-detail/expenses-detail.component';
 
 
 const routes: Routes = [
@@ -36,6 +37,7 @@ const routes: Routes = [
   { path: 'enter-otp', component: EnterOtpComponent },
   { path: 'change-password', component: ChangePasswordComponent },
   {path:'edit-plot', component:EditPlantedComponent},
+  {path:'ExDetail', component:ExpensesDetailComponent},
   { path: '', redirectTo: '/login', pathMatch: 'full' },
 ];
 

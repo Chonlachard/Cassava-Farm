@@ -1,0 +1,75 @@
+/* ✅ ปรับสไตล์ Dialog */
+:host ::ng-deep .p-dialog {
+    border-radius: 12px; /* ทำขอบมน */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+:host ::ng-deep .p-dialog-header {
+    background: #1976d2; /* พื้นหลังสีน้ำเงิน */
+    color: #fff; /* ตัวอักษรสีขาว */
+    font-size: 18px;
+    font-weight: bold;
+    padding: 16px;
+}
+
+:host ::ng-deep .p-dialog-content {
+    padding: 20px;
+    background: #f5f5f5; /* พื้นหลังเทาอ่อน */
+}
+
+/* ✅ ปรับสไตล์ปุ่ม */
+:host ::ng-deep .p-dialog-footer {
+    text-align: right;
+    padding: 10px 20px;
+    background: #f1f1f1;
+    border-top: 1px solid #ddd;
+}
+
+:host ::ng-deep .p-button {
+    background: #1976d2;
+    color: white;
+    border-radius: 5px;
+    padding: 8px 16px;
+    border: none;
+}
+
+:host ::ng-deep .p-button:hover {
+    background: #1565c0;
+}
+
+/* ✅ ปรับสไตล์ Mat Table */
+.mat-table {
+    width: 100%;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* ✅ ปรับสไตล์ส่วนหัวของตาราง */
+.mat-header-cell {
+    background: #1976d2 !important;
+    color: white !important;
+    font-weight: bold;
+    text-align: left;
+    padding: 10px;
+}
+
+/* ✅ ปรับสไตล์แถวของตาราง */
+.mat-row:nth-child(even) {
+    background: #f9f9f9;
+}
+
+/* ✅ ปรับสไตล์เซลล์ */
+.mat-cell {
+    padding: 12px;
+    text-align: left;
+}
+
+/* ✅ ปรับสไตล์ Paginator */
+.mat-paginator {
+    background: white;
+    border-top: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 0 0 8px 8px;
+}

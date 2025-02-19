@@ -1,5 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { DashbordService } from './dashbord.service';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatDialog } from '@angular/material/dialog';
+import { ExpensesDetailComponent } from '../expenses-detail/expenses-detail.component';
 
 @Component({
   selector: 'app-dashbord',
@@ -18,7 +21,11 @@ export class DashbordComponent implements OnInit {
   totalExpense = 0;
   expenseDetails: any[] = [];
   expenseList: any[] = [];
+  selectedExpense: any = null; // ✅ เพิ่มตัวแปรสำหรับเก็บข้อมูลที่เลือก
+  showPopup: boolean = false; // ✅ ควบคุมการเปิด/ปิด Popup
+  selectedCategory: string = ''; // ✅ หมวดหมู่ที่เลือก
 
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
   // ✅ กำหนดค่าเริ่มต้นให้ startMonth และ endMonth
   startMonth: number = 1;
   endMonth: number = 12;
@@ -42,7 +49,9 @@ export class DashbordComponent implements OnInit {
     'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
   ];
 
-  constructor(private dashbordService: DashbordService) {}
+  constructor(private dashbordService: DashbordService,private cdRef: ChangeDetectorRef,
+    private dialog: MatDialog
+  ) {}
 
   ngOnInit(): void {
     this.userId = localStorage.getItem('userId') ?? ''; 
@@ -106,7 +115,10 @@ export class DashbordComponent implements OnInit {
     return this.monthNames[monthNumber - 1] || 'ไม่ระบุเดือน';
   }
 
-  selectExpense(expense: any) {}
+  selectExpense(expense: any) {
+    this.selectedCategory = expense.expense_detail;
+    this.showPopup = true;
+  }
 
   updateChart(): void {
     this.chartData = {
@@ -243,5 +255,27 @@ export class DashbordComponent implements OnInit {
         }
       }
     };
+  }
+
+  // ✅ ฟังก์ชันเลือกหมวดหมู่และเปิด Popup
+  openPopup(category: string) {
+    this.dialog.open(ExpensesDetailComponent, {
+      width: '600px', // ✅ กำหนดขนาด Dialog
+      data: {
+        userId: this.userId,
+        selectedCategory: category,
+        selectedYear: new Date().getFullYear(),
+        startMonth: 1,
+        endMonth: 12
+      }
+    });
+  }
+  
+  
+  
+
+  // ✅ ฟังก์ชันปิด Popup
+  closePopup() {
+    this.showPopup = false;
   }
 }

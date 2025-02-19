@@ -11,7 +11,7 @@
                 <option *ngFor="let year of availableYears" [value]="year">{{ year }}</option>
             </select>
         </div>
-    
+
         <!-- เลือกช่วงเดือน (แสดงเดือนเริ่มต้น และสิ้นสุดในบรรทัดเดียวกัน) -->
         <div class="month-selection">
             <div class="month-group">
@@ -21,7 +21,7 @@
                         <option *ngFor="let month of availableMonths" [value]="month.value">{{ month.label }}</option>
                     </select>
                 </div>
-    
+
                 <div class="month-item">
                     <label for="endMonthSelect">เดือนสิ้นสุด:</label>
                     <select id="endMonthSelect" [(ngModel)]="endMonth" (change)="loadCashFlowReport()">
@@ -31,7 +31,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- ✅ ส่วนสรุปข้อมูล -->
     <div class="summary">
         <div class="summary-item">
@@ -122,7 +122,9 @@
                 </ng-template>
             </p-table>
         </div>
-
-
     </div>
+    <!-- ✅ ใช้ Component แยกสำหรับ Popup -->
+    <app-expense-detail [showPopup]="showPopup" [userId]="userId" [selectedCategory]="selectedCategory"
+        [selectedYear]="selectedYear" [startMonth]="startMonth" [endMonth]="endMonth">
+    </app-expense-detail>
 </div>

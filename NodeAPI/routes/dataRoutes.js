@@ -16,6 +16,7 @@ const harvestController = require('../controllers/harvestsController');
 const workerController = require('../controllers/workerController');
 const dashboardController = require('../controllers/dashbordController');
 const { sendOTP, verifyOTP, changePassword, resendOTP } = require('../controllers/passwordController');
+const expensesDetail = require('../controllers/expensesDetail');
 
 // Multer Configuration
 const storage = multer.diskStorage({
@@ -89,5 +90,9 @@ router.put('/expenses/:expense_id', expensesController.deleteExpense);
 router.put('/editExpenses', expensesController.updateExpense);
 router.get('/getExpenseEdit', expensesController.getExpenseEdit);
 
+
+// 8 Expense Detail Routes
+// ─────────────────────────────────────────
+router.get('/getExpensesDetail', expensesDetail.getExpensesDetail);
 
 module.exports = router;

@@ -46,6 +46,9 @@ import { ChangePasswordComponent } from './forgot-password/change-password/chang
 import { EditPlantedComponent } from './cassava-planted-area/edit-planted/edit-planted.component';
 import { DashbordComponent } from './dashbord/dashbord.component';
 import { TableModule } from 'primeng/table';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { DialogModule } from 'primeng/dialog';
+import { ExpensesDetailComponent } from './expenses-detail/expenses-detail.component';
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
@@ -72,12 +75,14 @@ export function HttpLoaderFactory(http: HttpClient) {
     ChangePasswordComponent,
     EditPlantedComponent,
     DashbordComponent,
+    ExpensesDetailComponent,
   ],
   imports: [
     BrowserModule,
     NgApexchartsModule,
     HttpClientModule,
     ChartModule ,
+    ProgressSpinnerModule,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
@@ -97,6 +102,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     MatCardModule,
     MatInputModule,
     MatButtonModule,
+    DialogModule, 
     MatIconModule,
     MatCheckboxModule,
     MatDialogModule,
