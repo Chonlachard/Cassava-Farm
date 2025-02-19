@@ -118,6 +118,12 @@
                                 }}">
                                 <mat-icon>delete</mat-icon>
                             </button>
+
+                            <!-- ✅ ปุ่ม Preview รายจ่าย -->
+                            <button mat-icon-button color="accent" (click)="previewExpense(expense.expense_id)"
+                                matTooltip="รายละเอียด">
+                                <mat-icon>visibility</mat-icon>
+                            </button>
                         </td>
                     </ng-container>
 

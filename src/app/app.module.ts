@@ -48,7 +48,9 @@ import { DashbordComponent } from './dashbord/dashbord.component';
 import { TableModule } from 'primeng/table';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { DialogModule } from 'primeng/dialog';
+import { TooltipModule } from 'primeng/tooltip';
 import { ExpensesDetailComponent } from './expenses-detail/expenses-detail.component';
+import { DetailComponent } from './expenses/detail/detail.component';
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
@@ -76,6 +78,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     EditPlantedComponent,
     DashbordComponent,
     ExpensesDetailComponent,
+    DetailComponent,
   ],
   imports: [
     BrowserModule,
@@ -110,7 +113,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     MatFormFieldModule,      // สำหรับ mat-form-field
     GoogleMapsModule,
     MatTooltipModule,
-    TableModule
+    TableModule,
+    TooltipModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

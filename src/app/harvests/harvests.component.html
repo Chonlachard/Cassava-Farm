@@ -2,9 +2,10 @@
 <div class="container mt-4">
     <mat-card class="harvests-card">
         <mat-card-header style="display: flex; justify-content: center; align-items: center;">
-            <mat-card-title style="font-weight: bold;  font-size: 48px;">{{ 'harvest.title' | translate }}</mat-card-title>
+            <mat-card-title style="font-weight: bold;  font-size: 48px;">{{ 'harvest.title' | translate
+                }}</mat-card-title>
         </mat-card-header>
-        
+
 
         <!-- ฟอร์มค้นหา -->
         <div class="container mt-4">
@@ -21,44 +22,38 @@
                                 </select>
                             </div>
                         </div>
-        
+
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="company_name" class="form-label">{{ 'harvest.companyName' | translate }}</label>
-                                <input 
-                                    type="text" 
-                                    formControlName="company_name" 
-                                    id="company_name" 
-                                    class="form-control" 
+                                <label for="company_name" class="form-label">{{ 'harvest.companyName' | translate
+                                    }}</label>
+                                <input type="text" formControlName="company_name" id="company_name" class="form-control"
                                     placeholder="{{ 'harvest.SelectCompany' | translate }}" />
                             </div>
                         </div>
-        
+
                         <div class="col-md-2">
                             <div class="form-group">
-                                <label for="harvest_date_start" class="form-label">{{ 'harvest.searchStartDate' | translate }}</label>
-                                <input 
-                                    type="date" 
-                                    formControlName="harvest_date_start" 
-                                    id="harvest_date_start" 
-                                    class="form-control" >
+                                <label for="harvest_date_start" class="form-label">{{ 'harvest.searchStartDate' |
+                                    translate }}</label>
+                                <input type="date" formControlName="harvest_date_start" id="harvest_date_start"
+                                    class="form-control">
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
-                                <label for="harvest_date_end" class="form-label">{{ 'harvest.searchsEndDate' | translate }}</label>
-                                <input 
-                                    type="date" 
-                                    formControlName="harvest_date_end" 
-                                    id="harvest_date_end" 
-                                    class="form-control" >
+                                <label for="harvest_date_end" class="form-label">{{ 'harvest.searchsEndDate' | translate
+                                    }}</label>
+                                <input type="date" formControlName="harvest_date_end" id="harvest_date_end"
+                                    class="form-control">
                             </div>
                         </div>
-        
+
                         <!-- แถวที่ 2 -->
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="starch_percentage" class="form-label">{{ 'harvest.starchPercentage' | translate }}</label>
+                                <label for="starch_percentage" class="form-label">{{ 'harvest.starchPercentage' |
+                                    translate }}</label>
                                 <select formControlName="starch_percentage" id="starch_percentage" class="form-select">
                                     <option value="">{{ 'harvest.SelectStarchPercentage' | translate }}</option>
                                     <option value="1-10">1-10%</option>
@@ -68,10 +63,11 @@
                                 </select>
                             </div>
                         </div>
-        
+
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="net_weight_kg" class="form-label">{{ 'harvest.netWeight' | translate }}</label>
+                                <label for="net_weight_kg" class="form-label">{{ 'harvest.netWeight' | translate
+                                    }}</label>
                                 <select formControlName="net_weight_kg" id="net_weight_kg" class="form-select">
                                     <option value="">{{ 'harvest.SelectnetWeight' | translate }}</option>
                                     <option value="1-1000">1-1000 กิโลกรัม</option>
@@ -81,10 +77,11 @@
                                 </select>
                             </div>
                         </div>
-        
+
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="price" class="form-label">{{ 'harvest.searchPricePerkilogram' | translate }}</label>
+                                <label for="price" class="form-label">{{ 'harvest.searchPricePerkilogram' | translate
+                                    }}</label>
                                 <select formControlName="price" id="price" class="form-select">
                                     <option value="">{{ 'harvest.SelectSellingPrice' | translate }}</option>
                                     <option value="1-2">1-2บาท</option>
@@ -95,7 +92,7 @@
                             </div>
                         </div>
                     </div>
-        
+
                     <!-- แถวปุ่มกดด้านล่าง -->
                     <div class="row mt-4">
                         <div class="col-12 d-flex gap-2 justify-content-end">
@@ -112,49 +109,58 @@
         </div>
 
         <!-- ตารางข้อมูล -->
-        <mat-card-content >
-            <div class="table-container" >
+        <mat-card-content>
+            <div class="table-container">
                 <table mat-table [dataSource]="dataSource" matSort class="harvests-table">
                     <!-- คอลัมน์ วันที่เก็บเกี่ยว -->
                     <ng-container matColumnDef="harvest_date">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: bold;">{{ 'harvest.harvestDate' | translate }}</th>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: bold;">{{
+                            'harvest.harvestDate' | translate }}</th>
                         <td mat-cell *matCellDef="let harvest">
                             {{ harvest.harvest_date | date:'dd/MM/yyyy' }}
                         </td>
                     </ng-container>
                     <!-- คอลัมน์ ชื่อแปลง -->
                     <ng-container matColumnDef="plot_name">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header  style="font-weight: bold;">{{ 'harvest.plotName' | translate }}</th>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: bold;">{{
+                            'harvest.plotName' | translate }}</th>
                         <td mat-cell *matCellDef="let harvest"> {{ harvest.plot_name }} </td>
                     </ng-container>
                     <!-- คอลัมน์ บริษัทที่ขาย -->
                     <ng-container matColumnDef="company_name">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header  style="font-weight: bold;">{{ 'harvest.companyName' | translate }}</th>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: bold;">{{
+                            'harvest.companyName' | translate }}</th>
                         <td mat-cell *matCellDef="let harvest"> {{ harvest.company_name }} </td>
                     </ng-container>
                     <!-- คอลัมน์ น้ำหนักสุทธิ -->
                     <ng-container matColumnDef="net_weight_kg">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: bold;">{{ 'harvest.netWeight' | translate }}</th>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: bold;">{{
+                            'harvest.netWeight' | translate }}</th>
                         <td mat-cell *matCellDef="let harvest"> {{ harvest.net_weight_kg }} </td>
                     </ng-container>
                     <!-- คอลัมน์ เปอร์เซ็นต์แป้ง -->
                     <ng-container matColumnDef="starch_percentage">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: bold;">{{ 'harvest.starchPercentage' | translate }}</th>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: bold;">{{
+                            'harvest.starchPercentage' | translate }}</th>
                         <td mat-cell *matCellDef="let harvest"> {{ harvest.starch_percentage }} </td>
                     </ng-container>
                     <!-- คอลัมน์ ราคาขาย -->
                     <ng-container matColumnDef="amount">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: bold;">{{ 'harvest.amount' | translate }}</th>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: bold;">{{
+                            'harvest.amount' | translate }}</th>
                         <td mat-cell *matCellDef="let harvest"> {{ harvest.amount }} </td>
                     </ng-container>
                     <!-- คอลัมน์ Actions -->
                     <ng-container matColumnDef="actions">
-                        <th mat-header-cell *matHeaderCellDef style="font-weight: bold;">{{ 'harvest.actionsHeader' | translate }}</th>
+                        <th mat-header-cell *matHeaderCellDef style="font-weight: bold;">{{ 'harvest.actionsHeader' |
+                            translate }}</th>
                         <td mat-cell *matCellDef="let harvest">
-                            <button mat-icon-button color="primary" (click)="EditHarvest(harvest.harvest_id)" matTooltip="แก้ไข">
+                            <button mat-icon-button color="primary" (click)="EditHarvest(harvest.harvest_id)"
+                                matTooltip="แก้ไข">
                                 <mat-icon>edit</mat-icon>
                             </button>
-                            <button mat-icon-button color="warn" (click)="DeleteHarvest(harvest.harvest_id)" matTooltip="ลบ">
+                            <button mat-icon-button color="warn" (click)="DeleteHarvest(harvest.harvest_id)"
+                                matTooltip="ลบ">
                                 <mat-icon>delete</mat-icon>
                             </button>
                             <button mat-icon-button (click)="viewDetails(harvest.harvest_id)" matTooltip="ดูรายละเอียด">
@@ -181,22 +187,20 @@
     </mat-card>
 
     <!-- Modal สำหรับแสดงภาพ -->
-    <div class="image-modal" 
-    [ngClass]="{'show': showModal}" 
-    [style.display]="showModal ? 'block' : 'none'" 
-    (click)="closeModal()">
-   
-   <div class="modal-container" (click)="$event.stopPropagation()">
-       <!-- ปุ่มปิดด้านบนขวา -->
-       <button class="close-button" (click)="closeModal()">
-           <span>&times;</span>
-       </button>
-       
-       <!-- รูปภาพ -->
-       <div class="image-container">
-           <img [src]="imageUrl" alt="ภาพรายละเอียด">
-       </div>
-   </div>
-</div>
+    <div class="image-modal" [ngClass]="{'show': showModal}" [style.display]="showModal ? 'block' : 'none'"
+        (click)="closeModal()">
+
+        <div class="modal-container" (click)="$event.stopPropagation()">
+            <!-- ปุ่มปิดด้านบนขวา -->
+            <button class="close-button" (click)="closeModal()">
+                <span>&times;</span>
+            </button>
+
+            <!-- รูปภาพ -->
+            <div class="image-container">
+                <img [src]="imageUrl" alt="ภาพรายละเอียด">
+            </div>
+        </div>
+    </div>
 
 </div>

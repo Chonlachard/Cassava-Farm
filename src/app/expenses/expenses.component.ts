@@ -9,6 +9,8 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { EditExpensesComponent } from './edit-expenses/edit-expenses.component';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { DetailComponent } from './detail/detail.component';
+import { DialogRef } from '@angular/cdk/dialog';
 
 @Component({
   selector: 'app-expenses',
@@ -169,4 +171,28 @@ export class ExpensesComponent implements OnInit, AfterViewInit {
       });
     });
   }
+
+  previewExpense(expense_id: any) {
+    if (!expense_id) {
+      console.error("❌ ไม่พบ expense_id:", expense_id);
+      return;
+    }
+
+    console.log("📌 เปิด Dialog สำหรับ expense_id:", expense_id);
+
+    const dialogRef = this.dialog.open(DetailComponent, {
+      width: '600px',
+      data: { expense_id: expense_id } // ✅ ใช้ค่า expense_id โดยตรง
+    });
+
+    dialogRef.afterClosed().subscribe(() => {
+      console.log("✅ Dialog ถูกปิดแล้ว");
+    });
+}
+
+closeDialog(): void {
+  this.dialog.closeAll();
+}
+
+  
 }

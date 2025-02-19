@@ -95,4 +95,6 @@ router.get('/getExpenseEdit', expensesController.getExpenseEdit);
 // ─────────────────────────────────────────
 router.get('/getExpensesDetail', expensesDetail.getExpensesDetail);
 
+router.get('/getExpensesDetailId', expensesDetail.getExpensesDetailId);
+
 module.exports = router;

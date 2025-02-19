@@ -79,4 +79,12 @@ export class ExpensesService {
   getDeopPlot(userId: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/getDeopdowplot?user_id=${userId}`);
   }
+
+
+  getExpensesDetailById(expenseId: string): Observable<any> {
+    debugger
+    return this.http.get<any>(`${this.apiUrl}/getExpensesDetailId`, {
+      params: { expense_id: expenseId }
+    });
+  }
 }

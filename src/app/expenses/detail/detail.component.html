@@ -1,0 +1,48 @@
+<p-dialog 
+    [visible]="true" 
+    [modal]="true" 
+    [dismissableMask]="true" 
+    [header]="'รายละเอียดค่าใช้จ่าย'" 
+    [style]="{width: '50vw'}"
+    (onHide)="closeDialog()"> <!-- ✅ ปิด Dialog เมื่อกดด้านนอก -->
+
+    <p-progressSpinner *ngIf="loading"></p-progressSpinner>
+
+    <!-- ✅ ตารางข้อมูล -->
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" *ngIf="!loading">
+        <!-- ✅ วันที่ -->
+        <ng-container matColumnDef="expenses_date">
+            <th mat-header-cell *matHeaderCellDef> วันที่ </th>
+            <td mat-cell *matCellDef="let element"> {{ element.expenses_date | date:'dd/MM/yyyy' }} </td>
+        </ng-container>
+
+        <!-- ✅ หมวดหมู่ -->
+        <ng-container matColumnDef="category">
+            <th mat-header-cell *matHeaderCellDef> หมวดหมู่ </th>
+            <td mat-cell *matCellDef="let element"> {{ element.category || 'ไม่ระบุ' }} </td>
+        </ng-container>
+
+        <!-- ✅ รายละเอียด -->
+        <ng-container matColumnDef="description">
+            <th mat-header-cell *matHeaderCellDef> รายละเอียด </th>
+            <td mat-cell *matCellDef="let element"> {{ element.description || 'ไม่ระบุ' }} </td>
+        </ng-container>
+
+        <!-- ✅ โครงสร้างตาราง -->
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+    <!-- ✅ MatPaginator -->
+    <mat-paginator 
+        *ngIf="dataSource.data.length > 0" <!-- ✅ ซ่อน Paginator ถ้าไม่มีข้อมูล -->
+        [pageSizeOptions]="[5, 10, 20]" 
+        showFirstLastButtons>
+    </mat-paginator>
+
+    <!-- ✅ ปุ่มปิด Dialog -->
+    <mat-dialog-actions align="end">
+        <button mat-button (click)="closeDialog()">ปิด</button>
+    </mat-dialog-actions>
+
+</p-dialog>
