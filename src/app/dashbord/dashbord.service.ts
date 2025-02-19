@@ -13,8 +13,9 @@ export class DashbordService {
      private http: HttpClient
    ) { }
 
-   getCashFlowReport(userId: string, year: number): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/getCashFlowReport?user_id=${userId}&year=${year}`);
-  }
+   getCashFlowReport(userId: string, year: number, startMonth: number, endMonth: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/getCashFlowReport?user_id=${userId}&year=${year}&startMonth=${startMonth}&endMonth=${endMonth}`);
+}
+
   
 }

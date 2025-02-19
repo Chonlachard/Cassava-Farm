@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { DashbordService } from './dashbord.service';
-import { NavbarComponent } from "../navbar/navbar.component";
 
 @Component({
   selector: 'app-dashbord',
@@ -8,9 +7,9 @@ import { NavbarComponent } from "../navbar/navbar.component";
   styleUrls: ['./dashbord.component.css'],
 })
 export class DashbordComponent implements OnInit {
-  summary: any = {}; // ✅ เก็บข้อมูลจาก API
-  selectedYear: number = new Date().getFullYear(); // ✅ ค่าเริ่มต้นเป็นปีปัจจุบัน
-  availableYears: number[] = []; // ✅ เก็บรายการปีที่มีข้อมูล
+  summary: any = {}; 
+  selectedYear: number = new Date().getFullYear(); 
+  availableYears: number[] = []; 
   incomeExpense: any = {};
   monthlyIncomeExpense: any[] = [];
   userId: string = '';
@@ -20,41 +19,57 @@ export class DashbordComponent implements OnInit {
   expenseDetails: any[] = [];
   expenseList: any[] = [];
 
-  pieChartOptions : any;
-  pieChartData : any;
+  // ✅ กำหนดค่าเริ่มต้นให้ startMonth และ endMonth
+  startMonth: number = 1;
+  endMonth: number = 12;
 
-  chartData: any;  // ✅ เก็บข้อมูลกราฟ
-  chartOptions: any; // ✅ ตั้งค่า Chart Options
+  availableMonths = [
+    { value: 1, label: "มกราคม" }, { value: 2, label: "กุมภาพันธ์" },
+    { value: 3, label: "มีนาคม" }, { value: 4, label: "เมษายน" },
+    { value: 5, label: "พฤษภาคม" }, { value: 6, label: "มิถุนายน" },
+    { value: 7, label: "กรกฎาคม" }, { value: 8, label: "สิงหาคม" },
+    { value: 9, label: "กันยายน" }, { value: 10, label: "ตุลาคม" },
+    { value: 11, label: "พฤศจิกายน" }, { value: 12, label: "ธันวาคม" }
+  ];
 
-  // ✅ ชื่อเดือนภาษาไทย
+  pieChartOptions: any;
+  pieChartData: any;
+  chartData: any;
+  chartOptions: any;
+
   monthNames: string[] = [
     'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
     'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
   ];
 
-  constructor(private dashbordService : DashbordService) {}
+  constructor(private dashbordService: DashbordService) {}
 
   ngOnInit(): void {
-    this.userId = localStorage.getItem('userId') ?? ''; // ดึงค่า userId จาก localStorage
-    this.loadAvailableYears(); // โหลดปีที่เลือกได้
+    this.userId = localStorage.getItem('userId') ?? ''; 
+    this.loadAvailableYears(); 
 
     if (this.userId) {
-      this.loadCashFlowReport(); // โหลดข้อมูลหากมี userId
+      this.loadCashFlowReport(); 
     } else {
       console.error('❌ ไม่พบ User ID');
     }
   }
 
-   // ✅ สร้างรายการปีที่เลือกได้ (5 ปีล่าสุด)
-   loadAvailableYears(): void {
-    this.userId = localStorage.getItem('userId') || '';
+  // ✅ โหลดรายการปีที่เลือกได้ (5 ปีล่าสุด)
+  loadAvailableYears(): void {
     const currentYear = new Date().getFullYear();
     this.availableYears = Array.from({ length: 5 }, (_, i) => currentYear - i);
   }
 
-  // ✅ โหลดข้อมูลจาก API ตามปีที่เลือก
+  // ✅ โหลดข้อมูลจาก API ตามปีที่เลือกและช่วงเดือน
   loadCashFlowReport(): void {
-    this.dashbordService.getCashFlowReport(this.userId, this.selectedYear).subscribe({
+    // ✅ ป้องกัน `startMonth` และ `endMonth` เป็น NaN
+    if (Number.isNaN(this.startMonth) || Number.isNaN(this.endMonth)) {
+      console.error("❌ ค่าของ startMonth หรือ endMonth ไม่ถูกต้อง:", { startMonth: this.startMonth, endMonth: this.endMonth });
+      return;
+    }
+
+    this.dashbordService.getCashFlowReport(this.userId, this.selectedYear, this.startMonth, this.endMonth).subscribe({
       next: (data) => {
         this.summary = data.summary;
         this.incomeExpense = data.IncomExpent;
@@ -62,7 +77,7 @@ export class DashbordComponent implements OnInit {
         this.categoryExpents = data.categoryExpents;
         this.expenseDetails = data.expenseDetails;
         this.updateExpenses();
-        this.updateChart(); // ✅ อัปเดตข้อมูลกราฟ
+        this.updateChart();
       },
       error: (err) => console.error('❌ เกิดข้อผิดพลาดในการโหลดข้อมูลกระแสเงินสด:', err),
     });
@@ -74,10 +89,10 @@ export class DashbordComponent implements OnInit {
       this.totalExpense = 0;
       return;
     }
-  
+
     // ✅ คำนวณยอดรวมของรายจ่ายทั้งหมด
     this.totalExpense = this.expenseDetails.reduce((sum, item) => sum + parseFloat(item.total_amount), 0);
-  
+
     // ✅ ฟอร์แมตรายจ่ายเพื่อใช้ในตาราง
     this.expenseList = this.expenseDetails.map((item) => ({
       expense_detail: item.expense_detail,
@@ -85,12 +100,17 @@ export class DashbordComponent implements OnInit {
       percentage_of_expense: parseFloat(item.percentage_of_expense).toFixed(2),
     }));
   }
-  
-  
+
+  // ✅ ฟังก์ชันแปลงตัวเลขเดือนเป็นชื่อเดือน
+  getMonthName(monthNumber: number): string {
+    return this.monthNames[monthNumber - 1] || 'ไม่ระบุเดือน';
+  }
+
+  selectExpense(expense: any) {}
 
   updateChart(): void {
     this.chartData = {
-      labels: this.monthlyIncomeExpense.map(item => this.getMonthName(item.month)), // ✅ ใช้ชื่อเดือนแทนตัวเลข
+      labels: this.monthlyIncomeExpense.map(item => this.getMonthName(item.month)), 
       datasets: [
         {
           label: 'รายรับ (บาท)',
@@ -106,42 +126,31 @@ export class DashbordComponent implements OnInit {
     };
 
     this.pieChartData = {
-      labels: this.categoryExpents.map(item => item.expenseCategory), // ชื่อประเภทค่าใช้จ่าย
+      labels: this.categoryExpents.map(item => item.expenseCategory),
       datasets: [
         {
-          data: this.categoryExpents.map(item => item.totalAmount), // ยอดรวมของแต่ละประเภท
-          backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4CAF50', '#9C27B0', '#FF9800', '#795548'], // สีที่ใช้ในกราฟ
+          data: this.categoryExpents.map(item => item.totalAmount),
+          backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4CAF50', '#9C27B0', '#FF9800', '#795548']
         }
       ]
     };
 
     this.pieChartOptions = {
-      responsive: true, // ✅ ทำให้ Pie Chart ปรับขนาดตามหน้าจอ
-      maintainAspectRatio: false, // ✅ ป้องกันไม่ให้กราฟถูกบีบ
-      aspectRatio: 0.8, // ✅ ปรับความสูงของ Pie Chart ให้สมดุล
+      responsive: true,
+      maintainAspectRatio: false,
+      aspectRatio: 0.8,
       animation: {
-        duration: 1000, // ✅ เพิ่ม Animation ให้ Pie Chart ค่อยๆ แสดงผล
-        easing: 'easeInOutQuad' // ✅ ทำให้การเคลื่อนไหวดู Smooth
+        duration: 1000,
+        easing: 'easeInOutQuad'
       },
       layout: {
-        padding: {
-          top: 30,
-          bottom: 30,
-          left: 30,
-          right: 30
-        } // ✅ เพิ่ม padding รอบกราฟเพื่อให้ดูสมดุล
+        padding: { top: 30, bottom: 30, left: 30, right: 30 }
       },
       plugins: {
         legend: {
           display: true,
-          position: 'bottom', // ✅ ย้าย Legend ไปด้านล่าง
-          labels: {
-            font: {
-              size: 14 // ✅ ปรับขนาดตัวอักษรของ Legend ให้ใหญ่ขึ้น
-            },
-            padding: 15, // ✅ เพิ่มระยะห่างของ legend
-            boxWidth: 20 // ✅ ขยายขนาดกล่องสีใน legend
-          }
+          position: 'bottom',
+          labels: { font: { size: 14 }, padding: 15, boxWidth: 20 }
         },
         tooltip: {
           callbacks: {
@@ -155,27 +164,42 @@ export class DashbordComponent implements OnInit {
         }
       }
     };
-    
-    
     this.chartOptions = {
-      responsive: true, // ✅ ทำให้ Bar Chart ปรับขนาดได้
-      maintainAspectRatio: false, // ✅ ปิดการรักษาสัดส่วนเพื่อให้สามารถกำหนดความสูงเองได้
-      aspectRatio: 1, // ✅ กำหนดอัตราส่วน (ค่ามากขึ้น = กราฟสูงขึ้น)
+      responsive: true,
+      maintainAspectRatio: false,
+      aspectRatio: 1,
       animation: {
-        duration: 1000, // ✅ เพิ่ม Animation ให้กราฟค่อยๆ แสดงผล
+        duration: 1000,
         easing: 'easeInOutQuad'
+      },
+      hover: { 
+        mode: 'nearest', 
+        intersect: true 
       },
       plugins: {
         legend: {
+          display: true,
           position: 'top',
           labels: {
-            font: {
-              size: 14
-            },
-            padding: 10
+            font: { size: 14 },
+            padding: 10,
+            color: "#333",
+            usePointStyle: true,
+            boxWidth: 10
+          },
+          onClick: (e: any, legendItem: any, legend: any) => {
+            const index = legendItem.datasetIndex;
+            const ci = legend.chart;
+            ci.getDatasetMeta(index).hidden = ci.getDatasetMeta(index).hidden === null ? !ci.data.datasets[index].hidden : null;
+            ci.update();
           }
         },
         tooltip: {
+          backgroundColor: "rgba(0, 0, 0, 0.7)",
+          titleFont: { size: 14, weight: 'bold' },
+          bodyFont: { size: 13 },
+          padding: 10,
+          displayColors: false,
           callbacks: {
             label: function (context: any) {
               let value = context.raw.toLocaleString();
@@ -187,40 +211,31 @@ export class DashbordComponent implements OnInit {
       scales: {
         x: {
           grid: {
-            display: false
+            display: true,
+            drawBorder: false,
+            color: "rgba(0, 0, 0, 0.1)"
           },
           title: {
             display: true,
             text: "เดือน",
-            font: {
-              size: 16,
-              weight: 'bold'
-            }
+            font: { size: 16, weight: 'bold' }
           },
-          ticks: {
-            font: {
-              size: 14
-            }
-          }
+          ticks: { font: { size: 14 } }
         },
         y: {
           beginAtZero: true,
           title: {
             display: true,
             text: "จำนวนเงิน (บาท)",
-            font: {
-              size: 16,
-              weight: 'bold'
-            }
+            font: { size: 16, weight: 'bold' }
           },
           grid: {
             color: "rgba(0, 0, 0, 0.1)",
-            borderColor: "rgba(0, 0, 0, 0.2)"
+            borderColor: "rgba(0, 0, 0, 0.2)",
+            borderDash: [5, 5]
           },
           ticks: {
-            font: {
-              size: 14
-            },
+            font: { size: 14 },
             callback: function (value: number) {
               return value.toLocaleString() + " บาท";
             }
@@ -228,18 +243,5 @@ export class DashbordComponent implements OnInit {
         }
       }
     };
-    
-    
-    
   }
-
-   // ✅ ฟังก์ชันแปลงตัวเลขเดือนเป็นชื่อเดือน
-  getMonthName(monthNumber: number): string {
-    return this.monthNames[monthNumber - 1] || 'ไม่ระบุเดือน'; // ✅ ลบ 1 เพราะ Array เริ่มที่ index 0
-  }
-
-
-  selectExpense(expense: any) {
-    
-}
 }
