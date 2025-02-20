@@ -70,7 +70,7 @@
 
         <div class="mb-3">
           <label for="phoneNumber" class="form-label">{{ 'login.phoneNumber' | translate }}</label>
-          <input id="phoneNumber" formControlName="phoneNumber" class="form-control"
+          <input id="phoneNumber" formControlName="phoneNumber" type="tel" class="form-control"
             placeholder="{{ 'login.phoneNumberPlaceholder' | translate }}" required>
           <div *ngIf="registerForm.get('phoneNumber')?.invalid && registerForm.get('phoneNumber')?.touched"
             class="invalid-feedback">

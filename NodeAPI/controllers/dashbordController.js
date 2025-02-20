@@ -25,7 +25,8 @@ exports.getCashFlowReport = async (req, res) => {
                 SELECT plot_id, SUM(net_weight_kg) AS net_weight_kg, MAX(harvest_date) AS latestHarvestDate
                 FROM harvests
                 WHERE YEAR(harvest_date) = ?
-                AND MONTH(harvest_date) BETWEEN ? AND ?  -- ✅ เพิ่มเงื่อนไขช่วงเดือน
+                AND MONTH(harvest_date) BETWEEN ? AND ?  
+                AND is_delete = 0
                 GROUP BY plot_id
             ) b ON a.plot_id = b.plot_id
             WHERE a.user_id = ?
@@ -53,7 +54,7 @@ exports.getCashFlowReport = async (req, res) => {
     
     UNION ALL
     
-    -- ✅ รวมรายจ่าย
+    --  รวมรายจ่าย
     SELECT user_id, 0 AS totalIncome, 
         SUM(
             COALESCE(h.total_price, 0) + COALESCE(f.total_price, 0) + COALESCE(he.total_price, 0) + 

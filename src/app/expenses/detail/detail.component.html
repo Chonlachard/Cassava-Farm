@@ -33,13 +33,7 @@
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
 
-    <!-- ✅ MatPaginator -->
-    <mat-paginator 
-        *ngIf="dataSource.data.length > 0" <!-- ✅ ซ่อน Paginator ถ้าไม่มีข้อมูล -->
-        [pageSizeOptions]="[5, 10, 20]" 
-        showFirstLastButtons>
-    </mat-paginator>
-
+    
     <!-- ✅ ปุ่มปิด Dialog -->
     <mat-dialog-actions align="end">
         <button mat-button (click)="closeDialog()">ปิด</button>
