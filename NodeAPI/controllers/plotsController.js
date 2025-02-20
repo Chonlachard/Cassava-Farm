@@ -6,7 +6,6 @@ const db = require('../config/db');
 const { console } = require('inspector');
 
 // ฟังก์ชันคำนวณพื้นที่จากพิกัด
-// ฟังก์ชันคำนวณพื้นที่จากพิกัด
 function calculateAreaRai(latlngs) {
     if (!latlngs || latlngs.length < 3) {
         throw new Error("ต้องมีพิกัดอย่างน้อย 3 จุดขึ้นไปเพื่อสร้างพื้นที่");

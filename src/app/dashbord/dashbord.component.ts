@@ -10,9 +10,9 @@ import { ExpensesDetailComponent } from '../expenses-detail/expenses-detail.comp
   styleUrls: ['./dashbord.component.css'],
 })
 export class DashbordComponent implements OnInit {
-  summary: any = {}; 
-  selectedYear: number = new Date().getFullYear(); 
-  availableYears: number[] = []; 
+  summary: any = {};
+  selectedYear: number = new Date().getFullYear();
+  availableYears: number[] = [];
   incomeExpense: any = {};
   monthlyIncomeExpense: any[] = [];
   userId: string = '';
@@ -49,16 +49,16 @@ export class DashbordComponent implements OnInit {
     'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
   ];
 
-  constructor(private dashbordService: DashbordService,private cdRef: ChangeDetectorRef,
+  constructor(private dashbordService: DashbordService, private cdRef: ChangeDetectorRef,
     private dialog: MatDialog
-  ) {}
+  ) { }
 
   ngOnInit(): void {
-    this.userId = localStorage.getItem('userId') ?? ''; 
-    this.loadAvailableYears(); 
+    this.userId = localStorage.getItem('userId') ?? '';
+    this.loadAvailableYears();
 
     if (this.userId) {
-      this.loadCashFlowReport(); 
+      this.loadCashFlowReport();
     } else {
       console.error('❌ ไม่พบ User ID');
     }
@@ -121,21 +121,48 @@ export class DashbordComponent implements OnInit {
   }
 
   updateChart(): void {
+
+    let cumulativeDifference = 0;
+    const cumulativeData = this.monthlyIncomeExpense.map(item => {
+      cumulativeDifference += (item.totalIncome - item.totalExpense);
+      return cumulativeDifference;
+    });
+
+
     this.chartData = {
-      labels: this.monthlyIncomeExpense.map(item => this.getMonthName(item.month)), 
+      labels: this.monthlyIncomeExpense.map(item => this.getMonthName(item.month)),
       datasets: [
         {
-          label: 'รายรับ (บาท)',
-          data: this.monthlyIncomeExpense.map(item => item.totalIncome),
-          backgroundColor: '#42A5F5'
+          type: 'line',
+          label: 'กระแสเงินสดสะสม',  // ✅ แสดงค่าผลต่างแบบสะสม
+          data: cumulativeData,  // ✅ ใช้ค่าผลต่างที่สะสมไว้
+          borderColor: '#4CAF50',
+          borderWidth: 3,
+          fill: false,
+          pointStyle: 'circle',
+          pointRadius: 4,
+          pointBackgroundColor: '#4CAF50',
         },
         {
+          type: 'bar',
+          label: 'รายรับ (บาท)',
+          data: this.monthlyIncomeExpense.map(item => item.totalIncome),
+          backgroundColor: '#42A5F5',
+          
+        },
+        {
+          type: 'bar',
           label: 'รายจ่าย (บาท)',
           data: this.monthlyIncomeExpense.map(item => item.totalExpense),
-          backgroundColor: '#FF6384'
-        }
+          backgroundColor: '#FF6384',
+          opacity: 0.7,
+          
+        },
+        
       ]
     };
+
+
 
     this.pieChartData = {
       labels: this.categoryExpents.map(item => item.expenseCategory),
@@ -184,9 +211,9 @@ export class DashbordComponent implements OnInit {
         duration: 1000,
         easing: 'easeInOutQuad'
       },
-      hover: { 
-        mode: 'nearest', 
-        intersect: true 
+      hover: {
+        mode: 'nearest',
+        intersect: true
       },
       plugins: {
         legend: {
@@ -270,9 +297,9 @@ export class DashbordComponent implements OnInit {
       }
     });
   }
-  
-  
-  
+
+
+
 
   // ✅ ฟังก์ชันปิด Popup
   closePopup() {

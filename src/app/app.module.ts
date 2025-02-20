@@ -51,7 +51,6 @@ import { DialogModule } from 'primeng/dialog';
 import { TooltipModule } from 'primeng/tooltip';
 import { ExpensesDetailComponent } from './expenses-detail/expenses-detail.component';
 import { DetailComponent } from './expenses/detail/detail.component';
-import { TestComponent } from './test/test.component';
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
@@ -80,7 +79,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     DashbordComponent,
     ExpensesDetailComponent,
     DetailComponent,
-    TestComponent,
   ],
   imports: [
     BrowserModule,

@@ -96,6 +96,7 @@ export class CassavaPlantedAreaComponent implements OnInit, AfterViewInit {
 
   // ฟังก์ชันโหลดข้อมูล
   loadPlots() {
+    debugger
     this.cassavaAreaService.getCassavaArea(this.userId).subscribe((res: any) => {
       this.dataSource.data = res.map((item: any) => ({
         ...item,

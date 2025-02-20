@@ -40,12 +40,7 @@ exports.addHarvest = async function (req, res) {
 
         console.log("🚀 Received Data:", req.body);
 
-        const checkDuplicateQuery = `SELECT * FROM harvests WHERE user_id = ? AND plot_id = ? AND harvest_date = ?`;
-        const [duplicate] = await db.promise().query(checkDuplicateQuery, [user_id, plot_id, harvest_date]);
-
-        if (duplicate.length > 0) {
-            return res.status(400).json({ message: 'ข้อมูลนี้มีอยู่แล้ว' });
-        }
+        // ❌ ลบการตรวจสอบข้อมูลซ้ำออกไป
 
         const insertQuery = `
             INSERT INTO harvests (
@@ -67,6 +62,7 @@ exports.addHarvest = async function (req, res) {
         res.status(500).json({ message: 'เกิดข้อผิดพลาดในการเพิ่มข้อมูลการเก็บเกี่ยว' });
     }
 };
+
 
 
 exports.getHarvests = async (req, res) => {

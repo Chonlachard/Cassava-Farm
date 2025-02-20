@@ -396,7 +396,7 @@ exports.getExpensesDetailId = async (req, res) => {
             ) AS description
         FROM expenses e
         LEFT JOIN Planting pl ON e.expense_id = pl.expense_id
-        WHERE e.expense_id = ? C`,
+        WHERE e.expense_id = ? `,
 
     'ค่าคนฉีดยาฆ่าหญ้า': `
         SELECT e.expenses_date, e.category, 

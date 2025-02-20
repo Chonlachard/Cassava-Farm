@@ -5,28 +5,27 @@
     <!-- ✅ ฟิลเตอร์เลือกปีและช่วงเดือน -->
     <div class="filter-section">
         <!-- เลือกปี -->
-        <div class="year-selection">
+        <!-- <div class="year-selection">
             <label for="yearSelect">เลือกปี:</label>
             <select id="yearSelect" [(ngModel)]="selectedYear" (change)="loadCashFlowReport()">
                 <option *ngFor="let year of availableYears" [value]="year">{{ year }}</option>
             </select>
-        </div>
+        </div> -->
 
         <!-- เลือกช่วงเดือน (แสดงเดือนเริ่มต้น และสิ้นสุดในบรรทัดเดียวกัน) -->
         <div class="month-selection">
             <div class="month-group">
                 <div class="month-item">
-                    <label for="startMonthSelect">เดือนเริ่ม:</label>
-                    <select id="startMonthSelect" [(ngModel)]="startMonth" (change)="loadCashFlowReport()">
-                        <option *ngFor="let month of availableMonths" [value]="month.value">{{ month.label }}</option>
-                    </select>
+                    <label for="startMonthSelect">วันที่เริ่ม:</label>
+                    <input type="date" id="startDate" class="form-control" formControlName="startDate">
                 </div>
 
                 <div class="month-item">
-                    <label for="endMonthSelect">เดือนสิ้นสุด:</label>
-                    <select id="endMonthSelect" [(ngModel)]="endMonth" (change)="loadCashFlowReport()">
+                    <label for="endMonthSelect">วันที่สิ้นสุด:</label>
+                    <!-- <select id="endMonthSelect" [(ngModel)]="endMonth" (change)="loadCashFlowReport()">
                         <option *ngFor="let month of availableMonths" [value]="month.value">{{ month.label }}</option>
-                    </select>
+                    </select> -->
+                    <input type="date" id="startDate" class="form-control" formControlName="startDate">
                 </div>
             </div>
         </div>

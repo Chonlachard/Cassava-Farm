@@ -32,6 +32,7 @@ export class AddPlantedAreaComponent implements OnInit {
   currentLocationMarker: google.maps.LatLngLiteral | null = null;
   areaInRai = 0;
   areaInNgan = 0;
+  areaText = '0 ไร่ 0 ตารางวา';
   markers: google.maps.Marker[] = [];
   userId: string = '';
   existingPlotNames: string[] = [];
@@ -202,22 +203,25 @@ export class AddPlantedAreaComponent implements OnInit {
     if (this.polygonCoords.length < 3) {
       this.areaInRai = 0;
       this.areaInNgan = 0;
+      this.areaText = "0 ไร่ 0 ตารางวา";
       return;
     }
-
+  
     const polygonPath = this.polygonCoords.map(coord => new google.maps.LatLng(coord.lat, coord.lng));
     const areaInSquareMeters = google.maps.geometry.spherical.computeArea(polygonPath);
     const areaInSquareWah = areaInSquareMeters / 4;
     const areaInRai = Math.floor(areaInSquareWah / 400);
     const remainingWah = areaInSquareWah % 400;
     const areaInNgan = Math.floor(remainingWah / 100);
-
+    const areaInWah = Math.round(remainingWah % 100); // หาตารางวาที่เหลือ
+  
     this.areaInRai = areaInRai;
     this.areaInNgan = areaInNgan;
-
-    this.plantedAreaForm.get('area_rai')?.setValue(this.areaInRai.toString());
+    this.areaText = `${this.areaInRai} ไร่ ${areaInWah} ตารางวา`;
+  
+    this.plantedAreaForm.get('area_rai')?.setValue(this.areaText);
   }
-
+  
   generatePlotName(): void {
     let newPlotNumber = 1;
     while (this.existingPlotNames.includes(`แปลงที่${newPlotNumber}`)) {

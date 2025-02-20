@@ -54,7 +54,7 @@
             </ng-container>
             
             <!-- Image Column -->
-            <ng-container matColumnDef="imageUrl">
+            <ng-container matColumnDef="imageUrl" >
                 <th mat-header-cell *matHeaderCellDef mat-sort-header class="imageUrl">{{ 'plot.imageHeader' | translate }}</th>
                 <td mat-cell *matCellDef="let plantedArea" class="imageUrl">
                   <img [src]="plantedArea.imageUrl" alt="Image" width="100">
