@@ -1,131 +1,130 @@
+/* =============================
+   1. โครงร่างหลักของฟอร์ม
+============================= */
 .harvest-form-container {
     display: flex;
     justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background: linear-gradient(135deg, #e0eafc 0%, #c8d6e5 100%);
-    padding: 20px;
+    align-items: flex-start; /* ทำให้ฟอร์มติดด้านบน ไม่เว้นระยะห่างมากเกินไป */
+    min-height: auto; /* ปรับให้สูงเท่าที่จำเป็น */
+    background: #f8fafc; /* สีพื้นหลังอ่อน ให้กลมกลืนกับ UI ด้านบน */
+    padding: 10px 0; /* ลด Padding ด้านบนและล่าง */
+    width: 100%;
+    margin-top: -20px; /* ลดช่องว่างที่เกิดขึ้นจาก UI ด้านบน */
 }
-  
+
+/* =============================
+   2. สไตล์ของการ์ดฟอร์ม
+============================= */
+/* ทำให้กรอบฟอร์มมีขนาดเท่ากับตารางด้านบน */
 .form-card {
     background: #ffffff;
-    padding: 30px;
+    padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 500px;
-    max-height: 80vh; 
-    overflow-y: auto;
+    width: calc(100% - 100px); /* ปรับความกว้างให้เท่ากับตาราง */
+    max-width: 100%; /* จำกัดขนาดสูงสุดให้เท่ากับตาราง */
     box-sizing: border-box;
+    border: 1px solid #e5e7eb; /* เพิ่มขอบให้เหมือนตาราง */
+    margin: 0 auto; /* จัดกึ่งกลาง */
 }
-  
-.form-title {
-    color: #333;
-    font-size: 22px;
-    margin-bottom: 20px;
-    text-align: center;
-    font-weight: 300;
+
+
+/* =============================
+   3. จัดเรียงฟิลด์ข้อมูลเป็น 4 คอลัมน์
+============================= */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* ทำให้มี 4 คอลัมน์ */
+    gap: 10px; /* ลดระยะห่างระหว่างช่องอินพุต */
 }
-  
+
+/* =============================
+   4. ปรับขนาดและการจัดวางของช่องข้อมูล
+============================= */
 .form-field {
-    margin-bottom: 16px;
-}
-  
-label {
-    display: block;
-    margin-bottom: 4px;
-    color: #555;
-    font-size: 14px;
-    font-weight: 500;
-}
-  
-input, select, textarea {
+    display: flex;
+    flex-direction: column;
     width: 100%;
-    padding: 10px;
-    border: 1px solid #d1d5db;
-    border-radius: 4px;
+}
+
+/* =============================
+   5. ปรับแต่ง Label และไอคอน
+============================= */
+label {
+    display: flex;
+    align-items: center;
+    font-size: 14px; /* ขนาดตัวอักษรเล็กลง */
+    font-weight: 500;
+    color: #374151; /* สีตัวอักษรเข้ม */
+    margin-bottom: 2px; /* ลดระยะห่างระหว่าง Label กับ Input */
+}
+
+/* ไอคอนข้าง Label */
+.option-icon {
+    margin-right: 8px; /* เว้นระยะห่างไอคอนกับข้อความ */
     font-size: 16px;
-    background-color: #f9f9f9;
-    transition: border-color 0.3s ease, background-color 0.3s ease;
+    color: #4a5568; /* สีเทาเข้ม */
 }
-  
-input:focus, select:focus, textarea:focus {
+
+/* =============================
+   6. ปรับแต่งช่องป้อนข้อมูล (Input และ Select)
+============================= */
+input, select {
+    width: 100%;
+    padding: 8px; /* ลด Padding ลงเล็กน้อย */
+    border: 1px solid #d1d5db; /* ขอบสีเทาอ่อน */
+    border-radius: 6px;
+    font-size: 14px; /* ลดขนาดตัวอักษรในช่องอินพุต */
+    background-color: #f8fafc; /* สีพื้นหลังเทาอ่อน */
+    transition: border-color 0.3s ease;
+}
+
+/* เพิ่มเอฟเฟกต์ตอนโฟกัส */
+input:focus, select:focus {
     outline: none;
-    border-color: #4a5568;
+    border-color: #3b82f6; /* เปลี่ยนขอบเป็นสีฟ้า */
     background-color: #ffffff;
+    box-shadow: 0 0 4px rgba(59, 130, 246, 0.3);
 }
-  
+
+/* =============================
+   7. ปรับขนาดปุ่มให้เหมาะสม
+============================= */
 .submit-button {
     width: 100%;
-    padding: 12px;
-    background-color: #4a5568;
+    padding: 10px; /* ลดขนาด Padding */
+    background-color: #3b82f6; /* สีฟ้า */
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 6px;
     font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    margin-top: 10px; /* ลดช่องว่างด้านบนปุ่ม */
 }
-  
+
+/* เอฟเฟกต์เมื่อเอาเมาส์ไปชี้ */
 .submit-button:hover {
-    background-color: #2d3748;
+    background-color: #2563eb;
 }
-  
+
+/* ทำให้ปุ่มเป็นสีเทาถ้าไม่สามารถกดได้ */
 .submit-button:disabled {
     background-color: #cbd5e0;
     cursor: not-allowed;
 }
-  
-.alert {
-    padding: 12px;
-    border-radius: 4px;
-    margin-bottom: 20px;
-    font-size: 14px;
-}
-  
-.alert-success {
-    background-color: #e6fffa;
-    color: #2c7a7b;
-    border: 1px solid #81e6d9;
-}
-  
-.alert-danger {
-    background-color: #fff5f5;
-    color: #c53030;
-    border: 1px solid #feb2b2;
-}
-  
-.option-icon {
-    margin-right: 12px; /* เว้นระยะห่างระหว่างไอคอนและข้อความ */
-    font-size: 20px; /* ขนาดของไอคอน */
-}
-  
-.mat-option {
-    display: flex;
-    align-items: center;
-    font-size: 16px;
+
+/* =============================
+   8. ทำให้ฟอร์ม Responsive
+============================= */
+@media (max-width: 1024px) {
+    .form-grid {
+        grid-template-columns: repeat(2, 1fr); /* ลดเหลือ 2 คอลัมน์ในแท็บเล็ต */
+    }
 }
 
-/* เพิ่ม CSS สำหรับ Angular Material Forms */
-.mat-form-field {
-    width: 100%;
-    margin-bottom: 16px;
-}
-
-.mat-form-field label {
-    font-size: 14px;
-    color: #555;
-}
-
-.mat-form-field input, .mat-form-field select, .mat-form-field textarea {
-    padding: 10px;
-    background-color: #f9f9f9;
-}
-
-.mat-form-field .mat-select {
-    font-size: 16px;
-}
-
-.mat-form-field .mat-input-element {
-    font-size: 16px;
+@media (max-width: 600px) {
+    .form-grid {
+        grid-template-columns: repeat(1, 1fr); /* แสดงเป็น 1 คอลัมน์ในมือถือ */
+    }
 }

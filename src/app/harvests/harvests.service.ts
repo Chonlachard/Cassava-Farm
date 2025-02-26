@@ -46,6 +46,7 @@ export class HarvestsService {
 
   // อัปเดตข้อมูลเก็บเกี่ยว
   updateHarvest(formData: FormData): Observable<any> {
+    debugger
     return this.http.put(`${this.apiUrl}/updateharvest`, formData); // ใช้ PUT สำหรับการอัปเดต
   }
 

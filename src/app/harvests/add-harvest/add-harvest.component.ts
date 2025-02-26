@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { HarvestsService } from '../harvests.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
 import Swal from 'sweetalert2';
 import { TranslateService } from '@ngx-translate/core';
+import { debounceTime } from 'rxjs/operators';
 
 @Component({
   selector: 'app-add-harvest',
@@ -11,6 +11,8 @@ import { TranslateService } from '@ngx-translate/core';
   styleUrls: ['./add-harvest.component.css']
 })
 export class AddHarvestComponent implements OnInit {
+  @Output() closeForm = new EventEmitter<void>(); // ✅ ส่ง event กลับไปที่ parent component
+
   harvestForm: FormGroup;
   userId: string = '';
   plots: any[] = [];
@@ -19,7 +21,6 @@ export class AddHarvestComponent implements OnInit {
   constructor(
     private harvestsService: HarvestsService,
     private fb: FormBuilder,
-    private dialogRef: MatDialogRef<AddHarvestComponent>,
     private translate: TranslateService
   ) {
     this.harvestForm = this.fb.group({
@@ -29,33 +30,33 @@ export class AddHarvestComponent implements OnInit {
       net_weight_kg: ['', [Validators.required, Validators.min(1)]],
       starch_percentage: ['', [Validators.required, Validators.min(0)]],
       price: ['', [Validators.required, Validators.min(0)]],
-      amount: ['', [Validators.required, Validators.min(1)]],
+      amount: [{ value: '', disabled: true }], // ✅ amount คำนวณอัตโนมัติ
       image: [null]
     });
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.userId = localStorage.getItem('userId') || '';
     const today = this.formatDate(new Date().toISOString());
     this.harvestForm.patchValue({ harvest_date: today });
-    this.fetchPlots();
+
+    await this.fetchPlots(); // ✅ โหลดข้อมูลแปลง
+    this.setupAutoCalculation(); // ✅ ตั้งค่าการคำนวณ amount อัตโนมัติ
   }
 
-  fetchPlots(): void {
-    this.harvestsService.getSerchPlot(this.userId).subscribe(
-      (res: any) => {
-        this.plots = res;
-      },
-      error => {
-        Swal.fire({
-          icon: 'error',
-          title: this.translate.instant('harvest.errorLoadingPlots.title'),
-          text: this.translate.instant('harvest.errorLoadingPlots.text'),
-          timer: 3000,
-          timerProgressBar: true,
-        });
-      }
-    );
+  async fetchPlots(): Promise<void> {
+    try {
+      const res: any = await this.harvestsService.getSerchPlot(this.userId).toPromise();
+      this.plots = res;
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: this.translate.instant('harvest.errorLoadingPlots.title'),
+        text: this.translate.instant('harvest.errorLoadingPlots.text'),
+        timer: 3000,
+        timerProgressBar: true,
+      });
+    }
   }
 
   formatDate(dateString: string): string {
@@ -63,7 +64,17 @@ export class AddHarvestComponent implements OnInit {
     return date.toISOString().split('T')[0]; // ✅ ให้เป็น `YYYY-MM-DD`
   }
 
-  onSubmit(): void {
+  setupAutoCalculation(): void {
+    this.harvestForm.valueChanges.pipe(debounceTime(300)).subscribe(values => {
+      const weight = parseFloat(values.net_weight_kg) || 0;
+      const price = parseFloat(values.price) || 0;
+      const amount = weight * price;
+
+      this.harvestForm.patchValue({ amount: amount.toFixed(2) }, { emitEvent: false });
+    });
+  }
+
+  async onSubmit(): Promise<void> {
     if (this.harvestForm.invalid) {
       Swal.fire({
         title: this.translate.instant('harvest.formInvalidErrorTitle'),
@@ -86,31 +97,25 @@ export class AddHarvestComponent implements OnInit {
     const image = this.harvestForm.get('image')?.value;
     if (image) formData.append('image', image);
 
-    const formDataObject: any = {};
-  formData.forEach((value, key) => {
-    formDataObject[key] = value;
-  });
-  console.log("🚀 Submitting Harvest Data:", formDataObject);
-
-    this.harvestsService.addHarvest(formData).subscribe(
-      () => {
-        Swal.fire({
-          title: this.translate.instant('harvest.addSuccessTitle'),
-          text: this.translate.instant('harvest.addSuccessText'),
-          icon: 'success'
-        }).then(() => {
-          this.dialogRef.close();
-        });
-      },
-      error => {
-        console.error('❌ Error adding harvest:', error);
-        Swal.fire({
-          title: this.translate.instant('harvest.addErrorTitle'),
-          text: this.translate.instant('harvest.addErrorText'),
-          icon: 'error'
-        });
-      }
-    ).add(() => this.isSubmitting = false);
+    try {
+      await this.harvestsService.addHarvest(formData).toPromise();
+      Swal.fire({
+        title: this.translate.instant('harvest.addSuccessTitle'),
+        text: this.translate.instant('harvest.addSuccessText'),
+        icon: 'success'
+      }).then(() => {
+        this.closeForm.emit(); // ✅ ปิดฟอร์มเมื่อบันทึกสำเร็จ
+      });
+    } catch (error) {
+      console.error('❌ Error adding harvest:', error);
+      Swal.fire({
+        title: this.translate.instant('harvest.addErrorTitle'),
+        text: this.translate.instant('harvest.addErrorText'),
+        icon: 'error'
+      });
+    } finally {
+      this.isSubmitting = false;
+    }
   }
 
   onFileSelect(event: any): void {
@@ -119,5 +124,9 @@ export class AddHarvestComponent implements OnInit {
       this.harvestForm.patchValue({ image: file });
       this.harvestForm.updateValueAndValidity();
     }
+  }
+
+  cancel(): void {
+    this.closeForm.emit(); // ✅ ปิดฟอร์มเมื่อกดยกเลิก
   }
 }

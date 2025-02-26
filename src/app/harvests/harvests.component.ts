@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, ElementRef } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
@@ -16,6 +16,7 @@ import { debounceTime } from 'rxjs/operators';
   styleUrls: ['./harvests.component.css']
 })
 export class HarvestsComponent implements OnInit, AfterViewInit {
+  @ViewChild('editFormSection') editFormSection!: ElementRef; // ✅ ดึงตำแหน่งของฟอร์มแก้ไข
   displayedColumns: string[] = [
     'harvest_date',
     'plot_name',
@@ -31,6 +32,9 @@ export class HarvestsComponent implements OnInit, AfterViewInit {
   plots: any[] = [];
   showModal: boolean = false;
   imageUrl: string = '';
+  showAddForm = false;
+  showEditForm = false;
+  selectedHarvestId: number | null = null; //
 
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
 
@@ -168,29 +172,38 @@ export class HarvestsComponent implements OnInit, AfterViewInit {
     });
   }
 
-  // เปิด Modal เพิ่มข้อมูล
-  openAdd(userId: string): void {
-    const dialogRef = this.dialog.open(AddHarvestComponent, {
-      width: '500px',
-      data: { userId: userId }
-    });
-
-    dialogRef.afterClosed().subscribe(() => {
-      this.loadHarvests();
-    });
+  openAdd() {
+    this.showAddForm = !this.showAddForm; // สลับสถานะเปิด/ปิดฟอร์ม
+  }
+  closeForm() {
+    this.showAddForm = false; // ปิดฟอร์มเมื่อบันทึกสำเร็จ
   }
 
   // แก้ไขข้อมูลการเก็บเกี่ยว
   EditHarvest(harvestId: number): void {
-    const dialogRef = this.dialog.open(EditHarvestComponent, {
-      width: '500px',
-      data: { userId: this.userId, harvestId: harvestId }
-    });
+    if (!harvestId) {
+        console.error("❌ harvestId เป็นค่าว่าง");
+        return;
+    }
 
-    dialogRef.afterClosed().subscribe(() => {
-      this.loadHarvests();
-    });
+    // ✅ ถ้าเลือกอันใหม่ ให้เปลี่ยนค่าแล้วโหลดข้อมูลใหม่
+    if (this.selectedHarvestId !== harvestId) {
+        this.selectedHarvestId = harvestId;
+        this.showEditForm = false; // ปิดฟอร์มก่อน แล้วเปิดใหม่
+        setTimeout(() => {
+          this.showEditForm = true;
+        }, 10); // ✅ ให้ Angular อัปเดต UI ก่อน
+
+        console.log("✅ เปลี่ยนข้อมูลฟอร์มแก้ไขไปที่ harvestId:", this.selectedHarvestId);
+    }
+
+    // ✅ เลื่อนหน้าไปยังฟอร์มแก้ไข
+    setTimeout(() => {
+      this.editFormSection.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
   }
+
+
 
   // ดูรายละเอียดรูปภาพ
   viewDetails(harvestId: number): void {

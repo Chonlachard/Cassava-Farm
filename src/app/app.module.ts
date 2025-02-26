@@ -51,6 +51,12 @@ import { DialogModule } from 'primeng/dialog';
 import { TooltipModule } from 'primeng/tooltip';
 import { ExpensesDetailComponent } from './expenses-detail/expenses-detail.component';
 import { DetailComponent } from './expenses/detail/detail.component';
+import { ButtonModule } from 'primeng/button';
+import { DropdownModule } from 'primeng/dropdown';
+import { InputTextModule } from 'primeng/inputtext';
+import { FileUploadModule } from 'primeng/fileupload';
+import { CalendarModule } from 'primeng/calendar';
+import { InputNumberModule } from 'primeng/inputnumber';
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
@@ -115,6 +121,14 @@ export function HttpLoaderFactory(http: HttpClient) {
     MatTooltipModule,
     TableModule,
     TooltipModule,
+    BrowserAnimationsModule, // ✅ จำเป็นสำหรับ PrimeNG
+    MatCardModule,
+    CalendarModule,
+    DropdownModule,
+    InputTextModule,
+    InputNumberModule,
+    FileUploadModule,
+    ButtonModule
   ],
   providers: [],
   bootstrap: [AppComponent]

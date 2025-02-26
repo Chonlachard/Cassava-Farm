@@ -93,17 +93,7 @@
                         </div>
                     </div>
 
-                    <!-- แถวปุ่มกดด้านล่าง -->
-                    <div class="row mt-4">
-                        <div class="col-12 d-flex gap-2 justify-content-end">
-                            <button type="button" class="btn btn-secondary px-4" (click)="clearSearch()">
-                                <i class="fas fa-undo me-2"></i>{{ 'harvest.clear' | translate }}
-                            </button>
-                            <button type="button" class="btn btn-success px-4" (click)="openAdd(userId)">
-                                <i class="fas fa-plus me-2"></i>{{ 'harvest.add' | translate }}
-                            </button>
-                        </div>
-                    </div>
+
                 </div>
             </form>
         </div>
@@ -182,9 +172,33 @@
             </div>
 
             <!-- Paginator -->
-            <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
+            <mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
         </mat-card-content>
     </mat-card>
+
+
+
+    <!-- ปุ่มเพิ่มข้อมูล -->
+    <div class="row mt-4">
+        <div class="col-12 d-flex gap-2 justify-content-end">
+            <button type="button" class="btn btn-success px-4" (click)="openAdd()">
+                <i class="fas fa-plus me-2"></i> {{ 'harvest.add' | translate }}
+            </button>
+        </div>
+    </div>
+
+    <!-- แสดงฟอร์มเพิ่มข้อมูลด้านล่างเมื่อ showAddForm เป็น true -->
+    <div *ngIf="showAddForm" class="mt-4">
+        <app-add-harvest (closeForm)="closeForm()"></app-add-harvest>
+    </div>
+
+    <!-- แสดงฟอร์มแก้ไขข้อมูลด้านล่างเมื่อ showAddForm เป็น true -->
+    <div *ngIf="showEditForm" #editFormSection class="mt-4">
+        <app-edit-harvest [harvestId]="selectedHarvestId!" (closeForm)="showEditForm = false"></app-edit-harvest>
+    </div>
+
+
+
 
     <!-- Modal สำหรับแสดงภาพ -->
     <div class="image-modal" [ngClass]="{'show': showModal}" [style.display]="showModal ? 'block' : 'none'"
