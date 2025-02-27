@@ -533,6 +533,7 @@ exports.getExpenseEdit = async (req, res) => {
 };
 
 exports.updateExpense = async (req, res) => {
+    console.log('📦 Request Body:', req.body);
     const expenseId = req.body.expense_id;
     const category = req.body.category;
 
@@ -644,7 +645,7 @@ exports.updateExpense = async (req, res) => {
                 WHERE expense_id = ?`,
                 values: [req.body.number_of_cans, req.body.price_per_can, req.body.total_price, req.body.plot_id, expenseId]
             },
-            'ค่าคนฉีดยาฮอร์โมน': {
+            'ค่าคนฉีดยาฮอโมน': {
                 query: `
                 UPDATE HormoneSpraying 
                 SET number_of_cans = ?, price_per_can = ?, total_price = ?, plot_id = ? 

@@ -49,7 +49,7 @@ export class ExpensesService {
     return this.http.post<any>(`${this.apiUrl}/addExpenses`, expense);
   
   }
-  getExpenseById(expenseId: string): Observable<any> {
+  getExpenseById(expenseId: number): Observable<any> {
     debugger
     return this.http.get(`${this.apiUrl}/getExpenseEdit?expense_id=${expenseId}`);
   }
@@ -63,6 +63,7 @@ export class ExpensesService {
 
   updateExpense(expenseData: any): Observable<any> {
     debugger
+    console.log(expenseData);
     return this.http.put(`${this.apiUrl}/editExpenses`, expenseData);
   }
   

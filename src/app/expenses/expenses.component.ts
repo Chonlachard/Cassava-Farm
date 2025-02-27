@@ -1,16 +1,13 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { ExpensesService } from './expenses.service';
-import { MatDialog } from '@angular/material/dialog';
-import { AddexpensesComponent } from './addexpenses/addexpenses.component';
 import Swal from 'sweetalert2';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { EditExpensesComponent } from './edit-expenses/edit-expenses.component';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { DetailComponent } from './detail/detail.component';
-import { DialogRef } from '@angular/cdk/dialog';
 
 @Component({
   selector: 'app-expenses',
@@ -18,13 +15,16 @@ import { DialogRef } from '@angular/cdk/dialog';
   styleUrls: ['./expenses.component.css']
 })
 export class ExpensesComponent implements OnInit, AfterViewInit {
+
+  @ViewChild('editFormSection') editFormSection!: ElementRef; // ✅ ดึงตำแหน่งของฟอร์มแก้ไข
   displayedColumns: string[] = ['expenses_date', 'category', 'total_price', 'actions'];
   dataSource = new MatTableDataSource<any>([]);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   searchForm: FormGroup;
-  
+  showAddForm = false;
+  showEditForm = false;
   plots: any[] = [];
   categories = [
     { value: 'ค่าฮอร์โมน', label: 'ค่าฮอร์โมน' },
@@ -43,11 +43,12 @@ export class ExpensesComponent implements OnInit, AfterViewInit {
   ];
 
   userId: string = '';
+  selectedExpenseId: number | null = null;
+selectedCategory: string | null = null;
 
   constructor(
     private fb: FormBuilder,
     private expensesService: ExpensesService,
-    public dialog: MatDialog,
     private translate: TranslateService
   ) {
     this.searchForm = this.fb.group({
@@ -100,29 +101,37 @@ export class ExpensesComponent implements OnInit, AfterViewInit {
   }
 
   openAddExpense(): void {
-    const dialogRef = this.dialog.open(AddexpensesComponent, {
-      width: '600px'
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        this.loadExpenses();
-      }
-    });
+    this.showAddForm = !this.showAddForm; // สลับสถานะเปิด/ปิดฟอร์ม
+  }
+  closeForm() {
+    this.showAddForm = false; // ปิดฟอร์มเมื่อบันทึกสำเร็จ
   }
 
-  editExpense(expenseId: number, category: string): void {
-    debugger
-    const dialogRef = this.dialog.open(EditExpensesComponent, {
-      width: '600px',
-      data: { id: expenseId, category: category } // ✅ ส่ง category ไปด้วย
-    });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        this.loadExpenses();
-      }
-    });
+  editExpense(expenseId: number, category: string): void {
+    if (expenseId && category) { // ✅ ตรวจสอบว่า expenseId และ category มีค่า
+        this.selectedExpenseId = expenseId;
+        this.selectedCategory = category;
+        this.showEditForm = true;
+
+        // ✅ เลื่อนหน้าไปยังฟอร์มแก้ไข
+        setTimeout(() => {
+            if (this.editFormSection) {
+                this.editFormSection.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                console.warn("⚠️ ไม่พบ element editFormSection");
+            }
+        }, 100);
+    } else {
+        console.warn("❌ ไม่สามารถแก้ไขได้: expenseId หรือ category ไม่ถูกต้อง");
+        Swal.fire({
+            icon: 'error',
+            title: 'เกิดข้อผิดพลาด',
+            text: 'ไม่สามารถแก้ไขค่าใช้จ่ายได้ กรุณาลองอีกครั้ง!',
+            confirmButtonText: 'ตกลง'
+        });
+    }
+  
 }
 
   deleteExpense(expenseId: number): void {
@@ -173,26 +182,7 @@ export class ExpensesComponent implements OnInit, AfterViewInit {
   }
 
   previewExpense(expense_id: any) {
-    if (!expense_id) {
-      console.error("❌ ไม่พบ expense_id:", expense_id);
-      return;
-    }
-
-    console.log("📌 เปิด Dialog สำหรับ expense_id:", expense_id);
-
-    const dialogRef = this.dialog.open(DetailComponent, {
-      width: '600px',
-      data: { expense_id: expense_id } // ✅ ใช้ค่า expense_id โดยตรง
-    });
-
-    dialogRef.afterClosed().subscribe(() => {
-      console.log("✅ Dialog ถูกปิดแล้ว");
-    });
+    
 }
-
-closeDialog(): void {
-  this.dialog.closeAll();
-}
-
   
 }

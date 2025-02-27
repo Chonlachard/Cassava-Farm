@@ -18,7 +18,7 @@
       </div>
 
       <!-- ค่าฮอร์โมน -->
-      <div *ngIf="selectedCategory === 'ค่าฮอร์โมน'">
+      <div *ngIf="selectedCategory === 'ค่าฮอร์โมน'"  class="form-category-container">
 
         <div class="form-field">
           <label for="expenseDate">วันที่ซื้อ</label>
@@ -66,7 +66,7 @@
 
 
       <!-- ค่าปุ๋ย -->
-      <div *ngIf="selectedCategory === 'ค่าปุ๋ย'">
+      <div *ngIf="selectedCategory === 'ค่าปุ๋ย'"  class="form-category-container">
 
         <div class="form-field">
           <label for="expenseDate">วันที่ซื้อ</label>
@@ -112,7 +112,7 @@
       </div>
 
       <!-- ค่ายาฆ่าหญ่า -->
-      <div *ngIf="selectedCategory === 'ค่ายาฆ่าหญ้า'">
+      <div *ngIf="selectedCategory === 'ค่ายาฆ่าหญ้า'"  class="form-category-container">
 
         <div class="form-field">
           <label for="expenseDate">วันที่ซื้อ</label>
@@ -145,7 +145,7 @@
           <input id="purchase_location" type="text" formControlName="purchase_location" placeholder="กรอกสถานที่ซื่อ" />
         </div>
         <!-- แปลง -->
-        <div class="form-field">
+        <div class="form-field"  class="form-category-container">
           <label for="plotId">แปลง</label>
           <select id="plot_id" formControlName="plot_id">
             <option value="" disabled selected>เลือกแปลง</option>
@@ -157,7 +157,7 @@
       </div>
 
       <!-- ค่าคนตัดต้น -->
-      <div *ngIf="selectedCategory === 'ค่าคนตัดต้น'">
+      <div *ngIf="selectedCategory === 'ค่าคนตัดต้น'"  class="form-category-container">
         <div class="form-field">
           <label for="expenseDate">วันที่ตัด</label>
           <input id="expenses_date" type="date" formControlName="expenses_date" />
@@ -170,9 +170,9 @@
 
         <div class="form-field">
           <label for="pricePerTree">ราคาต่อต้น</label>
-          <input id="pricePerTree" type="number" formControlName="price_per_tree" /> price_per_tree
-
+          <input id="price_per_tree" type="number" formControlName="price_per_tree" placeholder="กรอกราคาต่อต้น" />
         </div>
+
         <div class="form-field">
           <label for="totalPrice">ราคารวม</label>
           <input id="totalPrice" type="number" formControlName="total_price" readonly
@@ -189,7 +189,7 @@
       </div>
 
       <!-- ค่าคนปลูก -->
-      <div *ngIf="selectedCategory === 'ค่าคนปลูก'">
+      <div *ngIf="selectedCategory === 'ค่าคนปลูก'"  class="form-category-container">
         <div class="form-field">
           <label for="expenseDate">วันที่จ่ายเงิน</label>
           <input id="expenses_date" type="date" formControlName="expenses_date" />
@@ -226,7 +226,7 @@
       </div>
 
       <!-- ค่าคนฉีดยาฆ่าหญ่า -->
-      <div *ngIf="selectedCategory === 'ค่าคนฉีดยาฆ่าหญ้า'">
+      <div *ngIf="selectedCategory === 'ค่าคนฉีดยาฆ่าหญ้า'"  class="form-category-container">
         <div class="form-field">
           <label for="expenseDate">วันที่ฉีด</label>
           <input id="expenses_date" type="date" formControlName="expenses_date" />
@@ -258,7 +258,7 @@
       </div>
 
       <!-- ค่าคนฉีดยาฮอโมน -->
-      <div *ngIf="selectedCategory === 'ค่าคนฉีดยาฮอโมน'">
+      <div *ngIf="selectedCategory === 'ค่าคนฉีดยาฮอโมน'"  class="form-category-container">
         <!-- วันที่ฉีด -->
         <div class="form-field">
           <label for="expenseDate">วันที่ฉีด</label>
@@ -295,7 +295,7 @@
       </div>
 
       <!-- ค่าน้ำมัน -->
-      <div *ngIf="selectedCategory === 'ค่าน้ำมัน'">
+      <div *ngIf="selectedCategory === 'ค่าน้ำมัน'"  class="form-category-container">
         <!-- วันที่เติม -->
         <div class="form-field">
           <label for="expenseDate">วันที่เติม</label>
@@ -332,7 +332,7 @@
       </div>
 
       <!-- ค่าพันธุ์มัน -->
-      <div *ngIf="selectedCategory === 'ค่าพันธุ์มัน'">
+      <div *ngIf="selectedCategory === 'ค่าพันธุ์มัน'"  class="form-category-container">
         <!-- วันที่ซื้อ -->
         <div class="form-field">
           <label for="expenseDate">วันที่ซื้อ</label>
@@ -348,7 +348,7 @@
         <!-- ราคาต่อต้น -->
         <div class="form-field">
           <label for="pricePerTree">ราคาต่อต้น</label>
-          <input id="pricePerTree" type="number" formControlName="price_per_tree" />
+          <input id="price_per_tree" type="number" formControlName="price_per_tree" placeholder="กรอกราคาต่อต้น" />
         </div>
 
         <!-- ราคาที่จ่าย (คำนวณ) -->
@@ -381,7 +381,7 @@
       </div>
 
       <!-- ค่าซ่อมอุปกรณ์ -->
-      <div *ngIf="selectedCategory === 'ค่าซ่อมอุปกรณ์'">
+      <div *ngIf="selectedCategory === 'ค่าซ่อมอุปกรณ์'"  class="form-category-container">
         <!-- วันที่ซ่อม -->
         <div class="form-field">
           <label for="expenseDate">วันที่ซ่อม</label>
@@ -414,7 +414,7 @@
       </div>
 
       <!-- ค่าอุปกรณ์ -->
-      <div *ngIf="selectedCategory === 'ค่าอุปกรณ์'">
+      <div *ngIf="selectedCategory === 'ค่าอุปกรณ์'"  class="form-category-container">
         <!-- วันที่ซื้อ -->
         <div class="form-field">
           <label for="expenseDate">วันที่ซื้อ</label>
@@ -447,7 +447,7 @@
       </div>
 
       <!-- ค่าเช่าที่ดิน -->
-      <div *ngIf="selectedCategory === 'ค่าเช่าที่ดิน'">
+      <div *ngIf="selectedCategory === 'ค่าเช่าที่ดิน'"  class="form-category-container">
         <!-- วันที่เช่า -->
         <div class="form-field">
           <label for="expenseDate">วันที่เช่า</label>
@@ -502,7 +502,7 @@
       </div>
 
       <!-- ค่าขุด -->
-      <div *ngIf="selectedCategory === 'ค่าขุด'">
+      <div *ngIf="selectedCategory === 'ค่าขุด'"  class="form-category-container">
         <!-- วันที่มารับเงิน -->
         <div class="form-field">
           <label for="expenseDate">วันที่มารับเงิน</label>

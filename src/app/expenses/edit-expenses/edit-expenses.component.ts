@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ExpensesService } from '../expenses.service';
@@ -8,13 +8,16 @@ import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-editexpenses',
- templateUrl: './edit-expenses.component.html',
+  templateUrl: './edit-expenses.component.html',
   styleUrls: ['./edit-expenses.component.css']
 })
-export class EditExpensesComponent implements OnInit {
+export class EditExpensesComponent implements OnInit, OnChanges {
+
+  @Input() expenseId!: number;  // ✅ รับค่า expenseId
+  @Input() category!: string;  // ✅ รับค่า category
+  @Output() closeForm = new EventEmitter<void>(); // ✅ ส่ง event ปิดฟอร์มกลับไป
 
   expenseForm: FormGroup;
-  expenseId: string = ''; // กำหนด ID ของค่าใช้จ่าย
   plots: any[] = [];
   userId: string = '';
   categories = [
@@ -41,8 +44,7 @@ export class EditExpensesComponent implements OnInit {
     private transactionService: ExpensesService,
     private fb: FormBuilder,
     private translate: TranslateService,
-    private dialogRef: MatDialogRef<EditExpensesComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any // ✅ รับข้อมูลจาก Dialog
+
   ) {
     this.expenseForm = this.fb.group({
       area: [''],
@@ -51,7 +53,7 @@ export class EditExpensesComponent implements OnInit {
       category: ['', Validators.required],  // ต้องการตรวจสอบการกรอกข้อมูล
       cutting_date: [''],
       details: [''],
-      descript : [''],
+      descript: [''],
       equipmentCost: [''],
       fuel_date: [''],
       formula: ['', Validators.required],  // ต้องการตรวจสอบการกรอกข้อมูล
@@ -92,8 +94,8 @@ export class EditExpensesComponent implements OnInit {
       volume: [''],
       weight: [''],
       worker_name: [''],
-      item_name : [''],
-      total_price : [''],
+      item_name: [''],
+      total_price: [''],
       expenses_date: [''],
 
     });
@@ -101,207 +103,195 @@ export class EditExpensesComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.userId = localStorage.getItem('userId') || '';
-    this.fetchPlots();
-    if (this.data) {
-      this.expenseId = this.data.id; // รับค่า id ของรายการที่ต้องการแก้ไข
-      this.loadExpenseData(this.expenseId); // โหลดข้อมูลค่าใช้จ่าย
-  
-      this.expenseForm.patchValue({ category: this.data.category });
-      this.selectedCategory = this.data.category;
-      this.updateFormFields(this.data.category);
+    this.userId = localStorage.getItem('userId') || ''; // ✅ โหลด userId ครั้งเดียว
+    this.fetchPlots(); // ✅ โหลดรายการ plots
+
+    if (this.expenseId) {
+      this.loadExpenseData(); // ✅ โหลดข้อมูลค่าใช้จ่ายจาก expenseId
     }
+
     // ✅ ตรวจจับการเปลี่ยนแปลงค่าในฟอร์มและคำนวณราคารวมใหม่
     this.expenseForm.valueChanges.subscribe(() => {
       this.calculateTotalPrice();
     });
-  
-    // เมื่อเปลี่ยนประเภทค่าใช้จ่าย ฟอร์มจะอัปเดตอัตโนมัติ
+
+    // ✅ อัปเดตฟิลด์ตามประเภทค่าใช้จ่ายเมื่อ category เปลี่ยนแปลง
     this.expenseForm.get('category')?.valueChanges.subscribe(value => {
       this.selectedCategory = value;
       this.updateFormFields(value);
     });
   }
-  
-  loadExpenseData(expenseId: string) {
-    this.transactionService.getExpenseById(expenseId).subscribe((expenseData) => {
-      if (expenseData) {
-        console.log('✅ ข้อมูลค่าใช้จ่าย:', expenseData);
-        const formattedData = {
-          category: expenseData.category ?? '',
-          expenses_date: expenseData.expenses_date
-            ? expenseData.expenses_date.split('T')[0]
-            : '',
-          plot_id: expenseData.plot_id ?? '',
-          total_price: parseFloat(expenseData.total_price) || 0,
 
-          // ✅ ค่าน้ำมัน
-          ...(expenseData.category === 'ค่าน้ำมัน' && {
-            price_per_liter: parseFloat(expenseData.price_per_liter) || 0,
-            quantity_liters: parseFloat(expenseData.quantity_liters) || 0,
-          }),
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['expenseId'] && changes['expenseId'].currentValue) {
+      this.loadExpenseData();
+    }
+    if (changes['category'] && changes['category'].currentValue) {
+      this.selectedCategory = this.category;
+    }
+  }
 
-          // ✅ ค่าคนตัดต้น
-          ...(expenseData.category === 'ค่าคนตัดต้น' && {
-            number_of_trees: parseFloat(expenseData.number_of_trees) || 0,
-            price_per_tree: parseFloat(expenseData.price_per_tree) || 0,
-          }),
+  loadExpenseData(): void {
+    if (!this.expenseId) return; // ✅ ป้องกันการโหลดถ้า `expenseId` ไม่มีค่า
 
-          // ✅ ค่าพันธุ์มัน
-          ...(expenseData.category === 'ค่าพันธุ์มัน' && {
-            variety_name: expenseData.variety_name ?? '',
-            price_per_tree: parseFloat(expenseData.price_per_tree) || 0,
-            purchase_location: expenseData.purchase_location ?? '',
-            quantity: parseFloat(expenseData.quantity) || 0,
-          }),
+    this.transactionService.getExpenseById(this.expenseId).subscribe((expenseData) => {
+      if (!expenseData) return;
 
-          // ✅ ค่าอุปกรณ์
-        ...(expenseData.category === 'ค่าอุปกรณ์' && {
-          item_name: expenseData.item_name ?? '',
-          shop_name: expenseData.shop_name ?? '',
-          purchase_price: parseFloat(expenseData.purchase_price) || 0,
-          descript: expenseData.descript ?? '',
-        }),
+      const formattedData: any = {
+        category: expenseData.category ?? '',
+        expenses_date: expenseData.expenses_date ? expenseData.expenses_date.split('T')[0] : '',
+        plot_id: expenseData.plot_id ?? '',
+        total_price: parseFloat(expenseData.total_price) || 0,
+      };
 
-          // ✅ ค่าปุ๋ย
-          ...(expenseData.category === 'ค่าปุ๋ย' && {
-            brand: expenseData.brand ?? '',
-            formula: expenseData.formula ?? '',
-            price_per_bag: parseFloat(expenseData.price_per_bag) || 0,
-            quantity: parseFloat(expenseData.quantity) || 0,
-            purchase_location: expenseData.purchase_location ?? '',
-          }),
+      // ✅ ใช้ `switch-case` แทนการเช็คเงื่อนไขหลายๆ ครั้ง
+      switch (expenseData.category) {
+        case 'ค่าน้ำมัน':
+          formattedData.price_per_liter = parseFloat(expenseData.price_per_liter) || 0;
+          formattedData.quantity_liters = parseFloat(expenseData.quantity_liters) || 0;
+          break;
 
-          // ✅ ค่าฮอร์โมน
-          ...(expenseData.category === 'ค่าฮอร์โมน' && {
-            brand: expenseData.brand ?? '',
-            volume: parseFloat(expenseData.volume) || 0,
-            price_per_bottle: parseFloat(expenseData.price_per_bottle) || 0,
-            quantity: parseFloat(expenseData.quantity) || 0,
-            purchase_location: expenseData.purchase_location ?? '',
-          }),
+        case 'ค่าคนตัดต้น':
+          formattedData.number_of_trees = parseFloat(expenseData.number_of_trees) || 0;
+          formattedData.price_per_tree = parseFloat(expenseData.price_per_tree) || 0;
+          break;
 
-          // ✅ ค่ายาฆ่าหญ้า
-          ...(expenseData.category === 'ค่ายาฆ่าหญ้า' && {
-            brand: expenseData.brand ?? '',
-            volume: parseFloat(expenseData.volume) || 0,
-            price_per_bottle: parseFloat(expenseData.price_per_bottle) || 0,
-            quantity: parseFloat(expenseData.quantity) || 0,
-            purchase_location: expenseData.purchase_location ?? '',
-          }),
+        case 'ค่าพันธุ์มัน':
+          formattedData.variety_name = expenseData.variety_name ?? '';
+          formattedData.price_per_tree = parseFloat(expenseData.price_per_tree) || 0;
+          formattedData.purchase_location = expenseData.purchase_location ?? '';
+          formattedData.quantity = parseFloat(expenseData.quantity) || 0;
+          break;
 
-          // ✅ ค่าเช่าที่ดิน
-          ...(expenseData.category === 'ค่าเช่าที่ดิน' && {
-            owner_name: expenseData.owner_name ?? '',
-            owner_phone: expenseData.owner_phone ?? '',
-            area: parseFloat(expenseData.area) || 0,
-            price_per_rai: parseFloat(expenseData.price_per_rai) || 0,
-            rental_period: parseFloat(expenseData.rental_period) || 0,
-          }),
+        case 'ค่าอุปกรณ์':
+          formattedData.item_name = expenseData.item_name ?? '';
+          formattedData.shop_name = expenseData.shop_name ?? '';
+          formattedData.purchase_price = parseFloat(expenseData.purchase_price) || 0;
+          formattedData.descript = expenseData.descript ?? '';
+          break;
 
-          // ✅ ค่าขุด
-          ...(expenseData.category === 'ค่าขุด' && {
-            weight: parseFloat(expenseData.weight) || 0,
-            price_per_ton: parseFloat(expenseData.price_per_ton) || 0,
-          }),
+        case 'ค่าปุ๋ย':
+          formattedData.brand = expenseData.brand ?? '';
+          formattedData.formula = expenseData.formula ?? '';
+          formattedData.price_per_bag = parseFloat(expenseData.price_per_bag) || 0;
+          formattedData.quantity = parseFloat(expenseData.quantity) || 0;
+          formattedData.purchase_location = expenseData.purchase_location ?? '';
+          break;
 
-          ...(expenseData.category === 'ค่าคนปลูก' &&{
-            worker_name: expenseData.worker_name ?? '',
-            land_area: parseFloat(expenseData.land_area) || 0,
-            price_per_rai: parseFloat(expenseData.price_per_rai) || 0,
-          }),
-          ...(expenseData.category === 'ค่าคนฉีดยาฆ่าหญ้า' &&{
-            number_of_cans: parseFloat(expenseData.number_of_cans) || 0,
-            price_per_can: parseFloat(expenseData.price_per_can) || 0,
-          }),
-          ...(expenseData.category === 'ค่าคนฉีดยาฮอโมน' &&{
-            number_of_cans: parseFloat(expenseData.number_of_cans) || 0,
-            price_per_can: parseFloat(expenseData.price_per_can) || 0,
-          }),
-          ...(expenseData.category === 'ค่าซ่อมอุปกรณ์' &&{
-            repair_date: expenseData.repair_date ?? '',
-            repair_names: expenseData.repair_names ?? '',
-            details: expenseData.details ?? '',
-            repair_cost: parseFloat(expenseData.repair_cost) || 0,
-            shop_name: expenseData.shop_name ?? '',
-          })
-        };
+        case 'ค่าฮอร์โมน':
+        case 'ค่ายาฆ่าหญ้า':
+          formattedData.brand = expenseData.brand ?? '';
+          formattedData.volume = parseFloat(expenseData.volume) || 0;
+          formattedData.price_per_bottle = parseFloat(expenseData.price_per_bottle) || 0;
+          formattedData.quantity = parseFloat(expenseData.quantity) || 0;
+          formattedData.purchase_location = expenseData.purchase_location ?? '';
+          break;
 
-        // เติมค่าลงในฟอร์ม
-        this.expenseForm.patchValue(formattedData);
+        case 'ค่าเช่าที่ดิน':
+          formattedData.owner_name = expenseData.owner_name ?? '';
+          formattedData.owner_phone = expenseData.owner_phone ?? '';
+          formattedData.area = parseFloat(expenseData.area) || 0;
+          formattedData.price_per_rai = parseFloat(expenseData.price_per_rai) || 0;
+          formattedData.rental_period = parseFloat(expenseData.rental_period) || 0;
+          break;
 
-        // ตั้งค่าหมวดหมู่ที่เลือก และอัปเดตฟอร์มตามหมวดหมู่
-        this.selectedCategory = expenseData.category ?? '';
-        this.updateFormFields(this.selectedCategory ?? '');
-        this.calculateTotalPrice();
+        case 'ค่าขุด':
+          formattedData.weight = parseFloat(expenseData.weight) || 0;
+          formattedData.price_per_ton = parseFloat(expenseData.price_per_ton) || 0;
+          break;
+
+        case 'ค่าคนปลูก':
+          formattedData.worker_name = expenseData.worker_name ?? '';
+          formattedData.land_area = parseFloat(expenseData.land_area) || 0;
+          formattedData.price_per_rai = parseFloat(expenseData.price_per_rai) || 0;
+          break;
+
+        case 'ค่าคนฉีดยาฆ่าหญ้า':
+        case 'ค่าคนฉีดยาฮอโมน':
+          formattedData.number_of_cans = parseFloat(expenseData.number_of_cans) || 0;
+          formattedData.price_per_can = parseFloat(expenseData.price_per_can) || 0;
+          break;
+
+        case 'ค่าซ่อมอุปกรณ์':
+          formattedData.repair_date = expenseData.repair_date ?? '';
+          formattedData.repair_names = expenseData.repair_names ?? '';
+          formattedData.details = expenseData.details ?? '';
+          formattedData.repair_cost = parseFloat(expenseData.repair_cost) || 0;
+          formattedData.shop_name = expenseData.shop_name ?? '';
+          break;
       }
+
+      // ✅ เติมค่าลงในฟอร์ม
+      this.expenseForm.patchValue(formattedData);
+
+      // ✅ ตั้งค่าหมวดหมู่ที่เลือก และอัปเดตฟอร์มตามหมวดหมู่
+      this.selectedCategory = expenseData.category ?? '';
+      this.updateFormFields(this.selectedCategory ?? '');
+      this.calculateTotalPrice();
     });
-}
-
-  
-  
-
-updateFormFields(category: string) {
-  if (!category) {
-    console.warn('⚠️ category เป็นค่า null หรือ undefined:', category);
-    return;
   }
 
-  console.log('✅ updateFormFields เรียกใช้ด้วย category:', category);
 
-  // **ปิด `emitEvent` ป้องกัน loop**
-  this.expenseForm.patchValue({ category }, { emitEvent: false });
 
-  const fieldValues: { [key: string]: any } = {
-    'ค่าฮอร์โมน': { brand: '', volume: '', price_per_bottle: '', quantity: '', total_price: '', purchase_location: '', plot_id: '' },
-    'ค่าปุ๋ย': { brand: '', formula: '', price_per_bag: '', quantity: '', total_price: '', purchase_location: '', plot_id: '' },
-    'ค่ายาฆ่าหญ้า': { brand: '', volume: '', price_per_bottle: '', quantity: '', total_price: '', purchase_location: '', plot_id: '' },
-    'ค่าคนตัดต้น': { number_of_trees: '', cutting_price_per_tree: '', total_price: '', plot_id: '' },
-    'ค่าคนปลูก': { worker_name: '', land_area: '', price_per_rai: '', total_price: '', plot_id: '' },
-    'ค่าคนฉีดยาฆ่าหญ้า': { spray_date: '', number_of_cans: '', price_per_can: '', total_price: '', plot_id: '' },
-    'ค่าคนฉีดยาฮอโมน': { spray_date: '', number_of_cans: '', price_per_can: '', total_price: '', plot_id: '' },
-    'ค่าน้ำมัน': { fuel_date: '', price_per_liter: '', quantity_liters: '', total_price: '', plot_id: '' },
-    'ค่าพันธุ์มัน': { purchase_date: '', quantity: '', cassava_price_per_tree: '', total_price: '', variety_name: '', purchase_location: '', plot_id: '' },
-    'ค่าซ่อมอุปกรณ์': { repair_date: '', repair_names: '', details: '', repair_cost: '', shop_name: '', total_price: '' },
-    'ค่าอุปกรณ์': { purchase_date: '', item_name: '', shop_name: '', purchase_price: '', descript: '', total_price: '' },
-    'ค่าเช่าที่ดิน': { rental_date: '', owner_name: '', owner_phone: '', area: '', price_per_rai: '', rental_period: '', total_price: '', plot_id: '' },
-    'ค่าขุด': { payment_date: '', weight: '', price_per_ton: '', total_price: '' }
-  };
 
-  if (!fieldValues[category]) {
-    console.error('❌ ไม่พบ category นี้ใน fieldValues:', category);
-    return;
+  updateFormFields(category: string) {
+    if (!category) {
+      console.warn('⚠️ category เป็นค่า null หรือ undefined:', category);
+      return;
+    }
+
+    console.log('✅ updateFormFields เรียกใช้ด้วย category:', category);
+
+    // **ปิด `emitEvent` ป้องกัน loop**
+    this.expenseForm.patchValue({ category }, { emitEvent: false });
+
+    const fieldValues: { [key: string]: any } = {
+      'ค่าฮอร์โมน': { brand: '', volume: '', price_per_bottle: '', quantity: '', total_price: '', purchase_location: '', plot_id: '' },
+      'ค่าปุ๋ย': { brand: '', formula: '', price_per_bag: '', quantity: '', total_price: '', purchase_location: '', plot_id: '' },
+      'ค่ายาฆ่าหญ้า': { brand: '', volume: '', price_per_bottle: '', quantity: '', total_price: '', purchase_location: '', plot_id: '' },
+      'ค่าคนตัดต้น': { number_of_trees: '', cutting_price_per_tree: '', total_price: '', plot_id: '' },
+      'ค่าคนปลูก': { worker_name: '', land_area: '', price_per_rai: '', total_price: '', plot_id: '' },
+      'ค่าคนฉีดยาฆ่าหญ้า': { spray_date: '', number_of_cans: '', price_per_can: '', total_price: '', plot_id: '' },
+      'ค่าคนฉีดยาฮอโมน': { spray_date: '', number_of_cans: '', price_per_can: '', total_price: '', plot_id: '' },
+      'ค่าน้ำมัน': { fuel_date: '', price_per_liter: '', quantity_liters: '', total_price: '', plot_id: '' },
+      'ค่าพันธุ์มัน': { purchase_date: '', quantity: '', cassava_price_per_tree: '', total_price: '', variety_name: '', purchase_location: '', plot_id: '' },
+      'ค่าซ่อมอุปกรณ์': { repair_date: '', repair_names: '', details: '', repair_cost: '', shop_name: '', total_price: '' },
+      'ค่าอุปกรณ์': { purchase_date: '', item_name: '', shop_name: '', purchase_price: '', descript: '', total_price: '' },
+      'ค่าเช่าที่ดิน': { rental_date: '', owner_name: '', owner_phone: '', area: '', price_per_rai: '', rental_period: '', total_price: '', plot_id: '' },
+      'ค่าขุด': { payment_date: '', weight: '', price_per_ton: '', total_price: '' }
+    };
+
+    if (!fieldValues[category]) {
+      console.error('❌ ไม่พบ category นี้ใน fieldValues:', category);
+      return;
+    }
+
+    console.log('✅ ใช้ค่า fieldValues:', fieldValues[category]);
+
+    // **รวมค่าจาก `expenseData` เพื่อไม่ให้ค่าหาย**
+    const updatedFields = Object.assign({}, fieldValues[category], this.expenseForm.value);
+
+    // **ใช้ `setTimeout()` เพื่อให้ UI อัปเดตก่อน**
+    setTimeout(() => {
+      this.expenseForm.patchValue(updatedFields, { emitEvent: false });
+    }, 0);
   }
+  onSubmit(): void {
+    const category = this.expenseForm.get('category')?.value || '';
+    const expenseData = this.expenseForm.value; // ข้อมูลทั้งหมดจากฟอร์ม
+    const expenseId = this.expenseId; // ✅ ใช้ `this.expenseId` อย่างเดียว
 
-  console.log('✅ ใช้ค่า fieldValues:', fieldValues[category]);
-
-  // **รวมค่าจาก `expenseData` เพื่อไม่ให้ค่าหาย**
-  const updatedFields = Object.assign({}, fieldValues[category], this.expenseForm.value);
-
-  // **ใช้ `setTimeout()` เพื่อให้ UI อัปเดตก่อน**
-  setTimeout(() => {
-    this.expenseForm.patchValue(updatedFields, { emitEvent: false });
-  }, 0);
-}
-onSubmit(): void {
-  const category = this.expenseForm.get('category')?.value || '';
-  const expenseData = this.expenseForm.value; // ข้อมูลทั้งหมดจากฟอร์ม
-  const expenseId = this.expenseId || expenseData.expense_id; // ดึง expense_id
-
-  if (!expenseId) {
+    if (!expenseId) {
       Swal.fire({
-          icon: 'error',
-          title: 'เกิดข้อผิดพลาด',
-          text: 'ไม่พบข้อมูลค่าใช้จ่าย (expense_id)',
-          confirmButtonText: 'ตกลง'
+        icon: 'error',
+        title: 'เกิดข้อผิดพลาด',
+        text: 'ไม่พบข้อมูลค่าใช้จ่าย (expense_id)',
+        confirmButtonText: 'ตกลง'
       });
       return;
-  }
+    }
 
-  let requiredFields: string[] = [];
-
-  // 📝 กำหนดฟิลด์ที่ต้องตรวจสอบตามประเภทค่าใช้จ่าย
-  const categoryFields: { [key: string]: string[] } = {
+    const categoryFields: { [key: string]: string[] } = {
       'ค่าฮอร์โมน': ['brand', 'volume', 'price_per_bottle', 'quantity', 'purchase_location', 'plot_id'],
       'ค่าปุ๋ย': ['brand', 'formula', 'price_per_bag', 'quantity', 'purchase_location', 'plot_id'],
       'ค่ายาฆ่าหญ้า': ['brand', 'volume', 'price_per_bottle', 'quantity', 'purchase_location', 'plot_id'],
@@ -315,87 +305,81 @@ onSubmit(): void {
       'ค่าอุปกรณ์': ['item_name', 'shop_name', 'purchase_price', 'descript'],
       'ค่าเช่าที่ดิน': ['owner_name', 'owner_phone', 'area', 'price_per_rai', 'rental_period', 'plot_id'],
       'ค่าขุด': ['weight', 'price_per_ton', 'plot_id']
-  };
+    };
 
-  // 🔍 ดึงฟิลด์ที่ต้องตรวจสอบเฉพาะประเภทนั้น
-  if (categoryFields[category]) {
-      requiredFields = categoryFields[category];
-  } else {
+    if (!categoryFields[category]) {
       Swal.fire({
-          icon: 'error',
-          title: 'เกิดข้อผิดพลาด',
-          text: 'ไม่สามารถตรวจสอบข้อมูลประเภทนี้ได้!',
-          confirmButtonText: 'ตกลง'
+        icon: 'error',
+        title: 'เกิดข้อผิดพลาด',
+        text: 'ไม่สามารถตรวจสอบข้อมูลประเภทนี้ได้!',
+        confirmButtonText: 'ตกลง'
       });
       return;
-  }
+    }
 
-  // 🔍 ตรวจสอบว่าฟิลด์ที่จำเป็นมีค่าไหม
-  const missingFields = requiredFields.filter(field => !expenseData[field]);
+    // ✅ ใช้ `some()` เพื่อตรวจสอบว่ามีฟิลด์ไหนว่างไหม (เร็วขึ้น)
+    const isMissingFields = categoryFields[category].some(field => !expenseData[field]);
 
-  if (missingFields.length > 0) {
+    if (isMissingFields) {
+      const missingFields = categoryFields[category].filter(field => !expenseData[field]);
       Swal.fire({
-          icon: 'warning',
-          title: 'กรุณากรอกข้อมูลให้ครบถ้วน',
-          text: `กรุณากรอกข้อมูล: ${missingFields.join(', ')}`,
-          confirmButtonText: 'ตกลง'
+        icon: 'warning',
+        title: 'กรุณากรอกข้อมูลให้ครบถ้วน',
+        text: `กรุณากรอกข้อมูล: ${missingFields.join(', ')}`,
+        confirmButtonText: 'ตกลง'
       });
       return;
-  }
+    }
 
-  // 📝 เพิ่ม `expense_id` ลงไปในข้อมูลที่ส่งไป API
-  const updatedExpenseData = { ...expenseData, expense_id: expenseId };
+    const updatedExpenseData = { ...expenseData, expense_id: expenseId };
 
-  console.log("📤 ส่งข้อมูลไปอัปเดต:", updatedExpenseData);
-  this.transactionService.updateExpense(updatedExpenseData).subscribe(
-      (response) => {
-          console.log("✅ อัปเดตค่าใช้จ่ายสำเร็จ:", response);
-          Swal.fire({
-              icon: 'success',
-              title: 'อัปเดตข้อมูลเรียบร้อย',
-              text: 'ข้อมูลค่าใช้จ่ายได้รับการอัปเดตแล้ว!',
-              confirmButtonText: 'ตกลง'
-          }).then(() => {
-              this.dialogRef.close(true);
-          });
+    console.log(" ส่งข้อมูลไปอัปเดต:", updatedExpenseData);
+    this.transactionService.updateExpense(updatedExpenseData).subscribe(
+      () => {
+        Swal.fire({
+          icon: 'success',
+          title: 'อัปเดตข้อมูลเรียบร้อย',
+          text: 'ข้อมูลค่าใช้จ่ายได้รับการอัปเดตแล้ว!',
+          confirmButtonText: 'ตกลง'
+        }).then(() => {
+          this.closeForm.emit(); // ✅ ใช้ EventEmitter แทน `dialogRef.close()`
+        });
       },
       (error) => {
-          console.error("❌ เกิดข้อผิดพลาดในการอัปเดตค่าใช้จ่าย:", error);
-          Swal.fire({
-              icon: 'error',
-              title: 'เกิดข้อผิดพลาด',
-              text: 'ไม่สามารถอัปเดตข้อมูลได้ กรุณาลองอีกครั้ง!',
-              confirmButtonText: 'ตกลง'
-          }).then(() => {
-              this.dialogRef.close(false);
-          });
+        console.error("❌ เกิดข้อผิดพลาดในการอัปเดตค่าใช้จ่าย:", error);
+        Swal.fire({
+          icon: 'error',
+          title: 'เกิดข้อผิดพลาด',
+          text: 'ไม่สามารถอัปเดตข้อมูลได้ กรุณาลองอีกครั้ง!',
+          confirmButtonText: 'ตกลง'
+        });
       }
-  );
-}
+    );
+  }
 
 
 
-   // Fetch plots based on user ID
-    fetchPlots(): void {
-      const userId = localStorage.getItem('userId') || '';
-      this.transactionService.getDeopPlot(userId).subscribe(
-        (res: any) => {
-          this.plots = res;  // เช็คว่า plots ได้รับข้อมูลจาก API หรือไม่
-          console.log('Plots:', this.plots);
-        },
-        error => {
-          this.translate.get('harvest.errorLoadingPlots').subscribe((translations: { title: string; text: string; }) => {
-            Swal.fire({
-              icon: 'error',
-              title: translations.title,
-              text: translations.text,
-              timer: 3000,
-              timerProgressBar: true,
-            });
+  // Fetch plots based on user ID
+  fetchPlots(): void {
+    const userId = localStorage.getItem('userId') || '';
+    this.transactionService.getDeopPlot(userId).subscribe(
+      (res: any) => {
+        this.plots = res;  // เช็คว่า plots ได้รับข้อมูลจาก API หรือไม่
+        console.log('Plots:', this.plots);
+      },
+      error => {
+        this.translate.get('harvest.errorLoadingPlots').subscribe((translations: { title: string; text: string; }) => {
+          Swal.fire({
+            icon: 'error',
+            title: translations.title,
+            text: translations.text,
+            timer: 3000,
+            timerProgressBar: true,
           });
-        }
-      );
-    }
+        });
+      }
+    );
+  }
 
   onFormulaInput(event: any): void {
     const inputValue = event.target.value;
@@ -409,7 +393,7 @@ onSubmit(): void {
   calculateTotalPrice(): void {
     const category = this.expenseForm.get('category')?.value || '';
     let totalPrice = 0;
-  
+
     switch (category) {
       case 'ค่าฮอร์โมน':
         totalPrice = this.calculateHormoneCost();
@@ -451,82 +435,90 @@ onSubmit(): void {
         totalPrice = this.calculateDiggingCost();
         break;
     }
-  
-    // ✅ อัปเดตราคารวมในฟอร์มทุกครั้งที่มีการเปลี่ยนแปลงค่า
-    this.expenseForm.patchValue({ total_price: totalPrice }, { emitEvent: false });
+
+    console.log("🔢 คำนวณราคารวม (ก่อน patch):", totalPrice);
+
+    if (this.expenseForm.get('total_price')?.value !== totalPrice) {
+      this.expenseForm.patchValue({ total_price: totalPrice }, { emitEvent: false });
+      console.log("✅ อัปเดตราคารวมเป็น:", this.expenseForm.get('total_price')?.value);
+    } else {
+      console.warn("⚠️ ค่า total_price ในฟอร์มเหมือนเดิม ไม่อัปเดต");
+    }
   }
-  // Separate cost calculation methods for each category (sample implementations)
+
+
+  // ✅ แปลงค่าทุกตัวให้เป็น `number` ก่อนคำนวณ
   calculateHormoneCost(): number {
-    const price_per_bottle = this.expenseForm.get('price_per_bottle')?.value || 0;
-    const quantity = this.expenseForm.get('quantity')?.value || 0;
+    const price_per_bottle = parseFloat(this.expenseForm.get('price_per_bottle')?.value) || 0;
+    const quantity = parseFloat(this.expenseForm.get('quantity')?.value) || 0;
     return price_per_bottle * quantity;
   }
 
   calculateFertilizerCost(): number {
-    const price_per_bag = this.expenseForm.get('price_per_bag')?.value || 0;
-    const quantity = this.expenseForm.get('quantity')?.value || 0;
+    const price_per_bag = parseFloat(this.expenseForm.get('price_per_bag')?.value) || 0;
+    const quantity = parseFloat(this.expenseForm.get('quantity')?.value) || 0;
     return price_per_bag * quantity;
   }
 
   calculateWeedKillerCost(): number {
-    const price_per_bottle = this.expenseForm.get('price_per_bottle')?.value || 0;
-    const quantity = this.expenseForm.get('quantity')?.value || 0;
+    const price_per_bottle = parseFloat(this.expenseForm.get('price_per_bottle')?.value) || 0;
+    const quantity = parseFloat(this.expenseForm.get('quantity')?.value) || 0;
     return price_per_bottle * quantity;
   }
 
   calculateTreeCuttingCost(): number {
-    const price_per_tree = this.expenseForm.get('price_per_tree')?.value || 0;
-    const number_of_trees = this.expenseForm.get('number_of_trees')?.value || 0;
+    const price_per_tree = parseFloat(this.expenseForm.get('price_per_tree')?.value) || 0;
+    const number_of_trees = parseFloat(this.expenseForm.get('number_of_trees')?.value) || 0;
     return price_per_tree * number_of_trees;
   }
 
   calculateTreePlantingCost(): number {
-    const price_per_rai = this.expenseForm.get('price_per_rai')?.value || 0;
-    const land_area = this.expenseForm.get('land_area')?.value || 0;
+    const price_per_rai = parseFloat(this.expenseForm.get('price_per_rai')?.value) || 0;
+    const land_area = parseFloat(this.expenseForm.get('land_area')?.value) || 0;
     return price_per_rai * land_area;
   }
 
   calculateWeedSprayingCost(): number {
-    const price_per_can = this.expenseForm.get('price_per_can')?.value || 0;
-    const number_of_cans = this.expenseForm.get('number_of_cans')?.value || 0;
+    const price_per_can = parseFloat(this.expenseForm.get('price_per_can')?.value) || 0;
+    const number_of_cans = parseFloat(this.expenseForm.get('number_of_cans')?.value) || 0;
     return price_per_can * number_of_cans;
   }
 
   calculateHormoneSprayingCost(): number {
-    const price_per_can = this.expenseForm.get('price_per_can')?.value || 0;
-    const number_of_cans = this.expenseForm.get('number_of_cans')?.value || 0;
+    const price_per_can = parseFloat(this.expenseForm.get('price_per_can')?.value) || 0;
+    const number_of_cans = parseFloat(this.expenseForm.get('number_of_cans')?.value) || 0;
     return price_per_can * number_of_cans;
   }
 
   calculateFuelCost(): number {
-    const price_per_liter = this.expenseForm.get('price_per_liter')?.value || 0;
-    const quantity_liters = this.expenseForm.get('quantity_liters')?.value || 0;
+    const price_per_liter = parseFloat(this.expenseForm.get('price_per_liter')?.value) || 0;
+    const quantity_liters = parseFloat(this.expenseForm.get('quantity_liters')?.value) || 0;
     return price_per_liter * quantity_liters;
   }
 
   calculateSeedCost(): number {
-    const price_per_tree = this.expenseForm.get('price_per_tree')?.value || 0;
-    const quantity = this.expenseForm.get('quantity')?.value || 0;
+    const price_per_tree = parseFloat(this.expenseForm.get('price_per_tree')?.value) || 0;
+    const quantity = parseFloat(this.expenseForm.get('quantity')?.value) || 0;
     return price_per_tree * quantity;
   }
 
   calculateRepairCost(): number {
-    return this.expenseForm.get('repairCost')?.value || 0;
+    return parseFloat(this.expenseForm.get('repairCost')?.value) || 0;
   }
 
   calculateEquipmentCost(): number {
-    return this.expenseForm.get('equipmentCost')?.value || 0;
+    return parseFloat(this.expenseForm.get('equipmentCost')?.value) || 0;
   }
 
   calculateRentCost(): number {
-    const price_per_rai = this.expenseForm.get('price_per_rai')?.value || 0;
-    const area = this.expenseForm.get('area')?.value || 0;
+    const price_per_rai = parseFloat(this.expenseForm.get('price_per_rai')?.value) || 0;
+    const area = parseFloat(this.expenseForm.get('area')?.value) || 0;
     return price_per_rai * area;
   }
 
   calculateDiggingCost(): number {
-    const price_per_ton = (this.expenseForm.get('price_per_ton')?.value || 0) / 1000;
-    const weight = this.expenseForm.get('weight')?.value || 0;
+    const price_per_ton = (parseFloat(this.expenseForm.get('price_per_ton')?.value) || 0) / 1000;
+    const weight = parseFloat(this.expenseForm.get('weight')?.value) || 0;
     return price_per_ton * weight;
   }
-}
+}  

@@ -47,19 +47,7 @@
                     </div>
 
 
-                    <!-- Action Buttons -->
-                    <div class="row mt-4">
-                        <div class="col-12 d-flex gap-2 justify-content-end">
-                            <button type="button" class="btn btn-secondary px-4" (click)="clearSearch()">
-                                <i class="fas fa-undo me-2"></i>
-                                {{ 'expense.searchForm.clearButton' | translate }}
-                            </button>
-                            <button type="button" class="btn btn-success px-4" (click)="openAddExpense()">
-                                <i class="fas fa-plus me-2"></i>
-                                {{ 'expense.searchForm.addButton' | translate }}
-                            </button>
-                        </div>
-                    </div>
+
                 </div>
             </form>
         </div>
@@ -143,4 +131,25 @@
             <mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
         </mat-card-content>
     </mat-card>
+
+    <div class="row mt-4">
+        <div class="col-12 d-flex gap-2 justify-content-end">
+            <button type="button" class="btn btn-success px-4" (click)="openAddExpense()">
+                <i class="fas fa-plus me-2"></i>
+                เพิ่มข้อมูล
+            </button>
+        </div>
+    </div>
+
+
+    <div *ngIf="showAddForm" class="mt-4">
+        <app-addexpenses (closeForm)="closeForm()"></app-addexpenses>
+    </div>
+
+    <!-- แสดงฟอร์มแก้ไขเมื่อกดปุ่ม -->
+    <div *ngIf="showEditForm" #editFormSection class="mt-4">
+        <app-editexpenses [expenseId]="selectedExpenseId!" [category]="selectedCategory!"
+            (closeForm)="showEditForm = false">
+        </app-editexpenses>
+    </div>
 </div>

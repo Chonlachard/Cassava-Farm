@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ExpensesService } from '../expenses.service';
@@ -33,11 +33,13 @@ export class AddexpensesComponent implements OnInit {
   selectedCategory: string | null = null;
   calculatedTotalPrice: number = 0;
 
+  @Output() closeForm = new EventEmitter<void>();
+
   constructor(
     private transactionService: ExpensesService,
     private fb: FormBuilder,
     private translate: TranslateService,
-    private dialogRef: MatDialogRef<AddexpensesComponent>,
+  
 
   ) {
     this.expenseForm = this.fb.group({
@@ -132,7 +134,7 @@ export class AddexpensesComponent implements OnInit {
   }
 
   onSubmit(): void {
-    debugger
+    
     const formValue = this.expenseForm.getRawValue();
     const category = formValue.category;
   
@@ -159,7 +161,7 @@ export class AddexpensesComponent implements OnInit {
       details: details, // ส่งข้อมูลที่เกี่ยวข้องกับประเภท
     };
   
-    // ส่งข้อมูลไปยัง API หรือบันทึกข้อมูล
+
     this.transactionService.addExpense(expenseData).subscribe(
       () => {
         this.translate.get('expense.successAdd').subscribe(translations => {
@@ -168,24 +170,27 @@ export class AddexpensesComponent implements OnInit {
             title: translations.title,
             text: translations.text,
             timer: 3000,
-            timerProgressBar: true,
+            timerProgressBar: true
           }).then(() => {
-            this.dialogRef.close(true);
+            this.closeForm.emit(); // แจ้งให้คอมโพเนนต์หลักปิดฟอร์ม
           });
         });
       },
       () => {
-        this.translate.get('expense.errorAdd').subscribe(translations => {
-          Swal.fire({
-            icon: 'error',
-            title: translations.title,
-            text: translations.text,
-            timer: 3000,
-            timerProgressBar: true,
-          });
-        });
+        this.showError('expense.errorAdd');
       }
     );
+  }
+  private showError(translationKey: string) {
+    this.translate.get(translationKey).subscribe((translations) => {
+      Swal.fire({
+        icon: 'error',
+        title: translations.title,
+        text: translations.text,
+        timer: 3000,
+        timerProgressBar: true
+      });
+    });
   }
   
   getDetailsForCategory(category: string, formValue: any) {
