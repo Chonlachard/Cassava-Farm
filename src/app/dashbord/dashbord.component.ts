@@ -3,6 +3,7 @@ import { DashbordService } from './dashbord.service';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
 import { ExpensesDetailComponent } from '../expenses-detail/expenses-detail.component';
+import { FormControl, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-dashbord',
@@ -24,11 +25,10 @@ export class DashbordComponent implements OnInit {
   selectedExpense: any = null; // ✅ เพิ่มตัวแปรสำหรับเก็บข้อมูลที่เลือก
   showPopup: boolean = false; // ✅ ควบคุมการเปิด/ปิด Popup
   selectedCategory: string = ''; // ✅ หมวดหมู่ที่เลือก
+  cashFlowForm!: FormGroup;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   // ✅ กำหนดค่าเริ่มต้นให้ startMonth และ endMonth
-  startMonth: number = 1;
-  endMonth: number = 12;
   startDate: string = ''; // ค่าที่เลือก
   endDate: string = '';
   availableMonths = [
@@ -56,39 +56,46 @@ export class DashbordComponent implements OnInit {
 
   ngOnInit(): void {
     this.userId = localStorage.getItem('userId') ?? '';
-  
 
-    // ✅ ตั้งค่า startDate และ endDate เป็นค่าเริ่มต้น (วันที่ปัจจุบัน)
+    // ✅ ต้องกำหนดค่าให้ `cashFlowForm` ก่อนใช้งาน
     const today = new Date();
-    this.startDate = new Date(today.getFullYear(), 0, 1).toISOString().split('T')[0]; // วันที่ 1 ม.ค. ของปีปัจจุบัน
-    this.endDate = today.toISOString().split('T')[0]; // วันที่ปัจจุบัน
+    this.cashFlowForm = new FormGroup({
+      startDate: new FormControl(today.toISOString().split('T')[0]), // ค่าเริ่มต้นเป็นวันที่ปัจจุบัน
+      endDate: new FormControl(today.toISOString().split('T')[0])    // ค่าเริ่มต้นเป็นวันที่ปัจจุบัน
+    });
 
     if (this.userId) {
       this.loadCashFlowReport();
     } else {
       console.error('❌ ไม่พบ User ID');
     }
-}
+  }
 
 // ✅ โหลดข้อมูลจาก API ตามช่วงวันที่ที่เลือก
 loadCashFlowReport(): void {
-    if (!this.startDate || !this.endDate) {
-      console.error("❌ ค่าของ startDate หรือ endDate ไม่ถูกต้อง:", { startDate: this.startDate, endDate: this.endDate });
-      return;
-    }
+  const startDate = this.cashFlowForm.get('startDate')?.value;
+  const endDate = this.cashFlowForm.get('endDate')?.value;
 
-    this.dashbordService.getCashFlowReport(this.userId, this.startDate, this.endDate).subscribe({
-      next: (data) => {
-        this.summary = data.summary;
-        this.incomeExpense = data.IncomExpent;
-        this.monthlyIncomeExpense = data.monthlyIncomeExpense;
-        this.categoryExpents = data.categoryExpents;
-        this.expenseDetails = data.expenseDetails;
-        this.updateExpenses();
-        this.updateChart();
-      },
-      error: (err) => console.error('❌ เกิดข้อผิดพลาดในการโหลดข้อมูลกระแสเงินสด:', err),
-    });
+  // ✅ ตรวจสอบว่าค่าของ startDate และ endDate ไม่เป็นค่าว่าง
+  if (!startDate || !endDate) {
+    console.error("❌ ค่าของ startDate หรือ endDate ไม่ถูกต้อง:", { startDate, endDate });
+    return;
+  }
+
+  console.log(`📌 กำลังโหลดข้อมูลช่วงวันที่: ${startDate} - ${endDate}`);
+
+  this.dashbordService.getCashFlowReport(this.userId, startDate, endDate).subscribe({
+    next: (data) => {
+      this.summary = data.summary;
+      this.incomeExpense = data.IncomExpent;
+      this.monthlyIncomeExpense = data.monthlyIncomeExpense;
+      this.categoryExpents = data.categoryExpents;
+      this.expenseDetails = data.expenseDetails;
+      this.updateExpenses();
+      this.updateChart();
+    },
+    error: (err) => console.error('❌ เกิดข้อผิดพลาดในการโหลดข้อมูลกระแสเงินสด:', err),
+  });
 }
 
 
@@ -111,9 +118,28 @@ loadCashFlowReport(): void {
   }
 
   // ✅ ฟังก์ชันแปลงตัวเลขเดือนเป็นชื่อเดือน
-  getMonthName(monthNumber: number): string {
-    return this.monthNames[monthNumber - 1] || 'ไม่ระบุเดือน';
-  }
+  getMonthName(monthString: string | null | undefined): string {
+    if (!monthString || !monthString.includes('-')) {
+        return 'ไม่ระบุเดือน';
+    }
+
+    // แยกปีและเดือนออกจากกัน (เช่น "2024-05" -> ["2024", "05"])
+    const [year, month] = monthString.split('-');
+
+    // แปลงเป็นตัวเลข และตรวจสอบว่าถูกต้องหรือไม่
+    const monthNumber = parseInt(month, 10);
+    if (isNaN(monthNumber) || monthNumber < 1 || monthNumber > 12) {
+        return 'ไม่ระบุเดือน';
+    }
+
+    // รายชื่อเดือนภาษาไทย
+    const monthNames = [
+        'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
+        'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
+    ];
+
+    return `${monthNames[monthNumber - 1]} ${year}`; // เช่น "พฤษภาคม 2024"
+}
 
   selectExpense(expense: any) {
     this.selectedCategory = expense.expense_detail;

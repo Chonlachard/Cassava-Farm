@@ -3,31 +3,24 @@
     <h2><i class="pi pi-chart-bar"></i> รายงานกระแสเงินสดไร่มันสำปะหลัง</h2>
 
     <!-- ✅ ฟิลเตอร์เลือกปีและช่วงเดือน -->
-    <div class="filter-section">
-        <!-- เลือกปี -->
-        <!-- <div class="year-selection">
-            <label for="yearSelect">เลือกปี:</label>
-            <select id="yearSelect" [(ngModel)]="selectedYear" (change)="loadCashFlowReport()">
-                <option *ngFor="let year of availableYears" [value]="year">{{ year }}</option>
-            </select>
-        </div> -->
-
-        <!-- เลือกช่วงเดือน (แสดงเดือนเริ่มต้น และสิ้นสุดในบรรทัดเดียวกัน) -->
-        <div class="month-selection">
-            <div class="month-group">
-                <div class="month-item">
-                    <label for="startDate">วันที่เริ่ม:</label>
-                    <input type="date" id="startDate" class="form-control" formControlName="startDate" [(ngModel)]="startDate" (change)="loadCashFlowReport()">
-                </div>
-        
-                <div class="month-item">
-                    <label for="endDate">วันที่สิ้นสุด:</label>
-                    <input type="date" id="endDate" class="form-control" formControlName="endDate" [(ngModel)]="endDate" (change)="loadCashFlowReport()">
+    <form [formGroup]="cashFlowForm">
+        <div class="filter-section">
+            <div class="month-selection">
+                <div class="month-group">
+                    <div class="month-item">
+                        <label for="startDate">วันที่เริ่ม:</label>
+                        <input type="date" id="startDate" class="form-control" formControlName="startDate" (change)="loadCashFlowReport()">
+                    </div>
+    
+                    <div class="month-item">
+                        <label for="endDate">วันที่สิ้นสุด:</label>
+                        <input type="date" id="endDate" class="form-control" formControlName="endDate" (change)="loadCashFlowReport()">
+                    </div>
                 </div>
             </div>
         </div>
-        
-    </div>
+    </form>
+    
 
     <!-- ✅ ส่วนสรุปข้อมูล -->
     <div class="summary">
@@ -121,7 +114,7 @@
         </div>
     </div>
     <!-- ✅ ใช้ Component แยกสำหรับ Popup -->
-    <app-expense-detail [showPopup]="showPopup" [userId]="userId" [selectedCategory]="selectedCategory"
+    <!-- <app-expense-detail [showPopup]="showPopup" [userId]="userId" [selectedCategory]="selectedCategory"
         [selectedYear]="selectedYear" [startMonth]="startMonth" [endMonth]="endMonth">
-    </app-expense-detail>
+    </app-expense-detail> -->
 </div>

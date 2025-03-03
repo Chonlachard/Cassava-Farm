@@ -91,61 +91,65 @@ if (!startDate || !endDate) {
     // ✅ ดึงข้อมูลรายรับ-รายจ่ายแยกตามเดือน (เฉพาะช่วงที่เลือก)
     const [monthlyIncomeExpense] = await db.promise().query(
       `
-            SELECT 
-                months.month AS month,
-                COALESCE(SUM(incomeData.totalIncome), 0) AS totalIncome,
-                COALESCE(SUM(expenseData.totalExpense), 0) AS totalExpense,
-                COALESCE(SUM(incomeData.totalIncome), 0) - COALESCE(SUM(expenseData.totalExpense), 0) AS netIncome
-            FROM (
-                SELECT 1 AS month UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL 
-                SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL 
-                SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 UNION ALL 
-                SELECT 10 UNION ALL SELECT 11 UNION ALL SELECT 12
-            ) months
-            LEFT JOIN (
-                -- ✅ รายรับรายเดือน (เฉพาะช่วงวันที่เลือก)
-                SELECT MONTH(harvest_date) AS month, SUM(amount) AS totalIncome
-                FROM harvests
-                WHERE user_id = ? 
-                AND harvest_date BETWEEN ? AND ?  -- ✅ ใช้ช่วงวันที่แทน
-                AND is_delete = 0
-                GROUP BY MONTH(harvest_date)
-            ) incomeData ON months.month = incomeData.month
-            LEFT JOIN (
-                -- ✅ รายจ่ายรายเดือน (เฉพาะช่วงวันที่เลือก)
-                SELECT MONTH(e.expenses_date) AS month, 
-                    SUM(
-                        COALESCE(h.total_price, 0) + COALESCE(f.total_price, 0) + COALESCE(he.total_price, 0) + 
-                        COALESCE(fu.total_price, 0) + COALESCE(cv.total_price, 0) + COALESCE(er.repair_cost, 0) + 
-                        COALESCE(ep.purchase_price, 0) + COALESCE(l.total_price, 0) + COALESCE(ex.total_price, 0) + 
-                        COALESCE(tc.total_price, 0) + COALESCE(pl.total_price, 0) + COALESCE(ws.total_price, 0) + 
-                        COALESCE(hs.total_price, 0)
-                    ) AS totalExpense
-                FROM expenses e
-                LEFT JOIN HormoneData h ON e.expense_id = h.expense_id
-                LEFT JOIN FertilizerData f ON e.expense_id = f.expense_id
-                LEFT JOIN HerbicideData he ON e.expense_id = he.expense_id
-                LEFT JOIN FuelData fu ON e.expense_id = fu.expense_id
-                LEFT JOIN CassavaVarietyData cv ON e.expense_id = cv.expense_id
-                LEFT JOIN EquipmentRepairData er ON e.expense_id = er.expense_id
-                LEFT JOIN EquipmentPurchaseData ep ON e.expense_id = ep.expense_id
-                LEFT JOIN LandRentalData l ON e.expense_id = l.expense_id
-                LEFT JOIN ExcavationData ex ON e.expense_id = ex.expense_id
-                LEFT JOIN TreeCutting tc ON e.expense_id = tc.expense_id
-                LEFT JOIN Planting pl ON e.expense_id = pl.expense_id
-                LEFT JOIN WeedSpraying ws ON e.expense_id = ws.expense_id
-                LEFT JOIN HormoneSpraying hs ON e.expense_id = hs.expense_id
-                WHERE e.user_id = ? 
-                AND e.expenses_date BETWEEN ? AND ?  -- ✅ ใช้ช่วงวันที่แทน
-                AND e.is_deleted = 0
-                GROUP BY MONTH(e.expenses_date)
-            ) expenseData ON months.month = expenseData.month
-            WHERE months.month BETWEEN MONTH(?) AND MONTH(?)  -- ✅ กรองช่วงเดือนตามช่วงวันที่ที่เลือก
-            GROUP BY months.month
-            ORDER BY months.month;
-        `,
-      [userId, startDate, endDate, userId, startDate, endDate, startDate, endDate]
-    );
+      WITH RECURSIVE months AS (
+          -- ✅ เริ่มที่เดือนแรกของช่วงที่เลือก
+          SELECT DATE_FORMAT(?, '%Y-%m-01') AS month
+          UNION ALL
+          -- ✅ เพิ่มเดือนถัดไปทีละ 1 เดือน จนกว่าจะถึงเดือนสุดท้าย
+          SELECT DATE_ADD(month, INTERVAL 1 MONTH)
+          FROM months
+          WHERE month < DATE_FORMAT(?, '%Y-%m-01')
+      )
+      SELECT 
+          DATE_FORMAT(months.month, '%Y-%m') AS month,
+          COALESCE(incomeData.totalIncome, 0) AS totalIncome,
+          COALESCE(expenseData.totalExpense, 0) AS totalExpense,
+          COALESCE(incomeData.totalIncome, 0) - COALESCE(expenseData.totalExpense, 0) AS netIncome
+      FROM months
+      LEFT JOIN (
+          -- ✅ รายรับรายเดือน (รวมปีและเดือน)
+          SELECT DATE_FORMAT(harvest_date, '%Y-%m') AS month, SUM(amount) AS totalIncome
+          FROM harvests
+          WHERE user_id = ? 
+          AND harvest_date BETWEEN ? AND ?
+          AND is_delete = 0
+          GROUP BY month
+      ) incomeData ON DATE_FORMAT(months.month, '%Y-%m') = incomeData.month
+      LEFT JOIN (
+          -- ✅ รายจ่ายรายเดือน (รวมปีและเดือน)
+          SELECT DATE_FORMAT(e.expenses_date, '%Y-%m') AS month, 
+              SUM(
+                  COALESCE(h.total_price, 0) + COALESCE(f.total_price, 0) + COALESCE(he.total_price, 0) + 
+                  COALESCE(fu.total_price, 0) + COALESCE(cv.total_price, 0) + COALESCE(er.repair_cost, 0) + 
+                  COALESCE(ep.purchase_price, 0) + COALESCE(l.total_price, 0) + COALESCE(ex.total_price, 0) + 
+                  COALESCE(tc.total_price, 0) + COALESCE(pl.total_price, 0) + COALESCE(ws.total_price, 0) + 
+                  COALESCE(hs.total_price, 0)
+              ) AS totalExpense
+          FROM expenses e
+          LEFT JOIN HormoneData h ON e.expense_id = h.expense_id
+          LEFT JOIN FertilizerData f ON e.expense_id = f.expense_id
+          LEFT JOIN HerbicideData he ON e.expense_id = he.expense_id
+          LEFT JOIN FuelData fu ON e.expense_id = fu.expense_id
+          LEFT JOIN CassavaVarietyData cv ON e.expense_id = cv.expense_id
+          LEFT JOIN EquipmentRepairData er ON e.expense_id = er.expense_id
+          LEFT JOIN EquipmentPurchaseData ep ON e.expense_id = ep.expense_id
+          LEFT JOIN LandRentalData l ON e.expense_id = l.expense_id
+          LEFT JOIN ExcavationData ex ON e.expense_id = ex.expense_id
+          LEFT JOIN TreeCutting tc ON e.expense_id = tc.expense_id
+          LEFT JOIN Planting pl ON e.expense_id = pl.expense_id
+          LEFT JOIN WeedSpraying ws ON e.expense_id = ws.expense_id
+          LEFT JOIN HormoneSpraying hs ON e.expense_id = hs.expense_id
+          WHERE e.user_id = ? 
+          AND e.expenses_date BETWEEN ? AND ?
+          AND e.is_deleted = 0
+          GROUP BY month
+      ) expenseData ON DATE_FORMAT(months.month, '%Y-%m') = expenseData.month
+      ORDER BY DATE_FORMAT(months.month, '%Y-%m');
+
+      `,
+      [startDate, endDate, userId, startDate, endDate, userId, startDate, endDate]
+);
+
     
 
 
