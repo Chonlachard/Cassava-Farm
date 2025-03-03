@@ -49,8 +49,8 @@
             
             <!-- Area Column -->
             <ng-container matColumnDef="area_rai">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header class="area-rai">{{ 'plot.areaHeader' | translate }}</th>
-                <td mat-cell *matCellDef="let plantedArea" class="area-rai"> {{plantedArea.area_rai}} </td>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header class="area-rai" >ขนาดพื้นที่</th>
+                <td mat-cell *matCellDef="let plantedArea" class="area-rai"> {{plantedArea.totalArea }} </td>
             </ng-container>
             
             <!-- Image Column -->

@@ -16,23 +16,24 @@ if (!startDate || !endDate) {
 }
     const [summary] = await db.promise().query(
       `
-            SELECT 
-                COUNT(DISTINCT a.plot_id) AS plotCount,
-                FLOOR(SUM(a.area_rai)) AS totalArea,
-                COALESCE(SUM(b.net_weight_kg), 0) AS totalHarvest,
-                COALESCE(MAX(YEAR(b.latestHarvestDate)), YEAR(?)) AS selectedYear
-            FROM plots a
-            LEFT JOIN (
-                SELECT plot_id, SUM(net_weight_kg) AS net_weight_kg, MAX(harvest_date) AS latestHarvestDate
-                FROM harvests
-                WHERE harvest_date BETWEEN ? AND ?
-                AND is_delete = 0
-                GROUP BY plot_id
-            ) b ON a.plot_id = b.plot_id
-            WHERE a.user_id = ?
-            AND a.is_delete = 0;
-        `,
-      [endDate, startDate, endDate, userId]
+         SELECT 
+    COUNT(DISTINCT a.plot_id) AS plotCount,
+    FLOOR(SUM(a.area_rai)) AS rai, 
+    ROUND((SUM(a.area_rai) - FLOOR(SUM(a.area_rai))) * 400) AS wa,
+    CONCAT(FLOOR(SUM(a.area_rai)), ' ไร่ ', ROUND((SUM(a.area_rai) - FLOOR(SUM(a.area_rai))) * 400), ' ตารางวา') AS totalArea,
+    COALESCE(SUM(b.net_weight_kg), 0) AS totalHarvest
+FROM plots a
+LEFT JOIN (
+    SELECT plot_id, SUM(net_weight_kg) AS net_weight_kg, MAX(harvest_date) AS latestHarvestDate
+    FROM harvests
+    WHERE harvest_date BETWEEN ? AND ?
+    AND is_delete = 0
+    GROUP BY plot_id
+) b ON a.plot_id = b.plot_id
+WHERE a.user_id = ?
+AND a.is_delete = 0
+       ` ,
+      [startDate, endDate, userId]
     );
 
     
@@ -233,6 +234,79 @@ if (!startDate || !endDate) {
       `,
       [userId, startDate, endDate]
     );
+
+
+    const [ExpenseIncomePlot] = await db.promise().query(
+      `
+      SELECT 
+    COALESCE(p.plot_id, 'ไม่ระบุแปลง') AS plot_id,  -- ✅ ถ้าไม่มี plot_id ให้แสดงว่า "ไม่ระบุแปลง"
+    p.plot_name,
+    COALESCE(incomeData.totalIncome, 0) AS totalIncome,
+    COALESCE(expenseData.totalExpense, 0) AS totalExpense,
+    COALESCE(expenseData.expenseCategory, 'ไม่ระบุประเภท') AS expenseCategory  -- ✅ ประเภทค่าใช้จ่าย
+FROM plots p
+LEFT JOIN (
+    -- ✅ รายรับจากการเก็บเกี่ยว แยกตามแปลง
+    SELECT 
+        h.plot_id, 
+        SUM(h.amount) AS totalIncome
+    FROM harvests h
+    WHERE h.user_id = ? 
+    AND h.harvest_date BETWEEN ? AND ?
+    AND h.is_delete = 0
+    GROUP BY h.plot_id
+) incomeData ON p.plot_id = incomeData.plot_id
+LEFT JOIN (
+    -- ✅ รายจ่ายแยกตามแปลง และค่าใช้จ่ายทั่วไป
+    SELECT 
+        COALESCE(h.plot_id, f.plot_id, he.plot_id, fu.plot_id, cv.plot_id, 
+                 l.plot_id, ex.plot_id, tc.plot_id, 
+                 pl.plot_id, ws.plot_id, hs.plot_id, 'ไม่ระบุแปลง') AS plot_id, 
+        SUM(
+            COALESCE(h.total_price, 0) + COALESCE(f.total_price, 0) + COALESCE(he.total_price, 0) + 
+            COALESCE(fu.total_price, 0) + COALESCE(cv.total_price, 0) + COALESCE(l.total_price, 0) + 
+            COALESCE(ex.total_price, 0) + COALESCE(tc.total_price, 0) + COALESCE(pl.total_price, 0) + 
+            COALESCE(ws.total_price, 0) + COALESCE(hs.total_price, 0)
+        ) AS totalExpense,
+        e.category AS expenseCategory  
+    FROM expenses e
+    LEFT JOIN HormoneData h ON e.expense_id = h.expense_id
+    LEFT JOIN FertilizerData f ON e.expense_id = f.expense_id
+    LEFT JOIN HerbicideData he ON e.expense_id = he.expense_id
+    LEFT JOIN FuelData fu ON e.expense_id = fu.expense_id
+    LEFT JOIN CassavaVarietyData cv ON e.expense_id = cv.expense_id
+    LEFT JOIN LandRentalData l ON e.expense_id = l.expense_id
+    LEFT JOIN ExcavationData ex ON e.expense_id = ex.expense_id
+    LEFT JOIN TreeCutting tc ON e.expense_id = tc.expense_id
+    LEFT JOIN Planting pl ON e.expense_id = pl.expense_id
+    LEFT JOIN WeedSpraying ws ON e.expense_id = ws.expense_id
+    LEFT JOIN HormoneSpraying hs ON e.expense_id = hs.expense_id
+    WHERE e.user_id = ? 
+    AND e.expenses_date BETWEEN ? AND ?
+    AND e.is_deleted = 0
+    GROUP BY plot_id, e.category  
+
+    UNION ALL
+
+    -- ✅ ค่าใช้จ่ายที่ไม่มี plot_id (ค่าใช้จ่ายทั่วไป)
+    SELECT 
+        'ไม่ระบุแปลง' AS plot_id, 
+        SUM(
+            COALESCE(er.repair_cost, 0) + COALESCE(ep.purchase_price, 0)
+        ) AS totalExpense,
+        'ค่าใช้จ่ายทั่วไป' AS expenseCategory  
+    FROM expenses e
+    LEFT JOIN EquipmentRepairData er ON e.expense_id = er.expense_id
+    LEFT JOIN EquipmentPurchaseData ep ON e.expense_id = ep.expense_id
+    WHERE e.user_id = ? 
+    AND e.expenses_date BETWEEN ? AND ?
+    AND e.is_deleted = 0
+) expenseData ON p.plot_id = expenseData.plot_id
+WHERE p.user_id = ? 
+AND p.is_delete = 0
+ORDER BY plot_id, expenseData.expenseCategory;
+` , [userId, startDate, endDate, userId, startDate, endDate, userId, startDate, endDate, userId]);
+
     
 
     res.json({
@@ -241,6 +315,7 @@ if (!startDate || !endDate) {
       monthlyIncomeExpense: monthlyIncomeExpense || [],
       categoryExpents: categoryExpents || [],
       expenseDetails: expenseDetails || [],
+      ExpenseIncomePlot: ExpenseIncomePlot || [],
       startDate,   // ✅ เปลี่ยนจาก selectedYear เป็น startDate
       endDate,     // ✅ เพิ่ม endDate เพื่อให้แสดงช่วงวันที่ที่ใช้จริง
       userId,
