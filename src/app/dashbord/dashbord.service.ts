@@ -8,14 +8,16 @@ import { Observable } from 'rxjs';
 export class DashbordService {
 
   private apiUrl = 'http://localhost:3000/api';
- 
-   constructor(
-     private http: HttpClient
-   ) { }
 
-   getCashFlowReport(userId: string, year: number, startMonth: number, endMonth: number): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/getCashFlowReport?user_id=${userId}&year=${year}&startMonth=${startMonth}&endMonth=${endMonth}`);
-}
+  constructor(
+    private http: HttpClient
+  ) { }
 
-  
+  getCashFlowReport(userId: string, startDate: string, endDate: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/getCashFlowReport?user_id=${userId}&startDate=${startDate}&endDate=${endDate}`);
+  }
+
+
+
+
 }

@@ -16,19 +16,17 @@
         <div class="month-selection">
             <div class="month-group">
                 <div class="month-item">
-                    <label for="startMonthSelect">วันที่เริ่ม:</label>
-                    <input type="date" id="startDate" class="form-control" formControlName="startDate">
+                    <label for="startDate">วันที่เริ่ม:</label>
+                    <input type="date" id="startDate" class="form-control" formControlName="startDate" [(ngModel)]="startDate" (change)="loadCashFlowReport()">
                 </div>
-
+        
                 <div class="month-item">
-                    <label for="endMonthSelect">วันที่สิ้นสุด:</label>
-                    <!-- <select id="endMonthSelect" [(ngModel)]="endMonth" (change)="loadCashFlowReport()">
-                        <option *ngFor="let month of availableMonths" [value]="month.value">{{ month.label }}</option>
-                    </select> -->
-                    <input type="date" id="startDate" class="form-control" formControlName="startDate">
+                    <label for="endDate">วันที่สิ้นสุด:</label>
+                    <input type="date" id="endDate" class="form-control" formControlName="endDate" [(ngModel)]="endDate" (change)="loadCashFlowReport()">
                 </div>
             </div>
         </div>
+        
     </div>
 
     <!-- ✅ ส่วนสรุปข้อมูล -->

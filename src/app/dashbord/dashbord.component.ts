@@ -29,7 +29,8 @@ export class DashbordComponent implements OnInit {
   // ✅ กำหนดค่าเริ่มต้นให้ startMonth และ endMonth
   startMonth: number = 1;
   endMonth: number = 12;
-
+  startDate: string = ''; // ค่าที่เลือก
+  endDate: string = '';
   availableMonths = [
     { value: 1, label: "มกราคม" }, { value: 2, label: "กุมภาพันธ์" },
     { value: 3, label: "มีนาคม" }, { value: 4, label: "เมษายน" },
@@ -55,30 +56,28 @@ export class DashbordComponent implements OnInit {
 
   ngOnInit(): void {
     this.userId = localStorage.getItem('userId') ?? '';
-    this.loadAvailableYears();
+  
+
+    // ✅ ตั้งค่า startDate และ endDate เป็นค่าเริ่มต้น (วันที่ปัจจุบัน)
+    const today = new Date();
+    this.startDate = new Date(today.getFullYear(), 0, 1).toISOString().split('T')[0]; // วันที่ 1 ม.ค. ของปีปัจจุบัน
+    this.endDate = today.toISOString().split('T')[0]; // วันที่ปัจจุบัน
 
     if (this.userId) {
       this.loadCashFlowReport();
     } else {
       console.error('❌ ไม่พบ User ID');
     }
-  }
+}
 
-  // ✅ โหลดรายการปีที่เลือกได้ (5 ปีล่าสุด)
-  loadAvailableYears(): void {
-    const currentYear = new Date().getFullYear();
-    this.availableYears = Array.from({ length: 5 }, (_, i) => currentYear - i);
-  }
-
-  // ✅ โหลดข้อมูลจาก API ตามปีที่เลือกและช่วงเดือน
-  loadCashFlowReport(): void {
-    // ✅ ป้องกัน `startMonth` และ `endMonth` เป็น NaN
-    if (Number.isNaN(this.startMonth) || Number.isNaN(this.endMonth)) {
-      console.error("❌ ค่าของ startMonth หรือ endMonth ไม่ถูกต้อง:", { startMonth: this.startMonth, endMonth: this.endMonth });
+// ✅ โหลดข้อมูลจาก API ตามช่วงวันที่ที่เลือก
+loadCashFlowReport(): void {
+    if (!this.startDate || !this.endDate) {
+      console.error("❌ ค่าของ startDate หรือ endDate ไม่ถูกต้อง:", { startDate: this.startDate, endDate: this.endDate });
       return;
     }
 
-    this.dashbordService.getCashFlowReport(this.userId, this.selectedYear, this.startMonth, this.endMonth).subscribe({
+    this.dashbordService.getCashFlowReport(this.userId, this.startDate, this.endDate).subscribe({
       next: (data) => {
         this.summary = data.summary;
         this.incomeExpense = data.IncomExpent;
@@ -90,7 +89,8 @@ export class DashbordComponent implements OnInit {
       },
       error: (err) => console.error('❌ เกิดข้อผิดพลาดในการโหลดข้อมูลกระแสเงินสด:', err),
     });
-  }
+}
+
 
   updateExpenses(): void {
     if (!this.expenseDetails || this.expenseDetails.length === 0) {
