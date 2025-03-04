@@ -148,8 +148,8 @@ export class AddPlantedAreaComponent implements OnInit {
 
   onSubmit(): void {
     if (this.plantedAreaForm.invalid) {
-      this.showErrorAlert('กรุณากรอกข้อมูลให้ครบถ้วน');
-      return;
+        this.showErrorAlert('กรุณากรอกข้อมูลให้ครบถ้วน');
+        return;
     }
 
     // แปลงพิกัดพอลิกอนจาก LatLngLiteral[] เป็น LatLng[]
@@ -157,40 +157,43 @@ export class AddPlantedAreaComponent implements OnInit {
 
     // ส่งข้อมูลพอลิกอนและภาพแผนที่ไปที่ captureMapImage
     this.captureMapImage(polygonLatLngs).then((imageUrl) => {
-      const plotName = this.plantedAreaForm.get('plot_name')?.value || 'default-plot-name';
-      const timestamp = new Date().toISOString();
-      const fileName = `${plotName}-${timestamp}.png`;
+        const plotName = this.plantedAreaForm.get('plot_name')?.value || 'default-plot-name';
+        const timestamp = new Date().toISOString();
+        const fileName = `${plotName}-${timestamp}.png`;
 
-      const data = {
-        plot_name: plotName,
-        latlngs: this.polygonCoords,
-        user_id: this.userId,
-        fileData: imageUrl // ส่ง URL ของภาพแผนที่
-      };
+        const data = {
+            plot_name: plotName,
+            latlngs: this.polygonCoords,
+            user_id: this.userId,
+            fileData: imageUrl // ส่ง URL ของภาพแผนที่
+        };
 
-      this.plantedAreaService.savePlantedArea(data).subscribe(
-        response => {
-          Swal.fire({
-            icon: 'success',
-            title: 'สำเร็จ',
-            text: 'ข้อมูลถูกบันทึกเรียบร้อยแล้ว'
-          });
-          
-          this.closeForm.emit(); // แจ้งให้ Component หลักปิดฟอร์ม
-          this.plantedAreaForm.reset();
-          this.onClearPolygon();
-          this.generatePlotName();
-        },
-        error => {
-          console.error('Error:', error);
-          this.showErrorAlert('ไม่สามารถบันทึกข้อมูลได้');
-        }
-      );
+        this.plantedAreaService.savePlantedArea(data).subscribe(
+            response => {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'สำเร็จ',
+                    text: 'ข้อมูลถูกบันทึกเรียบร้อยแล้ว'
+                }).then(() => {
+                    location.reload(); // รีหน้าใหม่หลังจากกด OK
+                });
+
+                this.closeForm.emit(); // แจ้งให้ Component หลักปิดฟอร์ม
+                this.plantedAreaForm.reset();
+                this.onClearPolygon();
+                this.generatePlotName();
+            },
+            error => {
+                console.error('Error:', error);
+                this.showErrorAlert('ไม่สามารถบันทึกข้อมูลได้');
+            }
+        );
     }).catch(error => {
-      console.error('Error capturing image:', error);
-      this.showErrorAlert('ไม่สามารถจับภาพแผนที่ได้');
+        console.error('Error capturing image:', error);
+        this.showErrorAlert('ไม่สามารถจับภาพแผนที่ได้');
     });
 }
+
 
   
   onDragEnd(): void {

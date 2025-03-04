@@ -102,9 +102,11 @@ selectedCategory: string | null = null;
 
   openAddExpense(): void {
     this.showAddForm = !this.showAddForm; // สลับสถานะเปิด/ปิดฟอร์ม
+    this.showEditForm = false; // ปิดฟอร์มแก้ไข
   }
   closeForm() {
     this.showAddForm = false; // ปิดฟอร์มเมื่อบันทึกสำเร็จ
+    this.showEditForm = false; // ปิดฟอร์มเมื่อบันทึกสำเร็จ
   }
 
 
@@ -113,6 +115,7 @@ selectedCategory: string | null = null;
         this.selectedExpenseId = expenseId;
         this.selectedCategory = category;
         this.showEditForm = true;
+        this.showAddForm = false;
 
         // ✅ เลื่อนหน้าไปยังฟอร์มแก้ไข
         setTimeout(() => {

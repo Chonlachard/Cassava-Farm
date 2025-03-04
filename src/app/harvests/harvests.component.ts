@@ -174,9 +174,11 @@ export class HarvestsComponent implements OnInit, AfterViewInit {
 
   openAdd() {
     this.showAddForm = !this.showAddForm; // สลับสถานะเปิด/ปิดฟอร์ม
+    this.showEditForm = false; // ปิดฟอร์มแก้ไข
   }
   closeForm() {
     this.showAddForm = false; // ปิดฟอร์มเมื่อบันทึกสำเร็จ
+    this.showEditForm = false; // ปิดฟอร์มเมื่อบันทึกสำเร็จ
   }
 
   // แก้ไขข้อมูลการเก็บเกี่ยว
@@ -185,6 +187,9 @@ export class HarvestsComponent implements OnInit, AfterViewInit {
         console.error("❌ harvestId เป็นค่าว่าง");
         return;
     }
+
+    // ✅ ปิดฟอร์มเพิ่มข้อมูล
+    this.showAddForm = false;
 
     // ✅ ถ้าเลือกอันใหม่ ให้เปลี่ยนค่าแล้วโหลดข้อมูลใหม่
     if (this.selectedHarvestId !== harvestId) {
@@ -199,9 +204,14 @@ export class HarvestsComponent implements OnInit, AfterViewInit {
 
     // ✅ เลื่อนหน้าไปยังฟอร์มแก้ไข
     setTimeout(() => {
-      this.editFormSection.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (this.editFormSection) {
+        this.editFormSection.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+        console.warn("⚠️ ไม่พบ element editFormSection");
+      }
     }, 100);
-  }
+}
+
 
 
 
