@@ -14,15 +14,15 @@ exports.getPlots = async (req, res) => {
 
     try {
         const query = `SELECT 
-    plot_id,
-    plot_name,
-    FLOOR(area_rai) AS rai, 
-    ROUND((area_rai - FLOOR(area_rai)) * 400) AS wa,
-    CONCAT(FLOOR(area_rai), ' ไร่ ', ROUND((area_rai - FLOOR(area_rai)) * 400), ' ตารางวา') AS totalArea ,
-    image_path
-FROM plots
-WHERE user_id = ?
-AND is_delete = 0`;
+            plot_id,
+            plot_name,
+            FLOOR(area_rai) AS rai, 
+            ROUND((area_rai - FLOOR(area_rai)) * 400) AS wa,
+            CONCAT(FLOOR(area_rai), ' ไร่ ', ROUND((area_rai - FLOOR(area_rai)) * 400), ' ตารางวา') AS totalArea,
+            image_path
+        FROM plots
+        WHERE user_id = ?
+        AND is_delete = 0`;
         
         db.query(query, [userId], (err, results) => {
             if (err) {

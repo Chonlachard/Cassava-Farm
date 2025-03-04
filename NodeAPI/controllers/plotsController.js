@@ -11,7 +11,7 @@ function calculateAreaRai(latlngs) {
         throw new Error("ต้องมีพิกัดอย่างน้อย 3 จุดขึ้นไปเพื่อสร้างพื้นที่");
     }
 
-    // ตรวจสอบและแก้ไขพิกัดให้พอลิกอนปิดสนิท
+    // ตรวจสอบและปิด Polygon (เพิ่มจุดแรกเป็นจุดสุดท้าย)
     const firstPoint = latlngs[0];
     const lastPoint = latlngs[latlngs.length - 1];
 
@@ -21,9 +21,12 @@ function calculateAreaRai(latlngs) {
 
     try {
         const polygon = turf.polygon([latlngs.map(p => [p.lng, p.lat])]);
-        const area = turf.area(polygon); // คำนวณพื้นที่เป็นตารางเมตร
-        return area / 1600; // แปลงเป็นไร่ (1 ไร่ = 1600 ตร.ม.)
-        
+        const areaInSquareMeters = turf.area(polygon); // คำนวณพื้นที่เป็นตารางเมตร
+
+        // แปลง ตารางเมตร -> ไร่ (1 ไร่ = 1600 ตร.ม.)
+        const areaInRai = areaInSquareMeters / 1600;
+
+        return parseFloat(areaInRai.toFixed(4)); // ปัดเป็นทศนิยม 4 ตำแหน่งก่อนบันทึก
     } catch (error) {
         console.error("เกิดข้อผิดพลาดในการคำนวณพื้นที่:", error);
         return null;

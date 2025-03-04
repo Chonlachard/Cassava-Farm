@@ -66,7 +66,7 @@ export class LoginComponent implements OnInit {
           localStorage.setItem('userId', userId.toString());
           localStorage.setItem('token', response.token);
 
-          this.router.navigate(['/dashboard']);
+          this.router.navigate(['/cassavaPlantedArea']);
         } else {
           this.showAlert('login.invalidCredentials', 'error');
         }

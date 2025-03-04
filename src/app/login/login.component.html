@@ -51,10 +51,10 @@
         <div class="mb-3">
           <label for="firstName" class="form-label">{{ 'login.firstName' | translate }}</label>
           <input id="firstName" formControlName="firstName" class="form-control"
+            [ngClass]="{ 'is-invalid border-danger': registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched }"
             placeholder="{{ 'login.firstNamePlaceholder' | translate }}" required>
-          <div *ngIf="registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched"
-            class="invalid-feedback">
-            {{ 'login.requiredField' | translate }}
+          <div *ngIf="registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched" class="invalid-feedback">
+            {{ 'กรุณากรอกชื่อจริง' }}
           </div>
         </div>
 

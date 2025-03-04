@@ -25,6 +25,9 @@ export class CassavaPlantedAreaComponent implements OnInit, AfterViewInit {
   userId: string = '';
   searchForm: FormGroup;
 
+  showAddForm = false;
+  showEditForm = false;
+
   constructor(
     private fb: FormBuilder,
     private cassavaAreaService: CassavaAreaServiceService,
@@ -112,19 +115,8 @@ export class CassavaPlantedAreaComponent implements OnInit, AfterViewInit {
   }
 
   // ฟังก์ชันเปิดฟอร์มเพิ่มข้อมูล
-  openAdd() {
-    const dialogRef = this.dialog.open(AddPlantedAreaComponent, {
-      width: '90%',   // กำหนดความกว้างให้เต็มหน้าจอ
-      height: '90%',  // กำหนดความสูงให้เต็มหน้าจอ
-      maxWidth: '100vw', // ความกว้างสูงสุดเป็น 100% ของหน้าจอ
-      maxHeight: '100vh' // ความสูงสูงสุดเป็น 100% ของหน้าจอ
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.loadPlots(); // โหลดข้อมูลใหม่หลังจากเพิ่ม/แก้ไข
-      }
-    });
+  openAdd(): void {
+    this.showAddForm = !this.showAddForm; // สลับสถานะเปิด/ปิดฟอร์ม
   }
 
   // ฟังก์ชันกรองข้อมูล
@@ -132,7 +124,9 @@ export class CassavaPlantedAreaComponent implements OnInit, AfterViewInit {
     this.dataSource.filter = keyword.trim().toLowerCase(); // กรองข้อมูลในตาราง
   }
 
-
+  closeForm() {
+    this.showAddForm = false; // ปิดฟอร์มเมื่อบันทึกสำเร็จ
+  }
 
   edit(plotId: string) {
     const dialogRef = this.dialog.open(EditPlantedComponent, {
