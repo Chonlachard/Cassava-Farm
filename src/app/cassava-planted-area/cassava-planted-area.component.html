@@ -92,9 +92,16 @@
   </div>
 
   <!-- โชฟอมเพิ่มข้อมูล -->
-  <div *ngIf="showAddForm" class="mt-4">
+  <div *ngIf="showAddForm"  #addFormSection class="mt-4">
     <app-add-planted-area (closeForm)="closeForm()"></app-add-planted-area>
-</div>
+  </div>
+
+  <!-- แสดงฟอร์มแก้ไขเมื่อกดปุ่ม -->
+  <div *ngIf="showEditForm" #editFormSection class="mt-4">
+    <app-edit-planted *ngIf="selectedPlotId !== null" [plot_id]="selectedPlotId!" 
+      (closeForm)="showEditForm = false">
+    </app-edit-planted>
+  </div>
 
 
 </div>

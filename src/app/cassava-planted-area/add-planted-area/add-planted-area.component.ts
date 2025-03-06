@@ -167,6 +167,7 @@ export class AddPlantedAreaComponent implements OnInit {
             user_id: this.userId,
             fileData: imageUrl // ส่ง URL ของภาพแผนที่
         };
+        console.log('Data to save:', data);
 
         this.plantedAreaService.savePlantedArea(data).subscribe(
             response => {

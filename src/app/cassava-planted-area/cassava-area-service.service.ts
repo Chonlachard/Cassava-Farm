@@ -37,7 +37,8 @@ export class CassavaAreaServiceService {
     return this.http.delete(`${this.apiUrl}/deleteplot/${plotId}`);
   }
 
-  getPlotById(plotId: string): Observable<any> {
+  getPlotById(plotId: number): Observable<any> {
+    debugger
     return this.http.get<any>(`${this.apiUrl}/getPlotUpdate/${plotId}`);
   }
 

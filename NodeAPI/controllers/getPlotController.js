@@ -107,20 +107,23 @@ exports.deletePlot = async (req, res) => {
 };
 
 exports.getPlotsUpdate = (req, res) => {
-    const { plot_id } = req.params; // ใช้ req.params แทน req.body
+    const plotId = Number(req.params.plot_id); // แปลง plot_id เป็นตัวเลข
+    console.log('Received plot_id:', plotId);
 
-    if (!plot_id) {
-        return res.status(400).json({ message: 'กรุณาส่ง plot_id มาด้วย' });
+    if (!plotId || isNaN(plotId)) {
+        return res.status(400).json({ message: 'กรุณาส่ง plot_id ที่ถูกต้อง' });
     }
 
     const sqlQuery = `
         SELECT 
             a.plot_id,
             a.plot_name,
-            CAST(a.area_rai AS SIGNED) AS area_rai,
+            FLOOR(a.area_rai) AS rai, 
+            ROUND((a.area_rai - FLOOR(a.area_rai)) * 400) AS wa,
+            CONCAT(FLOOR(a.area_rai), ' ไร่ ', ROUND((a.area_rai - FLOOR(a.area_rai)) * 400), ' ตารางวา') AS totalArea,
             a.image_path,
-            GROUP_CONCAT(b.latitude ORDER BY b.location_id ASC) AS latitudes,
-            GROUP_CONCAT(b.longitude ORDER BY b.location_id ASC) AS longitudes
+            COALESCE(GROUP_CONCAT(b.latitude ORDER BY b.location_id ASC SEPARATOR ','), '') AS latitudes,
+            COALESCE(GROUP_CONCAT(b.longitude ORDER BY b.location_id ASC SEPARATOR ','), '') AS longitudes
         FROM 
             plots a 
         LEFT JOIN 
@@ -130,12 +133,14 @@ exports.getPlotsUpdate = (req, res) => {
         WHERE 
             a.plot_id = ?
         GROUP BY 
-            a.plot_id
-        LIMIT 1;  -- จำกัดผลลัพธ์ให้แสดงแค่แถวเดียว
+            a.plot_id, a.plot_name, a.area_rai, a.image_path
+        LIMIT 1;
     `;
 
-    db.query(sqlQuery, [plot_id], (error, results) => {
+
+    db.query(sqlQuery, [plotId], (error, results) => {
         if (error) {
+            console.error('Database error:', error);
             return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการเชื่อมต่อฐานข้อมูล', error });
         }
 
@@ -143,7 +148,7 @@ exports.getPlotsUpdate = (req, res) => {
             return res.status(404).json({ message: 'ไม่พบข้อมูลสำหรับ plot_id ที่ระบุ' });
         }
 
-        // แปลงค่าละติ ลองจิ ที่เก็บใน GROUP_CONCAT เป็นอาร์เรย์
+        // แปลงค่าละติจูดและลองจิจูดจาก GROUP_CONCAT เป็นอาร์เรย์
         const plotData = results[0];
         const latitudes = plotData.latitudes ? plotData.latitudes.split(',') : [];
         const longitudes = plotData.longitudes ? plotData.longitudes.split(',') : [];
@@ -151,7 +156,9 @@ exports.getPlotsUpdate = (req, res) => {
         res.status(200).json({
             plot_id: plotData.plot_id,
             plot_name: plotData.plot_name,
-            area_rai: plotData.area_rai,
+            area_rai: plotData.rai, // ใช้ค่า "ไร่" ที่คำนวณแล้ว
+            wa: plotData.wa, // ตารางวา
+            total_area: plotData.totalArea, // ขนาดแปลงในหน่วย "ไร่ ตารางวา"
             image_path: plotData.image_path,
             latitudes,
             longitudes
@@ -160,134 +167,88 @@ exports.getPlotsUpdate = (req, res) => {
 };
 
 
-exports.EditPlot = (req, res) => {
+
+exports.EditPlot = async (req, res) => {
     const { plot_id, user_id, plot_name, latlngs, fileData } = req.body;
 
-    let parsedLatlngs;
-    let imagePath = null;
-
     try {
-        // ดึงข้อมูลแปลงเดิมจากฐานข้อมูล
-        db.query('SELECT * FROM plots WHERE plot_id = ?', [plot_id], (err, plotResult) => {
-            if (err) {
-                return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการดึงข้อมูลแปลง', error: err.message });
+        // ดึงข้อมูลเดิมของแปลง
+        const [plotResult] = await db.promise().query('SELECT * FROM plots WHERE plot_id = ?', [plot_id]);
+        if (plotResult.length === 0) {
+            return res.status(404).json({ message: 'ไม่พบข้อมูลแปลงที่ต้องการแก้ไข' });
+        }
+
+        const existingPlot = plotResult[0];
+
+        // ดึงตำแหน่งพิกัดเดิม
+        const [locationResult] = await db.promise().query('SELECT latitude, longitude FROM plot_locations WHERE plot_id = ?', [plot_id]);
+        const currentLatlngs = locationResult.map(loc => ({ lat: loc.latitude, lng: loc.longitude }));
+
+        // ตรวจสอบว่าพิกัดมีการเปลี่ยนแปลงหรือไม่
+        const parsedLatlngs = JSON.stringify(currentLatlngs) !== JSON.stringify(latlngs) ? latlngs : currentLatlngs;
+
+        // ตรวจสอบว่ามีการอัปโหลดรูปภาพใหม่หรือไม่
+        let imagePath = existingPlot.image_path;
+        if (fileData) {
+            if (!fileData.startsWith('data:image/png;base64,')) {
+                return res.status(400).json({ message: 'รูปภาพไม่ถูกต้อง' });
             }
 
-            if (plotResult.length === 0) {
-                return res.status(404).json({ message: 'ไม่พบข้อมูลแปลงที่ต้องการแก้ไข' });
-            }
+            const base64Data = fileData.replace(/^data:image\/png;base64,/, "");
+            const filename = `plot-${uuidv4()}.png`;
+            const filepath = path.join('public', 'uploads', filename);
+            fs.writeFileSync(filepath, base64Data, 'base64');
+            imagePath = `/uploads/${filename}`;
+        }
 
-            // ใช้ข้อมูลเดิมในกรณีที่ไม่มีการเปลี่ยนแปลง
-            const existingPlot = plotResult[0];
-            let currentLatlngs = [];
+        // คำนวณพื้นที่ใหม่
+        const area_rai = calculateAreaRai(parsedLatlngs);
 
-            // ดึงพิกัดตำแหน่งเดิม
-            db.query('SELECT latitude, longitude FROM plot_locations WHERE plot_id = ?', [plot_id], (err, locationResult) => {
-                if (err) {
-                    return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการดึงข้อมูลตำแหน่ง', error: err.message });
-                }
+        // อัปเดตข้อมูลแปลง
+        await db.promise().query(
+            'UPDATE plots SET user_id = ?, plot_name = ?, area_rai = ?, image_path = ? WHERE plot_id = ?',
+            [user_id, plot_name, area_rai, imagePath, plot_id]
+        );
 
-                currentLatlngs = locationResult.map(loc => ({ lat: loc.latitude, lng: loc.longitude }));
+        // ลบตำแหน่งพิกัดเดิมและเพิ่มตำแหน่งใหม่
+        await db.promise().query('DELETE FROM plot_locations WHERE plot_id = ?', [plot_id]);
 
-                // ตรวจสอบว่า latlngs มีการเปลี่ยนแปลงหรือไม่
-                if (JSON.stringify(currentLatlngs) !== JSON.stringify(latlngs)) {
-                    parsedLatlngs = latlngs;
+        if (parsedLatlngs.length > 0) {
+            const locationValues = parsedLatlngs.map(latlng => [plot_id, latlng.lat, latlng.lng]);
+            await db.promise().query('INSERT INTO plot_locations (plot_id, latitude, longitude) VALUES ?', [locationValues]);
+        }
 
-                    // ตรวจสอบและเติมข้อมูลพิกัดให้ครบ 20 ค่า
-                    if (!parsedLatlngs || parsedLatlngs.length < 20) {
-                        while (parsedLatlngs.length < 20) {
-                            parsedLatlngs.push({ lat: null, lng: null }); // เติมค่าว่าง
-                        }
-                    } else if (parsedLatlngs.length > 20) {
-                        parsedLatlngs = parsedLatlngs.slice(0, 20); // ตัดเหลือ 20 ค่า
-                    }
-                } else {
-                    // ถ้า latlngs ไม่มีการเปลี่ยนแปลง ใช้ค่าเดิม
-                    parsedLatlngs = currentLatlngs;
-                }
+        res.status(200).json({ message: 'อัปเดตข้อมูลสำเร็จ' });
 
-                // ตรวจสอบว่า imagePath มีการเปลี่ยนแปลงหรือไม่
-                if (fileData) {
-                    // ตรวจสอบว่า fileData เป็น Base64 หรือไม่
-                    if (!fileData.startsWith('data:image/png;base64,')) {
-                        return res.status(400).json({ message: 'รูปภาพไม่ถูกต้อง' });
-                    }
-
-                    const base64Data = fileData.replace(/^data:image\/png;base64,/, "");
-                    const filename = `plot-${uuidv4()}.png`; // ใช้ UUID เพื่อให้ชื่อไฟล์ไม่ซ้ำ
-                    const filepath = path.join('public', 'uploads', filename);
-                    fs.writeFileSync(filepath, base64Data, 'base64');
-                    imagePath = `/uploads/${filename}`;
-                } else {
-                    // ถ้าไม่มีการเปลี่ยนแปลง imagePath ใช้ค่าจากข้อมูลเดิม
-                    imagePath = existingPlot.image_path;
-                }
-
-                // คำนวณพื้นที่
-                const area_rai = calculateAreaRai(parsedLatlngs);
-
-                // เริ่มต้นการทำธุรกรรมเพื่ออัปเดตข้อมูลแปลง
-                db.beginTransaction((err) => {
-                    if (err) throw err;
-
-                    const plotQuery = 'UPDATE plots SET user_id = ?, plot_name = ?, area_rai = ?, image_path = ? WHERE plot_id = ?';
-                    db.query(plotQuery, [user_id, plot_name, area_rai, imagePath, plot_id], (err, result) => {
-                        if (err) {
-                            return db.rollback(() => {
-                                throw err;
-                            });
-                        }
-
-                        // ลบข้อมูลตำแหน่งเดิมก่อนที่จะเพิ่มข้อมูลใหม่
-                        const deleteLocationsQuery = 'DELETE FROM plot_locations WHERE plot_id = ?';
-                        db.query(deleteLocationsQuery, [plot_id], (err) => {
-                            if (err) {
-                                return db.rollback(() => {
-                                    throw err;
-                                });
-                            }
-
-                            const locationQuery = 'INSERT INTO plot_locations (plot_id, latitude, longitude) VALUES ?';
-                            const locationValues = parsedLatlngs.map(latlng => [plot_id, latlng.lat, latlng.lng]);
-
-                            db.query(locationQuery, [locationValues], (err, result) => {
-                                if (err) {
-                                    return db.rollback(() => {
-                                        throw err;
-                                    });
-                                }
-
-                                // Commit การทำธุรกรรมหลังจากการอัปเดตข้อมูลสำเร็จ
-                                db.commit((err) => {
-                                    if (err) {
-                                        return db.rollback(() => {
-                                            throw err;
-                                        });
-                                    }
-                                    res.status(200).json({ message: 'อัปเดตข้อมูลสำเร็จ' });
-                                });
-                            });
-                        });
-                    });
-                });
-            });
-        });
     } catch (err) {
-        console.error('Error:', err);
+        console.error('❌ Error:', err);
         res.status(500).json({ message: 'เกิดข้อผิดพลาดในการอัปเดตข้อมูล', error: err.message });
     }
 };
 // ฟังก์ชันคำนวณพื้นที่จากพิกัด
 function calculateAreaRai(latlngs) {
-    // ตรวจสอบและแก้ไขพิกัดให้พอลิกอนปิดสนิท
-    if (latlngs.length > 1 && (
-        latlngs[0].lat !== latlngs[latlngs.length - 1].lat ||
-        latlngs[0].lng !== latlngs[latlngs.length - 1].lng
-    )) {
-        latlngs.push(latlngs[0]); // เพิ่มจุดเริ่มต้นไปที่จุดสิ้นสุด
+    if (!latlngs || latlngs.length < 3) {
+        throw new Error("ต้องมีพิกัดอย่างน้อย 3 จุดขึ้นไปเพื่อสร้างพื้นที่");
     }
-    
-    const polygon = turf.polygon([latlngs.map(p => [p.lng, p.lat])]);
-    const area = turf.area(polygon); // พื้นที่ในตารางเมตร
-    return area / 1600; // แปลงเป็นไร่
+
+    // ตรวจสอบและปิด Polygon (เพิ่มจุดแรกเป็นจุดสุดท้าย)
+    const firstPoint = latlngs[0];
+    const lastPoint = latlngs[latlngs.length - 1];
+
+    if (firstPoint.lat !== lastPoint.lat || firstPoint.lng !== lastPoint.lng) {
+        latlngs.push({ lat: firstPoint.lat, lng: firstPoint.lng });
+    }
+
+    try {
+        const polygon = turf.polygon([latlngs.map(p => [p.lng, p.lat])]);
+        const areaInSquareMeters = turf.area(polygon); // คำนวณพื้นที่เป็นตารางเมตร
+
+        // แปลง ตารางเมตร -> ไร่ (1 ไร่ = 1600 ตร.ม.)
+        const areaInRai = areaInSquareMeters / 1600;
+
+        return parseFloat(areaInRai.toFixed(4)); // ปัดเป็นทศนิยม 4 ตำแหน่งก่อนบันทึก
+    } catch (error) {
+        console.error("เกิดข้อผิดพลาดในการคำนวณพื้นที่:", error);
+        return null;
+    }
 }

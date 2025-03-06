@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, ElementRef } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -20,11 +20,13 @@ export class CassavaPlantedAreaComponent implements OnInit, AfterViewInit {
 
   displayedColumns: string[] = ['plot_name', 'area_rai', 'imageUrl', 'actions'];
   dataSource = new MatTableDataSource<any>([]);
+  @ViewChild('addFormSection') addFormSection!: ElementRef; // ✅ ดึงตำแหน่งของฟอร์มแก้ไข
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
+  @ViewChild('editFormSection') editFormSection!: ElementRef;
 
   userId: string = '';
   searchForm: FormGroup;
-
+  selectedPlotId?: number; 
   showAddForm = false;
   showEditForm = false;
 
@@ -117,31 +119,41 @@ export class CassavaPlantedAreaComponent implements OnInit, AfterViewInit {
   // ฟังก์ชันเปิดฟอร์มเพิ่มข้อมูล
   openAdd(): void {
     this.showAddForm = !this.showAddForm; // สลับสถานะเปิด/ปิดฟอร์ม
-  }
+    this.showEditForm = false; // ปิดฟอร์มแก้ไข
+
+    setTimeout(() => {
+      if (this.addFormSection) {
+          this.addFormSection.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+          console.warn("⚠️ ไม่พบ element addFormSection");
+      }
+  }, 100); }
 
   // ฟังก์ชันกรองข้อมูล
   applyFilter(keyword: string) {
     this.dataSource.filter = keyword.trim().toLowerCase(); // กรองข้อมูลในตาราง
   }
 
-  closeForm() {
+   closeForm() {
     this.showAddForm = false; // ปิดฟอร์มเมื่อบันทึกสำเร็จ
+    this.showEditForm = false; // ปิดฟอร์มเมื่อบันทึกสำเร็จ
   }
 
-  edit(plotId: string) {
-    const dialogRef = this.dialog.open(EditPlantedComponent, {
-      width: '90%',   // กำหนดความกว้างให้เต็มหน้าจอ
-      height: '90%',  // กำหนดความสูงให้เต็มหน้าจอ
-      maxWidth: '100vw', // ความกว้างสูงสุดเป็น 100% ของหน้าจอ
-      maxHeight: '100vh', // ความสูงสูงสุดเป็น 100% ของหน้าจอ
-      data: { plot_id: plotId } // ส่ง plot_id เข้าไปใน Dialog
-    });
-  
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.loadPlots(); // โหลดข้อมูลใหม่หลังจากเพิ่ม/แก้ไข
-      }
-    });
+
+  edit(plotId: number): void {
+    if (plotId) {
+      this.selectedPlotId = plotId;
+      this.showEditForm = true;
+      this.showAddForm = false;
+
+      setTimeout(() => {
+        if (this.editFormSection?.nativeElement) {
+          this.editFormSection.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+          console.warn("⚠️ ไม่พบ element editFormSection");
+        }
+      }, 100);
+    }
   }
   
 
