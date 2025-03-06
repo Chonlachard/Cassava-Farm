@@ -19,19 +19,23 @@ if (!startDate || !endDate) {
          SELECT 
     COUNT(DISTINCT a.plot_id) AS plotCount,
     FLOOR(SUM(a.area_rai)) AS rai, 
-    ROUND((SUM(a.area_rai) - FLOOR(SUM(a.area_rai))) * 400) AS wa,
-    CONCAT(FLOOR(SUM(a.area_rai)), ' ไร่ ', ROUND((SUM(a.area_rai) - FLOOR(SUM(a.area_rai))) * 400), ' ตารางวา') AS totalArea,
+    ROUND(MOD(SUM(a.area_rai) * 400, 400)) AS wa,
+    CONCAT(
+        FLOOR(SUM(a.area_rai)), ' ไร่ ', 
+        ROUND(MOD(SUM(a.area_rai) * 400, 400)), ' ตารางวา'
+    ) AS totalArea,
     COALESCE(SUM(b.net_weight_kg), 0) AS totalHarvest
 FROM plots a
 LEFT JOIN (
-    SELECT plot_id, SUM(net_weight_kg) AS net_weight_kg, MAX(harvest_date) AS latestHarvestDate
+    SELECT plot_id, SUM(net_weight_kg) AS net_weight_kg
     FROM harvests
     WHERE harvest_date BETWEEN ? AND ?
     AND is_delete = 0
     GROUP BY plot_id
 ) b ON a.plot_id = b.plot_id
 WHERE a.user_id = ?
-AND a.is_delete = 0
+AND a.is_delete = 0;
+
        ` ,
       [startDate, endDate, userId]
     );

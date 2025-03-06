@@ -188,7 +188,7 @@
     </div>
 
     <!-- แสดงฟอร์มเพิ่มข้อมูลด้านล่างเมื่อ showAddForm เป็น true -->
-    <div *ngIf="showAddForm" class="mt-4">
+    <div *ngIf="showAddForm"  #addFormSection class="mt-4">
         <app-add-harvest (closeForm)="closeForm()"></app-add-harvest>
     </div>
 

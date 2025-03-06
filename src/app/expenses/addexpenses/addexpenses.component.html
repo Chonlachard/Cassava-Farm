@@ -19,41 +19,6 @@
 
       <!-- ค่าฮอร์โมน -->
       <div *ngIf="selectedCategory === 'ค่าฮอร์โมน'"  class="form-category-container">
-
-        <div class="form-field">
-          <label for="expenseDate">วันที่ซื้อ</label>
-          <input id="expenses_date" type="date" formControlName="expenses_date" />
-        </div>
-        <div class="form-field">
-          <label for="brand">ยี่ห้อ</label>
-          <input id="brand" type="text" formControlName="brand" placeholder="กรอกยี่ห้อ" />
-        </div>
-
-        <div class="form-field">
-          <label for="volume">ปริมาณ</label>
-          <input id="volume" type="number" formControlName="volume" placeholder="กรอกปริมาณ (เช่น 500 ml)" />
-        </div>
-
-        <div class="form-field">
-          <label for="pricePerBottle">ราคาต่อขวด</label>
-          <input id="price_per_bottle" type="number" formControlName="price_per_bottle" placeholder="กรอกราคาต่อขวด" />
-        </div>
-
-        <div class="form-field">
-          <label for="quantity">จำนวนขวด</label>
-          <input id="quantity" type="number" formControlName="quantity" placeholder="กรอกจำนวนขวด" />
-        </div>
-
-        <div class="form-field">
-          <label for="totalPrice">ราคารวม</label>
-          <input id="totalPrice" type="number" [value]="calculatedTotalPrice" readonly
-            placeholder="ราคารวมจะคำนวณอัตโนมัติ" />
-        </div>
-        <div class="form-field">
-          <label for="purchaseLocation">สถานที่ซื่อ</label>
-          <input id="purchase_location" type="text" formControlName="purchase_location" placeholder="กรอกสถานที่ซื่อ" />
-        </div>
-
         <div class="form-field">
           <label for="plotId">แปลง</label>
           <select id="plot_id" formControlName="plot_id">
@@ -61,6 +26,42 @@
             <option *ngFor="let plot of plots" [value]="plot.plot_id">{{ plot.plot_name }}</option>
           </select>
         </div>
+        <div class="form-field">
+          <label for="expenseDate">วันที่ซื้อ</label>
+          <input id="expenses_date" type="date" formControlName="expenses_date" />
+        </div>
+        <div class="form-field">
+          <label for="purchaseLocation">สถานที่ซื่อ</label>
+          <input id="purchase_location" type="text" formControlName="purchase_location" placeholder="กรอกสถานที่ซื่อ" />
+        </div>
+
+        <div class="form-field">
+          <label for="brand">ยี่ห้อ</label>
+          <input id="brand" type="text" formControlName="brand" placeholder="กรอกยี่ห้อ" />
+        </div>
+
+        <div class="form-field">
+          <label for="volume">ปริมาณ(ML)</label>
+          <input id="volume" type="number" formControlName="volume" placeholder="กรอกปริมาณ (เช่น 500 ml)" />
+        </div>
+
+        <div class="form-field">
+          <label for="quantity">จำนวนขวด</label>
+          <input id="quantity" type="number" formControlName="quantity" placeholder="กรอกจำนวนขวด" />
+        </div>
+        
+        <div class="form-field">
+          <label for="pricePerBottle">ราคาต่อขวด</label>
+          <input id="price_per_bottle" type="number" formControlName="price_per_bottle" placeholder="กรอกราคาต่อขวด" />
+        </div>
+
+        <div class="form-field">
+          <label for="totalPrice">ราคารวม</label>
+          <input id="totalPrice" type="number" [value]="calculatedTotalPrice" readonly
+            placeholder="ราคารวมจะคำนวณอัตโนมัติ" />
+        </div>
+       
+        
       </div>
 
 
@@ -68,20 +69,32 @@
       <!-- ค่าปุ๋ย -->
       <div *ngIf="selectedCategory === 'ค่าปุ๋ย'"  class="form-category-container">
 
+          <!-- แปลง -->
+          <div class="form-field">
+            <label for="plotId">แปลง</label>
+            <select id="plot_id" formControlName="plot_id">
+              <option value="" disabled selected>เลือกแปลง</option>
+              <option *ngFor="let plot of plots" [value]="plot.plot_id">{{ plot.plot_name }}</option>
+            </select>
+          </div>
         <div class="form-field">
           <label for="expenseDate">วันที่ซื้อ</label>
           <input id="expenses_date" type="date" formControlName="expenses_date" />
+        </div>
+        <div class="form-field">
+          <label for="purchaseLocation">สถานที่ซื่อ</label>
+          <input id="purchase_location" type="" formControlName="purchase_location" placeholder="กรอกสถานที่ซื่อ" />
         </div>
 
         <div class="form-field">
           <label for="brand">ยี่ห้อ</label>
           <input id="brand" type="text" formControlName="brand" placeholder="กรอกยี่ห้อ" />
         </div>
-        <div class="form-field">
+        <!-- <div class="form-field">
           <label for="formula">สูตร</label>
           <input id="formula" type="text" formControlName="formula" placeholder="กรอกสูตร (เช่น 15-15-15)"
             (input)="onFormulaInput($event)" />
-        </div>
+        </div> -->
 
         <div class="form-field">
           <label for="pricePerBag">ราคาต่อถุง</label>
@@ -96,68 +109,69 @@
           <input id="totalPrice" type="number" [value]="calculatedTotalPrice" readonly
             placeholder="ราคารวมจะคำนวณอัตโนมัติ" />
         </div>
-        <div class="form-field">
-          <label for="purchaseLocation">สถานที่ซื่อ</label>
-          <input id="purchase_location" type="" formControlName="purchase_location" placeholder="กรอกสถานที่ซื่อ" />
-        </div>
-        <!-- แปลง -->
-        <div class="form-field">
-          <label for="plotId">แปลง</label>
-          <select id="plot_id" formControlName="plot_id">
-            <option value="" disabled selected>เลือกแปลง</option>
-            <option *ngFor="let plot of plots" [value]="plot.plot_id">{{ plot.plot_name }}</option>
-          </select>
-        </div>
+       
+      
 
       </div>
 
       <!-- ค่ายาฆ่าหญ่า -->
       <div *ngIf="selectedCategory === 'ค่ายาฆ่าหญ้า'"  class="form-category-container">
 
-        <div class="form-field">
-          <label for="expenseDate">วันที่ซื้อ</label>
-          <input id="expenses_date" type="date" formControlName="expenses_date" />
-        </div>
-
-        <div class="form-field">
-          <label for="brand">ยี่ห้อ</label>
-          <input id="brand" type="text" formControlName="brand" placeholder="กรอกยี่ห้อ" />
-        </div>
-        <div class="form-field">
-          <label for="volume">ปริมาณ</label>
-          <input id="volume" type="text" formControlName="volume" placeholder="กรอกปริมาณ (เช่น 500 ml)" />
-        </div>
-        <div class="form-field">
-          <label for="pricePerBottle">ราคาต่อขวด</label>
-          <input id="price_per_bottle" type="number" formControlName="price_per_bottle" placeholder="กรอกราคาต่อขวด" />
-        </div>
-        <div class="form-field">
-          <label for="quantity">จำนวนขวด</label>
-          <input id="quantity" type="number" formControlName="quantity" placeholder="กรอกจำนวนขวด" />
-        </div>
-        <div class="form-field">
-          <label for="totalPrice">ราคารวม</label>
-          <input id="total_price" type="number" [value]="calculatedTotalPrice" readonly
-            placeholder="ราคารวมจะคำนวณอัตโนมัติ" />
-        </div>
-        <div class="form-field">
-          <label for="purchaseLocation">สถานที่ซื่อ</label>
-          <input id="purchase_location" type="text" formControlName="purchase_location" placeholder="กรอกสถานที่ซื่อ" />
-        </div>
-        <!-- แปลง -->
-        <div class="form-field"  class="form-category-container">
+         <!-- แปลง -->
+         <div class="form-field">
           <label for="plotId">แปลง</label>
           <select id="plot_id" formControlName="plot_id">
             <option value="" disabled selected>เลือกแปลง</option>
             <option *ngFor="let plot of plots" [value]="plot.plot_id">{{ plot.plot_name }}</option>
           </select>
         </div>
+        <div class="form-field">
+          <label for="expenseDate">วันที่ซื้อ</label>
+          <input id="expenses_date" type="date" formControlName="expenses_date" />
+        </div>
+        <div class="form-field">
+          <label for="purchaseLocation">สถานที่ซื่อ</label>
+          <input id="purchase_location" type="text" formControlName="purchase_location" placeholder="กรอกสถานที่ซื่อ" />
+        </div>
+        <div class="form-field">
+          <label for="brand">ยี่ห้อ</label>
+          <input id="brand" type="text" formControlName="brand" placeholder="กรอกยี่ห้อ" />
+        </div>
+        <div class="form-field">
+          <label for="volume">ปริมาณ(ML)</label>
+          <input id="volume" type="text" formControlName="volume" placeholder="กรอกปริมาณ (เช่น 500 ml)" />
+        </div>
+        <div class="form-field">
+          <label for="quantity">จำนวนขวด</label>
+          <input id="quantity" type="number" formControlName="quantity" placeholder="กรอกจำนวนขวด" />
+        </div>
+        <div class="form-field">
+          <label for="pricePerBottle">ราคาต่อขวด</label>
+          <input id="price_per_bottle" type="number" formControlName="price_per_bottle" placeholder="กรอกราคาต่อขวด" />
+        </div>
+       
+        <div class="form-field">
+          <label for="totalPrice">ราคารวม</label>
+          <input id="total_price" type="number" [value]="calculatedTotalPrice" readonly
+            placeholder="ราคารวมจะคำนวณอัตโนมัติ" />
+        </div>
+       
+      
 
 
       </div>
 
       <!-- ค่าคนตัดต้น -->
       <div *ngIf="selectedCategory === 'ค่าคนตัดต้น'"  class="form-category-container">
+
+         <!-- แปลง -->
+         <div class="form-field">
+          <label for="plotId">แปลง</label>
+          <select id="plot_id" formControlName="plot_id">
+            <option value="" disabled selected>เลือกแปลง</option>
+            <option *ngFor="let plot of plots" [value]="plot.plot_id">{{ plot.plot_name }}</option>
+          </select>
+        </div>
         <div class="form-field">
           <label for="expenseDate">วันที่ตัด</label>
           <input id="expenses_date" type="date" formControlName="expenses_date" />
@@ -178,7 +192,12 @@
           <input id="totalPrice" type="number" [value]="calculatedTotalPrice" readonly
             placeholder="ราคารวมจะคำนวณอัตโนมัติ" />
         </div>
-        <!-- แปลง -->
+       
+      </div>
+
+      <!-- ค่าคนปลูก -->
+      <div *ngIf="selectedCategory === 'ค่าคนปลูก'"  class="form-category-container">
+
         <div class="form-field">
           <label for="plotId">แปลง</label>
           <select id="plot_id" formControlName="plot_id">
@@ -186,19 +205,16 @@
             <option *ngFor="let plot of plots" [value]="plot.plot_id">{{ plot.plot_name }}</option>
           </select>
         </div>
-      </div>
 
-      <!-- ค่าคนปลูก -->
-      <div *ngIf="selectedCategory === 'ค่าคนปลูก'"  class="form-category-container">
         <div class="form-field">
           <label for="expenseDate">วันที่จ่ายเงิน</label>
           <input id="expenses_date" type="date" formControlName="expenses_date" />
         </div>
 
-        <div class="form-field">
+        <!-- <div class="form-field">
           <label for="workerName">ชื่อ</label>
           <input id="worker_name" type="text" formControlName="worker_name" placeholder="กรอกชื่อคนปลูก" />
-        </div>
+        </div> -->
 
         <div class="form-field">
           <label for="landArea">จำนวนไร่</label>
@@ -216,6 +232,12 @@
             placeholder="ราคารวมจะคำนวณอัตโนมัติ" />
         </div>
 
+        
+      </div>
+
+      <!-- ค่าคนฉีดยาฆ่าหญ่า -->
+      <div *ngIf="selectedCategory === 'ค่าคนฉีดยาฆ่าหญ้า'"  class="form-category-container">
+
         <div class="form-field">
           <label for="plotId">แปลง</label>
           <select id="plot_id" formControlName="plot_id">
@@ -223,10 +245,6 @@
             <option *ngFor="let plot of plots" [value]="plot.plot_id">{{ plot.plot_name }}</option>
           </select>
         </div>
-      </div>
-
-      <!-- ค่าคนฉีดยาฆ่าหญ่า -->
-      <div *ngIf="selectedCategory === 'ค่าคนฉีดยาฆ่าหญ้า'"  class="form-category-container">
         <div class="form-field">
           <label for="expenseDate">วันที่ฉีด</label>
           <input id="expenses_date" type="date" formControlName="expenses_date" />
@@ -248,17 +266,21 @@
             placeholder="ราคารวมจะคำนวณอัตโนมัติ" />
         </div>
 
-        <div class="form-field">
+       
+      </div>
+
+      <!-- ค่าคนฉีดยาฮอโมน -->
+      <div *ngIf="selectedCategory === 'ค่าคนฉีดยาฮอโมน'"  class="form-category-container">
+
+         <!-- แปลง -->
+         <div class="form-field">
           <label for="plotId">แปลง</label>
           <select id="plot_id" formControlName="plot_id">
             <option value="" disabled selected>เลือกแปลง</option>
             <option *ngFor="let plot of plots" [value]="plot.plot_id">{{ plot.plot_name }}</option>
           </select>
         </div>
-      </div>
 
-      <!-- ค่าคนฉีดยาฮอโมน -->
-      <div *ngIf="selectedCategory === 'ค่าคนฉีดยาฮอโมน'"  class="form-category-container">
         <!-- วันที่ฉีด -->
         <div class="form-field">
           <label for="expenseDate">วันที่ฉีด</label>
@@ -284,18 +306,21 @@
             placeholder="ราคารวมจะคำนวณอัตโนมัติ" />
         </div>
 
-        <!-- แปลง -->
-        <div class="form-field">
+       
+      </div>
+
+      <!-- ค่าน้ำมัน -->
+      <div *ngIf="selectedCategory === 'ค่าน้ำมัน'"  class="form-category-container">
+
+         <!-- แปลง -->
+         <div class="form-field">
           <label for="plotId">แปลง</label>
           <select id="plot_id" formControlName="plot_id">
             <option value="" disabled selected>เลือกแปลง</option>
             <option *ngFor="let plot of plots" [value]="plot.plot_id">{{ plot.plot_name }}</option>
           </select>
         </div>
-      </div>
 
-      <!-- ค่าน้ำมัน -->
-      <div *ngIf="selectedCategory === 'ค่าน้ำมัน'"  class="form-category-container">
         <!-- วันที่เติม -->
         <div class="form-field">
           <label for="expenseDate">วันที่เติม</label>
@@ -321,24 +346,35 @@
             placeholder="ราคาที่จ่ายจะคำนวณอัตโนมัติ" />
         </div>
 
-        <!-- แปลง -->
-        <div class="form-field">
-          <label for="plotId">แปลง</label>
-          <select id="plot_id" formControlName="plot_id">
-            <option value="" disabled selected>เลือกแปลง</option>
-            <option *ngFor="let plot of plots" [value]="plot.plot_id">{{ plot.plot_name }}</option>
-          </select>
-        </div>
+       
       </div>
 
       <!-- ค่าพันธุ์มัน -->
       <div *ngIf="selectedCategory === 'ค่าพันธุ์มัน'"  class="form-category-container">
+          <!-- ลงแปลงไหน -->
+          <div class="form-field">
+            <label for="plotId">แปลง</label>
+            <select id="plot_id" formControlName="plot_id">
+              <option value="" disabled selected>เลือกแปลง</option>
+              <option *ngFor="let plot of plots" [value]="plot.plot_id">{{ plot.plot_name }}</option>
+            </select>
+          </div>
+
         <!-- วันที่ซื้อ -->
         <div class="form-field">
           <label for="expenseDate">วันที่ซื้อ</label>
           <input id="expenses_date" type="date" formControlName="expenses_date" />
         </div>
-
+         <!-- สถานที่ซื้อ -->
+         <div class="form-field">
+          <label for="purchaseLocation">สถานที่ซื้อ</label>
+          <input id="purchase_location" type="text" formControlName="purchase_location" placeholder="กรอกสถานที่ซื้อ" />
+        </div>
+        <!-- ชื่อพันธุ์ -->
+        <div class="form-field">
+          <label for="varietyName">ชื่อพันธุ์</label>
+          <input id="variety_name" type="text" formControlName="variety_name" placeholder="กรอกชื่อพันธุ์" />
+        </div>
         <!-- จำนวน -->
         <div class="form-field">
           <label for="quantity">จำนวนต้น</label>
@@ -357,27 +393,6 @@
           <input id="totalPrice" type="number" [value]="calculatedTotalPrice" readonly
             placeholder="ราคาที่จ่ายจะคำนวณอัตโนมัติ" />
         </div>
-
-        <!-- ลงแปลงไหน -->
-        <div class="form-field">
-          <label for="plotId">แปลง</label>
-          <select id="plot_id" formControlName="plot_id">
-            <option value="" disabled selected>เลือกแปลง</option>
-            <option *ngFor="let plot of plots" [value]="plot.plot_id">{{ plot.plot_name }}</option>
-          </select>
-        </div>
-
-        <!-- ชื่อพันธุ์ -->
-        <div class="form-field">
-          <label for="varietyName">ชื่อพันธุ์</label>
-          <input id="variety_name" type="text" formControlName="variety_name" placeholder="กรอกชื่อพันธุ์" />
-        </div>
-
-        <!-- สถานที่ซื้อ -->
-        <div class="form-field">
-          <label for="purchaseLocation">สถานที่ซื้อ</label>
-          <input id="purchase_location" type="text" formControlName="purchase_location" placeholder="กรอกสถานที่ซื้อ" />
-        </div>
       </div>
 
       <!-- ค่าซ่อมอุปกรณ์ -->
@@ -387,7 +402,11 @@
           <label for="expenseDate">วันที่ซ่อม</label>
           <input id="expenses_date" type="date" formControlName="expenses_date" />
         </div>
-
+        <!-- ชื่อร้านที่ไปซ่อม -->
+        <div class="form-field">
+          <label for="shopName">ชื่อร้านที่ไปซ่อม</label>
+          <input id="shop_name" type="text" formControlName="shop_name" placeholder="กรอกชื่อร้านที่ซ่อม" />
+        </div>
         <!-- รายชื่อที่ซ่อม -->
         <div class="form-field">
           <label for="repairNames">รายชื่อที่ซ่อม</label>
@@ -406,11 +425,7 @@
           <input id="repair_cost" type="number" formControlName="repair_cost" placeholder="กรอกค่าใช้จ่ายในการซ่อม" />
         </div>
 
-        <!-- ชื่อร้านที่ไปซ่อม -->
-        <div class="form-field">
-          <label for="shopName">ชื่อร้านที่ไปซ่อม</label>
-          <input id="shop_name" type="text" formControlName="shop_name" placeholder="กรอกชื่อร้านที่ซ่อม" />
-        </div>
+        
       </div>
 
       <!-- ค่าอุปกรณ์ -->
@@ -453,7 +468,6 @@
           <label for="expenseDate">วันที่เช่า</label>
           <input id="expenses_date" type="date" formControlName="expenses_date" />
         </div>
-
         <!-- ชื่อเจ้าของที่ให้เช่า -->
         <div class="form-field">
           <label for="ownerName">ชื่อเจ้าของที่ให้เช่า</label>
@@ -465,7 +479,21 @@
           <label for="ownerPhone">เบอร์โทร</label>
           <input id="owner_phone" type="tel" formControlName="owner_phone" placeholder="กรอกเบอร์โทรของเจ้าของที่" />
         </div>
-
+         <!-- แปลง -->
+         <div class="form-field">
+          <label for="plotId">แปลง</label>
+          <select id="plot_id" formControlName="plot_id">
+            <option value="" disabled selected>เลือกแปลง</option>
+            <option *ngFor="let plot of plots" [value]="plot.plot_id">{{ plot.plot_name }}</option>
+          </select>
+        </div>
+        
+        
+          <!-- ระยะเวลาที่เช่า -->
+          <div class="form-field">
+            <label for="rentalPeriod">ระยะเวลาที่เช่า (ปี)</label>
+            <input id="rental_period" type="number" formControlName="rental_period" placeholder="กรอกระยะเวลาที่เช่า" />
+          </div>
         <!-- จำนวนไร่ -->
         <div class="form-field">
           <label for="area">จำนวนไร่</label>
@@ -478,11 +506,7 @@
           <input id="price_per_rai" type="number" formControlName="price_per_rai" placeholder="กรอกราคาต่อไร่" />
         </div>
 
-        <!-- ระยะเวลาที่เช่า -->
-        <div class="form-field">
-          <label for="rentalPeriod">ระยะเวลาที่เช่า (ปี)</label>
-          <input id="rental_period" type="number" formControlName="rental_period" placeholder="กรอกระยะเวลาที่เช่า" />
-        </div>
+      
 
         <!-- ราคารวม -->
         <div class="form-field">
@@ -491,21 +515,23 @@
             placeholder="ราคารวมจะคำนวณอัตโนมัติ" />
         </div>
 
-        <!-- แปลง -->
-        <div class="form-field">
+       
+      </div>
+
+      <!-- ค่าขุด -->
+      <div *ngIf="selectedCategory === 'ค่าขุด'"  class="form-category-container">
+
+         <!-- แปลง -->
+         <div class="form-field">
           <label for="plotId">แปลง</label>
           <select id="plot_id" formControlName="plot_id">
             <option value="" disabled selected>เลือกแปลง</option>
             <option *ngFor="let plot of plots" [value]="plot.plot_id">{{ plot.plot_name }}</option>
           </select>
         </div>
-      </div>
-
-      <!-- ค่าขุด -->
-      <div *ngIf="selectedCategory === 'ค่าขุด'"  class="form-category-container">
         <!-- วันที่มารับเงิน -->
         <div class="form-field">
-          <label for="expenseDate">วันที่มารับเงิน</label>
+          <label for="expenseDate">วันที่</label>
           <input id="expenses_date" type="date" formControlName="expenses_date" />
         </div>
 

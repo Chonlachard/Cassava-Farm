@@ -15,7 +15,8 @@ import { DetailComponent } from './detail/detail.component';
   styleUrls: ['./expenses.component.css']
 })
 export class ExpensesComponent implements OnInit, AfterViewInit {
-
+  @ViewChild('addFormSection') addFormSection!: ElementRef; // ✅ ดึงตำแหน่งของฟอร์มแก้ไข
+  
   @ViewChild('editFormSection') editFormSection!: ElementRef; // ✅ ดึงตำแหน่งของฟอร์มแก้ไข
   displayedColumns: string[] = ['expenses_date', 'category', 'total_price', 'actions'];
   dataSource = new MatTableDataSource<any>([]);
@@ -103,7 +104,16 @@ selectedCategory: string | null = null;
   openAddExpense(): void {
     this.showAddForm = !this.showAddForm; // สลับสถานะเปิด/ปิดฟอร์ม
     this.showEditForm = false; // ปิดฟอร์มแก้ไข
-  }
+
+    setTimeout(() => {
+      if (this.addFormSection) {
+          this.addFormSection.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+          console.warn("⚠️ ไม่พบ element addFormSection");
+      }
+  }, 100); }
+
+
   closeForm() {
     this.showAddForm = false; // ปิดฟอร์มเมื่อบันทึกสำเร็จ
     this.showEditForm = false; // ปิดฟอร์มเมื่อบันทึกสำเร็จ

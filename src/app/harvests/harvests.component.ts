@@ -16,6 +16,8 @@ import { debounceTime } from 'rxjs/operators';
   styleUrls: ['./harvests.component.css']
 })
 export class HarvestsComponent implements OnInit, AfterViewInit {
+
+  @ViewChild('addFormSection') addFormSection!: ElementRef; // ✅ ดึงตำแหน่งของฟอร์มแก้ไข
   @ViewChild('editFormSection') editFormSection!: ElementRef; // ✅ ดึงตำแหน่งของฟอร์มแก้ไข
   displayedColumns: string[] = [
     'harvest_date',
@@ -175,6 +177,14 @@ export class HarvestsComponent implements OnInit, AfterViewInit {
   openAdd() {
     this.showAddForm = !this.showAddForm; // สลับสถานะเปิด/ปิดฟอร์ม
     this.showEditForm = false; // ปิดฟอร์มแก้ไข
+
+    setTimeout(() => {
+      if (this.addFormSection) {
+          this.addFormSection.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+          console.warn("⚠️ ไม่พบ element addFormSection");
+      }
+  }, 100);
   }
   closeForm() {
     this.showAddForm = false; // ปิดฟอร์มเมื่อบันทึกสำเร็จ
