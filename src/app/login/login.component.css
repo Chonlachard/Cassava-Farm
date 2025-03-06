@@ -1,73 +1,70 @@
 
-  body {
-    min-height: 100vh;     
-  display: flex;          
-  justify-content: center; 
+body {
+  min-height: 100vh;
+display: flex;
+justify-content: center;
+align-items: center;
+background-color: #F0ECE3;
+margin: 0;
+padding: 20px;
+font-family: Arial, sans-serif;
+}
+
+.card {
+  background-color: white;
+border-radius: 8px;
+box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+width: 100%;
+max-width: 400px;
+padding: 24px;
+margin: auto;
+
+}
+.card-title {
+  text-align: center;
+  margin-bottom: 24px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+}
+.btn-primary {
+  border-radius: 15px;
+  background-color: #4299e1;
+color: white;
+width: 75%;
+margin: 0 auto;
+display: block;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #4a5568;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: #4299e1;
+  box-shadow: 0 0 0 3px rgba(66,153,225,0.1);
+}
+
+.input-group {
+  position: relative;
+  display: flex;
   align-items: center;
-  background-color: #F0ECE3; 
-  margin: 0;             
-  padding: 20px;         
-  font-family: Arial, sans-serif; 
-  }
-  
-  .card {
-    background-color: white; 
-  border-radius: 8px;     
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  width: 100%;           
-  max-width: 400px;      
-  padding: 24px;         
-  margin: auto;          
-    
-  }
-  .card-title {
-    text-align: center;    
-    margin-bottom: 24px;   
-    font-size: 1.5rem;     
-    font-weight: 600;      
-    color: #333;          
-  }
-  .btn-primary {
-    border-radius: 15px;
-    background-color: #4299e1; 
-  color: white;     
-  width: 75%;        
-  margin: 0 auto;    
-  display: block;   
-  }
+}
 
-  .form-group {
-    margin-bottom: 16px;   
-  }
-  
-  .form-label {
-    display: block;        
-    margin-bottom: 8px;    
-    font-size: 14px;      
-    font-weight: 500;     
-    color: #4a5568;       
-  }
+.input-group .form-control {
+  padding-right: 40px;
+}
 
-  .form-control:focus {    
-    outline: none;        
-    border-color: #4299e1; 
-    box-shadow: 0 0 0 3px rgba(66,153,225,0.1); 
-  }
-
-  .input-group {
-    position: relative;  
-    display: flex;      
-    align-items: center; 
-  }
-  
-  .input-group .form-control {
-    padding-right: 40px; 
-  }
-  
-
-
-  .is-invalid {
-    background-image: none !important;
-  }
- 
-  
+.was-validated .form-control:invalid,
+.form-control.is-invalid {
+  background-image: none !important;
+}

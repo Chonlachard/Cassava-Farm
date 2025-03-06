@@ -34,7 +34,11 @@ export class LoginComponent implements OnInit {
       lastName: ['', Validators.required],
       phoneNumber: ['', [Validators.required, Validators.pattern('^\\+?\\d{10,15}$')]],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      password: ['', [
+        Validators.required,
+        Validators.minLength(8),
+        Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).+$') // ต้องมีอักษรพิมพ์ใหญ่, พิมพ์เล็ก, และตัวเลข
+      ]],
       confirmPassword: ['', Validators.required]
     }, { validator: this.passwordMatchValidator });
   }
@@ -97,23 +101,20 @@ export class LoginComponent implements OnInit {
     this.authService.register(userData).subscribe(
       response => {
         console.log('Registration successful', response);
-        this.showAlert('login.registrationSuccess', 'success');
-        this.toggleRegisterForm(); // ปิดฟอร์มสมัครสมาชิกหลังจากสำเร็จ
+        this.showSuccessAlert(); // ✅ แสดงข้อความ "สมัครสมาชิกสำเร็จ"
+        this.toggleRegisterForm(); // ปิดฟอร์มสมัครสมาชิก
   
-        // รีเซ็ตฟอร์มหลังจากการสมัครสมาชิกสำเร็จ
+        // รีเซ็ตฟอร์มหลังจากสมัครสมาชิกสำเร็จ
         this.registerForm.reset();
-        
+  
         // ล้างค่าที่ไม่ใช่ฟิลด์ที่จำเป็นต้องกรอกใหม่
         this.registerForm.get('confirmPassword')?.setValue('');
         this.router.navigate(['/login']);
       },
       error => {
         console.error('Registration failed', error);
-        let errorMessage = 'login.registrationFailure';
-        if (error.status === 409) {
-          errorMessage = 'login.emailExists';
-        }
-        this.showAlert(errorMessage, 'error');
+        // เปลี่ยนข้อความให้เป็น "อีเมลนี้มีในระบบ กรุณาใช้อีเมลอื่น" ในทุกกรณี
+        this.showEmailExistsAlert();
       }
     );
   }
@@ -133,8 +134,50 @@ export class LoginComponent implements OnInit {
     });
   }
 
+  // ฟังก์ชันสำหรับตรวจสอบการป้อนเฉพาะตัวเลข
+  validateNumberInput(event: KeyboardEvent): void {
+    const charCode = event.which ? event.which : event.keyCode;
+    if (charCode < 48 || charCode > 57) { // อนุญาตเฉพาะ 0-9
+      event.preventDefault();
+    }
+  }
+
+  // ฟังก์ชันสำหรับตรวจสอบการวางข้อมูล
+  validatePasteInput(event: ClipboardEvent): void {
+    const pastedText = event.clipboardData?.getData('text') || '';
+    if (!/^\d+$/.test(pastedText)) { // ตรวจสอบว่ามีเฉพาะตัวเลขหรือไม่
+      event.preventDefault();
+    }
+  }
+   // แสดงแจ้งเตือนเมื่อสมัครสมาชิกสำเร็จ
+   private showSuccessAlert(): void {
+    Swal.fire({
+      title: 'สำเร็จ',
+      text: 'สมัครสมาชิกสำเร็จ',
+      icon: 'success',
+      confirmButtonText: 'ตกลง',
+      confirmButtonColor: '#28a745',
+      timer: 3000,
+      timerProgressBar: true
+    });
+  }
+
+// แสดงแจ้งเตือนเมื่ออีเมลซ้ำ และล้างค่าฟิลด์ email
+private showEmailExistsAlert(): void {
+  Swal.fire({
+    title: 'ข้อผิดพลาด',
+    text: 'อีเมลนี้มีในระบบ กรุณาใช้อีเมลอื่น',
+    icon: 'error',
+    confirmButtonText: 'ตกลง',
+    confirmButtonColor: '#dc3545',
+    timer: 3000,
+  }).then(() => {
+    this.registerForm.get('email')?.setValue(''); // ล้างค่า email
+  });
+}
+
   // ฟังก์ชันสำหรับเปลี่ยนการแสดงฟอร์มสมัครสมาชิก
-  toggleRegisterForm() {
+  toggleRegisterForm() {  
     this.showRegister = !this.showRegister;
   }
 
