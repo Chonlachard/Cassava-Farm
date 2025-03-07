@@ -48,6 +48,10 @@ export class CassavaAreaServiceService {
     return this.http.put<any>(`${this.apiUrl}/updateplot`, plotData);
   }
 
+  checkFarmExists(userId: string): Observable<{ hasFarm: boolean }> {
+    return this.http.get<{ hasFarm: boolean }>(`${this.apiUrl}/checkplot?user_id=${userId}`);
+  }
+
 
 
 

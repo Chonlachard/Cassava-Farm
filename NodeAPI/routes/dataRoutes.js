@@ -62,6 +62,7 @@ router.get('/getPlotUpdate/:plot_id', getPlotController.getPlotsUpdate);
 router.get('/getplots', getPlotController.getPlots);
 router.put('/deleteplot/:plot_id', getPlotController.deletePlot);
 router.put('/updateplot', getPlotController.EditPlot);
+router.get('/checkplot', getPlotController.checkplot);
 
 // 5. Harvest Management Routes
 // ─────────────────────────────────────────
@@ -94,7 +95,6 @@ router.get('/getExpenseEdit', expensesController.getExpenseEdit);
 // 8 Expense Detail Routes
 // ─────────────────────────────────────────
 router.get('/getExpensesDetail', expensesDetail.getExpensesDetail);
-
 router.get('/getExpensesDetailId', expensesDetail.getExpensesDetailId);
 
 module.exports = router;

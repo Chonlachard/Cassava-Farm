@@ -12,6 +12,8 @@ export class NavbarComponent implements OnInit {
   userName: string = '';
   dropdownVisible: boolean = false;
 
+  
+
   constructor(
     private navbarService: NavbarService,
     private translate: TranslateService,

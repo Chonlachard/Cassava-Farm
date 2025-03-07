@@ -161,9 +161,6 @@ exports.getPlotsUpdate = (req, res) => {
         });
     });
 };
-
-
-
 exports.EditPlot = async (req, res) => {
     const { plot_id, user_id, plot_name, latlngs, fileData } = req.body;
 
@@ -221,6 +218,33 @@ exports.EditPlot = async (req, res) => {
         res.status(500).json({ message: 'เกิดข้อผิดพลาดในการอัปเดตข้อมูล', error: err.message });
     }
 };
+
+exports.checkplot = async (req, res) => {
+    const userId = req.query.user_id; // รับ user_id จาก body
+
+    if (!userId) {
+        return res.status(400).json({ message: 'กรุณาระบุ user_id' });
+    }
+
+    try {
+        const sql = 'SELECT COUNT(*) AS count FROM plots WHERE user_id = ? AND is_delete = 0';
+        const result = await new Promise((resolve, reject) => {
+            db.query(sql, [userId], (err, rows) => {
+                if (err) reject(err);
+                else resolve(rows);
+            });
+        });
+
+        res.json({ hasFarm: result[0].count > 0 });
+
+    } catch (error) {
+        console.error('เกิดข้อผิดพลาดในการเช็คแปลง:', error);
+        res.status(500).json({ message: 'เกิดข้อผิดพลาดในระบบ', error: error.message });
+    }
+};
+
+
+
 // ฟังก์ชันคำนวณพื้นที่จากพิกัด
 function calculateAreaRai(latlngs) {
     if (!latlngs || latlngs.length < 3) {

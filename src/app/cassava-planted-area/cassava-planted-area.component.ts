@@ -20,15 +20,17 @@ export class CassavaPlantedAreaComponent implements OnInit, AfterViewInit {
 
   displayedColumns: string[] = ['plot_name', 'area_rai', 'imageUrl', 'actions'];
   dataSource = new MatTableDataSource<any>([]);
-  @ViewChild('addFormSection') addFormSection!: ElementRef; // ✅ ดึงตำแหน่งของฟอร์มแก้ไข
+  @ViewChild('addFormSection') addFormSection!: ElementRef;
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
   @ViewChild('editFormSection') editFormSection!: ElementRef;
 
   userId: string = '';
   searchForm: FormGroup;
-  selectedPlotId?: number; 
+  selectedPlotId?: number;
   showAddForm = false;
   showEditForm = false;
+
+  hasFarm: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -44,21 +46,55 @@ export class CassavaPlantedAreaComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    // ดึง userId จาก Local Storage
     this.userId = localStorage.getItem('userId') || '';
 
     if (this.userId) {
-      this.loadPlots();
+      this.checkPlot(); // เช็คว่าผู้ใช้มีแปลงหรือไม่
     } else {
-      console.error(this.translate.instant('plot.noUserIdError'));
+      console.error('ไม่พบข้อมูลผู้ใช้');
     }
 
-    // ใช้ valueChanges เพื่อตรวจสอบการเปลี่ยนแปลงในช่องค้นหา
+    // ตรวจสอบการเปลี่ยนแปลงในช่องค้นหา
     this.searchForm.get('keyword')?.valueChanges
       .pipe(debounceTime(300)) // รอ 300ms หลังจากผู้ใช้หยุดพิมพ์
       .subscribe((keyword: string) => {
         this.applyFilter(keyword); // ใช้ฟังก์ชันกรองข้อมูล
       });
   }
+  checkPlot() {
+    this.cassavaAreaService.checkFarmExists(this.userId).subscribe(
+      response => {
+        this.hasFarm = response.hasFarm; // ✅ อัปเดตค่า hasFarm
+        if (this.hasFarm) {
+          this.loadPlots(); // ✅ ถ้ามีแปลง → โหลดข้อมูลแปลง
+        } else {
+          Swal.fire({
+            title: 'ไม่มีแปลงมันสำปะหลัง',
+            text: 'กรุณาเพิ่มแปลงก่อนใช้งาน',
+            icon: 'warning',
+            confirmButtonText: 'เพิ่มแปลง'
+          }).then(() => {
+            this.navigateToAddPlot(); // ✅ ไปเพิ่มแปลง
+          });
+        }
+      },
+      error => {
+        console.error('เกิดข้อผิดพลาดขณะตรวจสอบแปลง:', error);
+      }
+    );
+}
+
+  navigateToAddPlot() {
+    if (this.router.url === '/cassavaPlantedArea') {
+      this.openAdd(); // ✅ ถ้าอยู่ในหน้าแปลง → เปิดฟอร์มเพิ่มแปลง
+    } else {
+      this.router.navigate(['/cassavaPlantedArea']); // ✅ ถ้าอยู่นอกหน้า → เปลี่ยนหน้าไปยังหน้าแปลง
+    }
+  }
+
+
+
 
   ngAfterViewInit(): void {
     if (this.paginator) {
@@ -98,7 +134,7 @@ export class CassavaPlantedAreaComponent implements OnInit, AfterViewInit {
       }
     });
   }
-  
+
 
   // ฟังก์ชันโหลดข้อมูล
   loadPlots() {
@@ -119,23 +155,27 @@ export class CassavaPlantedAreaComponent implements OnInit, AfterViewInit {
 
   // ฟังก์ชันเปิดฟอร์มเพิ่มข้อมูล
   openAdd(): void {
-    this.showAddForm = !this.showAddForm; // สลับสถานะเปิด/ปิดฟอร์ม
-    this.showEditForm = false; // ปิดฟอร์มแก้ไข
+    this.showAddForm = true; // เปิดฟอร์มเพิ่มข้อมูล
+    this.showEditForm = false; // ปิดฟอร์มแก้ไข (ถ้ามี)
 
     setTimeout(() => {
-      if (this.addFormSection) {
-          this.addFormSection.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      } else {
-          console.warn("⚠️ ไม่พบ element addFormSection");
-      }
-  }, 100); }
+        const element = document.getElementById('addFormSection'); // ใช้ `id` ของฟอร์ม
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+            console.warn("⚠️ ไม่พบ element addFormSection (อาจยังโหลดไม่เสร็จ)");
+        }
+    }, 100); // ✅ รอให้ Angular อัปเดต DOM ก่อน
+}
+
+
 
   // ฟังก์ชันกรองข้อมูล
   applyFilter(keyword: string) {
     this.dataSource.filter = keyword.trim().toLowerCase(); // กรองข้อมูลในตาราง
   }
 
-   closeForm() {
+  closeForm() {
     this.showAddForm = false; // ปิดฟอร์มเมื่อบันทึกสำเร็จ
     this.showEditForm = false; // ปิดฟอร์มเมื่อบันทึกสำเร็จ
   }
@@ -156,8 +196,8 @@ export class CassavaPlantedAreaComponent implements OnInit, AfterViewInit {
       }, 100);
     }
   }
-  
 
-  viewDetails(){}
+
+  viewDetails() { }
 
 }

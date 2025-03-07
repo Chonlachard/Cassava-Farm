@@ -18,6 +18,7 @@ import { ChangePasswordComponent } from './forgot-password/change-password/chang
 import { EditPlantedComponent } from './cassava-planted-area/edit-planted/edit-planted.component';
 import { ExpensesDetailComponent } from './expenses-detail/expenses-detail.component';
 import { DetailComponent } from './expenses/detail/detail.component';
+import { NavbarComponent } from './navbar/navbar.component';
 
 
 const routes: Routes = [
@@ -25,6 +26,7 @@ const routes: Routes = [
   {path:'dashboard',component:DashbordComponent},
   { path: 'profile', component: ProfileComponent },
   { path: 'expenses', component: ExpensesComponent },
+  { path: 'navbar', component: NavbarComponent },
   { path: 'addexpenses', component: AddexpensesComponent },
   { path: 'cassavaPlantedArea', component: CassavaPlantedAreaComponent },
   { path: 'addPlantedArea', component: AddPlantedAreaComponent },
