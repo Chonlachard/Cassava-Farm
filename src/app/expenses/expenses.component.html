@@ -128,7 +128,7 @@
                             </button>
 
                             <!-- ✅ ปุ่ม Preview รายจ่าย -->
-                            <button mat-icon-button color="accent" (click)="previewExpense(expense.expense_id)"
+                            <button mat-icon-button color="accent" (click)="previewExpense(expense.expense_id, expense.category)"
                                 matTooltip="รายละเอียด">
                                 <mat-icon>visibility</mat-icon>
                             </button>
@@ -172,4 +172,12 @@
             (closeForm)="showEditForm = false">
         </app-editexpenses>
     </div>
+
+     <!-- แสดงฟอร์มแก้ไขเมื่อกดปุ่ม -->
+     <div *ngIf="showPreviewForm" #showPreviewSection class="mt-4">
+        <app-expense-detail [expenseId]="selectedExpenseId!" [category]="selectedCategory!"
+            (closeForm)="showEditForm = false">
+        </app-expense-detail>
+    </div>
+
 </div>

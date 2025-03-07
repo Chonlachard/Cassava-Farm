@@ -16,7 +16,7 @@ import { DetailComponent } from './detail/detail.component';
 })
 export class ExpensesComponent implements OnInit, AfterViewInit {
   @ViewChild('addFormSection') addFormSection!: ElementRef; // ✅ ดึงตำแหน่งของฟอร์มแก้ไข
-  
+  @ViewChild('showPreviewSection') showPreviewSection!: ElementRef; // ✅ ดึงตำแหน่งของฟอร์มแก้ไข
   @ViewChild('editFormSection') editFormSection!: ElementRef; // ✅ ดึงตำแหน่งของฟอร์มแก้ไข
   displayedColumns: string[] = ['expenses_date','plot_name', 'category', 'total_price', 'actions'];
   dataSource = new MatTableDataSource<any>([]);
@@ -26,6 +26,7 @@ export class ExpensesComponent implements OnInit, AfterViewInit {
   searchForm: FormGroup;
   showAddForm = false;
   showEditForm = false;
+  showPreviewForm = false;
   plots: any[] = [];
   categories = [
     { value: 'ค่าฮอร์โมน', label: 'ค่าฮอร์โมน' },
@@ -106,6 +107,7 @@ selectedCategory: string | null = null;
   openAddExpense(): void {
     this.showAddForm = !this.showAddForm; // สลับสถานะเปิด/ปิดฟอร์ม
     this.showEditForm = false; // ปิดฟอร์มแก้ไข
+    this.showPreviewForm = false; // ปิดฟอร์มแสดงตัวอย่าง
 
     setTimeout(() => {
       if (this.addFormSection) {
@@ -119,6 +121,7 @@ selectedCategory: string | null = null;
   closeForm() {
     this.showAddForm = false; // ปิดฟอร์มเมื่อบันทึกสำเร็จ
     this.showEditForm = false; // ปิดฟอร์มเมื่อบันทึกสำเร็จ
+    this.showPreviewForm = false; // ปิดฟอร์มเมื่อบันทึกสำเร็จ
   }
 
 
@@ -128,6 +131,7 @@ selectedCategory: string | null = null;
         this.selectedCategory = category;
         this.showEditForm = true;
         this.showAddForm = false;
+        this.showPreviewForm = false
 
         // ✅ เลื่อนหน้าไปยังฟอร์มแก้ไข
         setTimeout(() => {
@@ -196,8 +200,32 @@ selectedCategory: string | null = null;
     });
   }
 
-  previewExpense(expense_id: any) {
-    
+  previewExpense(expenseId: number, category: string): void {
+    if (expenseId && category) { // ✅ ตรวจสอบว่า expenseId และ category มีค่า
+        this.selectedExpenseId = expenseId;
+        this.selectedCategory = category;
+        this.showEditForm = false;
+        this.showAddForm = false;
+        this.showPreviewForm = true
+
+        // ✅ เลื่อนหน้าไปยังฟอร์มแก้ไข
+        setTimeout(() => {
+            if (this.showPreviewSection) {
+                this.showPreviewSection.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                console.warn("⚠️ ไม่พบ element editFormSection");
+            }
+        }, 100);
+    } else {
+        console.warn("❌ ไม่สามารถแก้ไขได้: expenseId หรือ category ไม่ถูกต้อง");
+        Swal.fire({
+            icon: 'error',
+            title: 'เกิดข้อผิดพลาด',
+            text: 'ไม่สามารถแก้ไขค่าใช้จ่ายได้ กรุณาลองอีกครั้ง!',
+            confirmButtonText: 'ตกลง'
+        });
+    }
+  
 }
   
 }

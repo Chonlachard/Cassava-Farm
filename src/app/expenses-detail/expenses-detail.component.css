@@ -1,75 +1,165 @@
-/* ✅ ปรับสไตล์ Dialog */
-:host ::ng-deep .p-dialog {
-    border-radius: 12px; /* ทำขอบมน */
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-}
-
-:host ::ng-deep .p-dialog-header {
-    background: #1976d2; /* พื้นหลังสีน้ำเงิน */
-    color: #fff; /* ตัวอักษรสีขาว */
-    font-size: 18px;
-    font-weight: bold;
-    padding: 16px;
-}
-
-:host ::ng-deep .p-dialog-content {
-    padding: 20px;
-    background: #f5f5f5; /* พื้นหลังเทาอ่อน */
-}
-
-/* ✅ ปรับสไตล์ปุ่ม */
-:host ::ng-deep .p-dialog-footer {
-    text-align: right;
-    padding: 10px 20px;
-    background: #f1f1f1;
-    border-top: 1px solid #ddd;
-}
-
-:host ::ng-deep .p-button {
-    background: #1976d2;
-    color: white;
-    border-radius: 5px;
-    padding: 8px 16px;
-    border: none;
-}
-
-:host ::ng-deep .p-button:hover {
-    background: #1565c0;
-}
-
-/* ✅ ปรับสไตล์ Mat Table */
-.mat-table {
+/* 🌟 คอนเทนเนอร์หลักของฟอร์ม */
+.expense-form-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* ทำให้ฟอร์มติดด้านบน ไม่เว้นระยะห่างมากเกินไป */
+    min-height: auto; /* ปรับให้สูงเท่าที่จำเป็น */
+    background: #f8fafc; /* สีพื้นหลังอ่อน ให้กลมกลืนกับ UI ด้านบน */
+    padding: 10px 0; /* ลด Padding ด้านบนและล่าง */
     width: 100%;
-    background: white;
+    margin-top: -20px; /* ลดช่องว่างที่เกิดขึ้นจาก UI ด้านบน */
+}
+
+/* 🌟 การ์ดของฟอร์ม */
+.form-card {
+    background: #ffffff;
+    padding: 20px;
     border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: calc(100% - 100px); /* ปรับความกว้างให้เท่ากับตาราง */
+    max-width: 100%; /* จำกัดขนาดสูงสุดให้เท่ากับตาราง */
+    box-sizing: border-box;
+    border: 1px solid #e5e7eb; /* เพิ่มขอบให้เหมือนตาราง */
+    margin: 0 auto; /* จัดกึ่งกลาง */
 }
 
-/* ✅ ปรับสไตล์ส่วนหัวของตาราง */
-.mat-header-cell {
-    background: #1976d2 !important;
-    color: white !important;
-    font-weight: bold;
-    text-align: left;
+/* 🌟 ชื่อฟอร์ม */
+.form-title {
+    color: #333; /* สีข้อความ */
+    font-size: 22px; /* ขนาดตัวอักษร */
+    margin-bottom: 20px; /* ระยะห่างด้านล่าง */
+    text-align: center; /* จัดข้อความกึ่งกลาง */
+    font-weight: 500; /* ความหนาของตัวอักษร */
+}
+
+/* 🌟 คอนเทนเนอร์ของหมวดหมู่ฟอร์ม */
+.form-category-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* แบ่งเป็น 4 คอลัมน์ */
+    gap: 16px; /* ระยะห่างระหว่างฟิลด์ */
+    width: 100%; /* ให้เต็มพื้นที่ */
+    max-width: 1200px; /* จำกัดความกว้างสูงสุด */
+    margin: auto; /* จัดกึ่งกลาง */
+}
+
+/* 🌟 แต่ละฟิลด์ของฟอร์ม */
+.form-field {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    width: 100%; /* ขนาดเต็มพื้นที่ */
+    margin-bottom: 16px; /* ระยะห่างระหว่างฟิลด์ */
+}
+
+
+/* 🌟 ปรับการแสดงผลของ label */
+label {
+    display: block; /* จัดให้อยู่บรรทัดเดียว */
+    margin-bottom: 6px; /* ระยะห่าง */
+    color: #444; /* สีข้อความ */
+    font-size: 14px; /* ขนาดตัวอักษร */
+    font-weight: 600; /* ทำให้ดูเด่นขึ้น */
+}
+
+/* 🌟 ปรับ input, select และ textarea */
+input,
+select,
+textarea {
+    width: 100%; /* กำหนดให้เต็มขนาดฟอร์ม */
     padding: 10px;
+    border: 1px solid #d1d5db; /* กรอบสีเทา */
+    border-radius: 6px; /* ทำให้โค้งมนขึ้น */
+    font-size: 16px;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
 }
 
-/* ✅ ปรับสไตล์แถวของตาราง */
-.mat-row:nth-child(even) {
-    background: #f9f9f9;
+/* 🌟 เมื่อ focus */
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: #4a5568; /* เปลี่ยนสีกรอบ */
+    background-color: #ffffff;
 }
 
-/* ✅ ปรับสไตล์เซลล์ */
-.mat-cell {
+/* 🌟 ปุ่มบันทึก */
+.submit-button {
+    width: 100%;
     padding: 12px;
-    text-align: left;
+    background-color: #4a5568;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
-/* ✅ ปรับสไตล์ Paginator */
-.mat-paginator {
-    background: white;
-    border-top: 1px solid #ddd;
-    padding: 10px;
-    border-radius: 0 0 8px 8px;
+/* 🌟 เมื่อ hover */
+.submit-button:hover {
+    background-color: #2d3748;
+}
+
+/* 🌟 เมื่อปุ่มถูกปิดใช้งาน */
+.submit-button:disabled {
+    background-color: #cbd5e0;
+    cursor: not-allowed;
+}
+
+/* 🌟 การตั้งค่าการแจ้งเตือน */
+.alert {
+    padding: 12px; /* ระยะห่างภายใน */
+    border-radius: 4px; /* มุมโค้งมน */
+    margin-bottom: 20px; /* ระยะห่างด้านล่าง */
+    font-size: 14px; /* ขนาดตัวอักษร */
+}
+
+/* 🌟 แจ้งเตือนเมื่อสำเร็จ */
+.alert-success {
+    background-color: #e6fffa;
+    color: #2c7a7b;
+    border: 1px solid #81e6d9;
+}
+
+/* 🌟 แจ้งเตือนเมื่อเกิดข้อผิดพลาด */
+.alert-danger {
+    background-color: #fff5f5;
+    color: #c53030;
+    border: 1px solid #feb2b2;
+}
+
+/* 🌟 การตั้งค่าของ radio group */
+.radio-group {
+    display: flex;
+    gap: 10px;
+}
+
+/* 🌟 การตั้งค่า label สำหรับ radio group */
+.radio-group label {
+    display: inline-flex;
+    align-items: center;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+/* 🌟 การตั้งค่าของ radio button */
+.radio-group input[type="radio"] {
+    margin-right: 5px;
+}
+
+/* 🌟 ปรับให้ responsive บนหน้าจอขนาดเล็ก */
+@media (max-width: 768px) {
+    .form-card {
+        width: 90%;
+        max-width: none;
+    }
+
+    .submit-button {
+        font-size: 14px;
+    }
+
+    .form-title {
+        font-size: 18px;
+    }
 }
