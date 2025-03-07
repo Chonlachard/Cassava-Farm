@@ -63,27 +63,23 @@ exports.deletePlot = async (req, res) => {
             });
         });
 
-        // ลบข้อมูลจาก plot_locations โดยใช้ plot_id
-        await new Promise((resolve, reject) => {
-            db.query('DELETE FROM plot_locations WHERE plot_id = ?', [plotId], (err, results) => {
-                if (err) return reject(err);
-                resolve(results);
-            });
-        });
-
-        // ลบข้อมูลจาก plots โดยใช้ plot_id
+        // อัปเดต is_delete ในตาราง plots โดยใช้ plot_id
         const result = await new Promise((resolve, reject) => {
-            db.query('DELETE FROM plots WHERE plot_id = ?', [plotId], (err, results) => {
-                if (err) return reject(err);
-                resolve(results);
-            });
+            db.query(
+                'UPDATE plots SET is_delete = 1 WHERE plot_id = ?',
+                [plotId],
+                (err, results) => {
+                    if (err) return reject(err);
+                    resolve(results);
+                }
+            );
         });
 
-        // ตรวจสอบว่ามีแถวที่ถูกลบหรือไม่
+        // ตรวจสอบว่ามีแถวที่ถูกอัปเดตหรือไม่
         if (result.affectedRows === 0) {
-            // ถ้าไม่พบข้อมูลที่จะลบ ให้ย้อนกลับธุรกรรมและส่งข้อผิดพลาด
+            // ถ้าไม่มีการอัปเดตข้อมูล ให้ย้อนกลับธุรกรรมและแจ้งเตือน
             await new Promise((resolve, reject) => {
-                db.rollback(() => reject(new Error('ไม่พบข้อมูลที่ต้องการลบ')));
+                db.rollback(() => reject(new Error('ไม่พบข้อมูลที่ต้องการอัปเดต')));
             });
         } else {
             // คอมมิทธุรกรรม
@@ -94,8 +90,8 @@ exports.deletePlot = async (req, res) => {
                 });
             });
 
-            // ส่งข้อความยืนยันการลบข้อมูล
-            res.status(200).json({ message: 'ลบข้อมูลและข้อมูลที่เกี่ยวข้องเรียบร้อยแล้ว' });
+            // ส่งข้อความยืนยันการอัปเดตข้อมูล
+            res.status(200).json({ message: 'อัปเดตข้อมูลสำเร็จ (is_delete = 1)' });
         }
     } catch (error) {
         // ถ้ามีข้อผิดพลาด ให้ย้อนกลับธุรกรรมและส่งข้อผิดพลาด

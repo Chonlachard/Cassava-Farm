@@ -26,6 +26,7 @@ export class ExpensesService {
 
   // ดึงข้อมูลค่าใช้จ่ายตาม userId พร้อมตัวกรอง
   getExpenses(userId: string, filters: any = {}): Observable<any> {
+    console.log('Request filters:', filters);
     // สร้างพารามิเตอร์สำหรับ query string
     let params = new HttpParams().set('user_id', userId);
 
@@ -43,8 +44,6 @@ export class ExpensesService {
 
 
   addExpense(expense: any): Observable<any> {
-    debugger
-    console.log(expense);
     // ทำการตรวจสอบ หรือปรับข้อมูลก่อนส่ง API ถ้าจำเป็น
     return this.http.post<any>(`${this.apiUrl}/addExpenses`, expense);
   

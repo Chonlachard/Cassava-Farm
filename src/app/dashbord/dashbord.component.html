@@ -9,22 +9,24 @@
                 <div class="month-group">
                     <div class="month-item">
                         <label for="startDate">วันที่เริ่ม:</label>
-                        <input type="date" id="startDate" class="form-control" formControlName="startDate" (change)="loadCashFlowReport()">
+                        <input type="date" id="startDate" class="form-control" formControlName="startDate"
+                            (change)="loadCashFlowReport()">
                     </div>
-    
+
                     <div class="month-item">
                         <label for="endDate">วันที่สิ้นสุด:</label>
-                        <input type="date" id="endDate" class="form-control" formControlName="endDate" (change)="loadCashFlowReport()">
+                        <input type="date" id="endDate" class="form-control" formControlName="endDate"
+                            (change)="loadCashFlowReport()">
                     </div>
                 </div>
             </div>
         </div>
     </form>
-    
+
 
     <!-- ✅ ส่วนสรุปข้อมูล -->
     <div class="summary">
-        <div class="summary-item">
+        <div class="summary-item clickable" (click)="scrollToPlotInfo()">
             <i class="pi pi-sitemap"></i>
             <p>จำนวนแปลง</p>
             <strong>{{ summary.plotCount || 0 }} แปลง</strong>
@@ -49,7 +51,8 @@
             <p>รายรับ</p>
             <strong>{{ incomeExpense.totalIncome | number }} บาท</strong>
         </div>
-        <div class="expense">
+        <!-- ✅ ทำให้กดได้ (เพิ่ม class "clickable") -->
+        <div class="expense clickable" (click)="scrollToExpenseReport()">
             <i class="pi pi-wallet"></i>
             <p>รายจ่าย</p>
             <strong>{{ incomeExpense.totalExpense | number }} บาท</strong>
@@ -70,7 +73,7 @@
     </div>
 
     <!-- ✅ Pie Chart + ตาราง รายจ่าย -->
-    <div class="expense-report-container">
+    <div #expenseReportContainer class="expense-report-container">
         <!-- ✅ Pie Chart -->
         <div class="chart-section" style="width: 700px; height: 400px;">
             <h3><i class="pi pi-chart-pie"></i> สัดส่วนประเภทรายจ่าย</h3>
@@ -113,8 +116,32 @@
             </p-table>
         </div>
     </div>
-    <!-- ✅ ใช้ Component แยกสำหรับ Popup -->
-    <!-- <app-expense-detail [showPopup]="showPopup" [userId]="userId" [selectedCategory]="selectedCategory"
-        [selectedYear]="selectedYear" [startMonth]="startMonth" [endMonth]="endMonth">
-    </app-expense-detail> -->
+
+
+    <div #plotInfo class="plot-info">
+        <h3><i class="pi pi-chart-line"></i> ข้อมูลแปลง</h3>
+        <div class="plot-list">
+            <div class="plot-card" *ngFor="let plot of expenseIncomePlot">
+                <h4><i class="pi pi-map"></i> {{ plot.plot_name }}</h4>
+
+                <p><strong><i class="pi pi-dollar"></i> รายรับ:</strong>
+                    <span class="badge income">{{ plot.totalIncome | number }} บาท</span>
+                </p>
+                <p><strong><i class="pi pi-wallet"></i> รายจ่าย:</strong>
+                    <span class="badge expense">{{ plot.totalExpense | number }} บาท</span>
+                </p>
+                <p><strong><i class="pi pi-chart-bar"></i> กำไร/ขาดทุน:</strong>
+                    <span class="badge net-income">{{ plot.netIncome | number }} บาท</span>
+                </p>
+
+                <h5><i class="pi pi-list"></i> รายละเอียดรายจ่าย:</h5>
+                <ul>
+                    <li *ngFor="let cat of plot.expenseCategory | keyvalue">
+                        <i class="pi pi-tag"></i> {{ cat.key }}:
+                        <span class="expense-detail">{{ cat.value | number:'1.2-2' }} บาท</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
 </div>

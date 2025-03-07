@@ -32,13 +32,14 @@ export class CassavaAreaServiceService {
     return this.http.get(`${this.apiUrl}/getplots?user_id=${userId}`);
   }
 
-  // ฟังก์ชันลบข้อมูล
+  
   deletePlot(plotId: string): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/deleteplot/${plotId}`);
+    debugger
+    return this.http.put(`${this.apiUrl}/deleteplot/${plotId}`, {}); // เปลี่ยนเป็น PUT เพื่ออัปเดตข้อมูล
   }
 
+
   getPlotById(plotId: number): Observable<any> {
-    debugger
     return this.http.get<any>(`${this.apiUrl}/getPlotUpdate/${plotId}`);
   }
 
@@ -46,9 +47,9 @@ export class CassavaAreaServiceService {
     // กำหนด URL ของ API โดยใช้ plot_id
     return this.http.put<any>(`${this.apiUrl}/updateplot`, plotData);
   }
-  
-  
-  
+
+
+
 
 
 

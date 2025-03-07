@@ -3,7 +3,15 @@ const db = require('../config/db'); // ใช้ db สำหรับเชื�
 
 // ฟังก์ชันสำหรับดึงข้อมูลค่าใช้จ่าย
 exports.getExpense = async (req, res) => {
-    const { user_id, expenses_date_start, expenses_date_end, category } = req.query;
+    const { user_id, startDate, endDate, category, plot  } = req.query; // ✅ ดึง plot_id มาจาก req.query
+
+    // แปลง plot เป็นตัวเลข ถ้ามีค่า
+const plot_id = plot ? parseInt(plot, 10) : null;
+
+    console.log('User ID:', user_id);
+    console.log('Expenses Date Start:', startDate);
+    console.log('Expenses Date End:', endDate);
+    console.log('Plot ID:', plot_id);
 
     // ตรวจสอบว่ามีการส่ง user_id มาหรือไม่
     if (!user_id) {
@@ -13,45 +21,60 @@ exports.getExpense = async (req, res) => {
     // เริ่มต้นคำสั่ง SQL
     let query = `
         SELECT 
-            e.expense_id,
-            e.expenses_date,
-            DATE_FORMAT(e.expenses_date, '%d/%m/%Y') AS formatted_expenses_date, 
-            e.category,
-            COALESCE(
-                h.total_price, f.total_price, he.total_price, fu.total_price, cv.total_price, 
-                er.repair_cost, ep.purchase_price, l.total_price, ex.total_price, 
-                tc.total_price, pl.total_price, ws.total_price, hs.total_price
-            ) AS total_price
-        FROM expenses e
-        LEFT JOIN HormoneData h ON e.expense_id = h.expense_id
-        LEFT JOIN FertilizerData f ON e.expense_id = f.expense_id
-        LEFT JOIN HerbicideData he ON e.expense_id = he.expense_id
-        LEFT JOIN FuelData fu ON e.expense_id = fu.expense_id
-        LEFT JOIN CassavaVarietyData cv ON e.expense_id = cv.expense_id
-        LEFT JOIN EquipmentRepairData er ON e.expense_id = er.expense_id
-        LEFT JOIN EquipmentPurchaseData ep ON e.expense_id = ep.expense_id
-        LEFT JOIN LandRentalData l ON e.expense_id = l.expense_id
-        LEFT JOIN ExcavationData ex ON e.expense_id = ex.expense_id
-        LEFT JOIN TreeCutting tc ON e.expense_id = tc.expense_id
-        LEFT JOIN Planting pl ON e.expense_id = pl.expense_id
-        LEFT JOIN WeedSpraying ws ON e.expense_id = ws.expense_id
-        LEFT JOIN HormoneSpraying hs ON e.expense_id = hs.expense_id
-        WHERE e.user_id = ? AND e.is_deleted = 0
+    e.expense_id,
+    e.expenses_date,
+    DATE_FORMAT(e.expenses_date, '%d/%m/%Y') AS formatted_expenses_date, 
+    e.category,
+    COALESCE(
+        h.total_price, f.total_price, he.total_price, fu.total_price, cv.total_price, 
+        er.repair_cost, ep.purchase_price, l.total_price, ex.total_price, 
+        tc.total_price, pl.total_price, ws.total_price, hs.total_price
+    ) AS total_price,
+    p.plot_name  -- ✅ ดึงชื่อแปลงจากตาราง plots
+FROM expenses e
+LEFT JOIN HormoneData h ON e.expense_id = h.expense_id
+LEFT JOIN FertilizerData f ON e.expense_id = f.expense_id
+LEFT JOIN HerbicideData he ON e.expense_id = he.expense_id
+LEFT JOIN FuelData fu ON e.expense_id = fu.expense_id
+LEFT JOIN CassavaVarietyData cv ON e.expense_id = cv.expense_id
+LEFT JOIN EquipmentRepairData er ON e.expense_id = er.expense_id
+LEFT JOIN EquipmentPurchaseData ep ON e.expense_id = ep.expense_id
+LEFT JOIN LandRentalData l ON e.expense_id = l.expense_id
+LEFT JOIN ExcavationData ex ON e.expense_id = ex.expense_id
+LEFT JOIN TreeCutting tc ON e.expense_id = tc.expense_id
+LEFT JOIN Planting pl ON e.expense_id = pl.expense_id
+LEFT JOIN WeedSpraying ws ON e.expense_id = ws.expense_id
+LEFT JOIN HormoneSpraying hs ON e.expense_id = hs.expense_id
+LEFT JOIN plots p ON 
+    p.plot_id = COALESCE(h.plot_id, f.plot_id, he.plot_id, fu.plot_id, cv.plot_id, 
+                         l.plot_id, ex.plot_id, tc.plot_id, pl.plot_id, ws.plot_id, hs.plot_id) -- ✅ เลือก plot_id ที่ตรงกับข้อมูล
+WHERE e.user_id = ? AND e.is_deleted = 0
+
     `;
 
     // ตัวแปรสำหรับพารามิเตอร์ SQL
     const values = [user_id];
 
-    // เพิ่มเงื่อนไขช่วงวันที่
-    if (expenses_date_start && expenses_date_end) {
-        query += ' AND e.expenses_date BETWEEN ? AND ?';
-        values.push(expenses_date_start, expenses_date_end);
+    if (startDate && endDate) {
+        query += ' AND DATE(e.expenses_date) BETWEEN ? AND ?';
+        values.push(startDate, endDate);
     }
-
+    
     // เพิ่มเงื่อนไขหมวดหมู่
     if (category) {
         query += ' AND e.category = ?';
         values.push(category);
+    }
+
+    // กรองเฉพาะ `plot_id` จากตารางที่มี `plot_id` เท่านั้น
+    if (plot_id) {
+        query += `
+            AND (
+                h.plot_id = ? OR f.plot_id = ? OR he.plot_id = ? OR fu.plot_id = ? OR cv.plot_id = ?
+                OR l.plot_id = ? OR ex.plot_id = ? OR tc.plot_id = ? OR pl.plot_id = ? OR ws.plot_id = ? OR hs.plot_id = ?
+            )
+        `;
+        values.push(plot_id, plot_id, plot_id, plot_id, plot_id, plot_id, plot_id, plot_id, plot_id, plot_id, plot_id);
     }
 
     // เรียงลำดับตามวันที่
@@ -382,7 +405,7 @@ exports.getDeopdowplot = async (req, res) => {
         return res.status(400).json({ message: 'กรุณาระบุ user_id' });
     }
 
-    const query = 'SELECT plot_id  , plot_name  FROM plots WHERE user_id = ?';
+    const query = 'SELECT plot_id  , plot_name  FROM plots WHERE user_id = ? AND is_delete = 0 ';
     db.query(query, [userId], (err, results) => {
         if (err) {
             console.error('Error executing query:', err.stack);

@@ -69,35 +69,36 @@ export class CassavaPlantedAreaComponent implements OnInit, AfterViewInit {
   // ฟังก์ชันลบข้อมูล
   deleted(plotId: string) {
     Swal.fire({
-      title: this.translate.instant('plot.confirmDeleteTitle'),
-      text: this.translate.instant('plot.confirmDeleteText'),
+      title: this.translate.instant('ยืนยันการลบแปลง'),
+      text: this.translate.instant('คุณแน่ใจหรือไม่ว่าต้องการลบแปลงนี้?'),
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonText: this.translate.instant('plot.confirmButtonText'),
-      cancelButtonText: this.translate.instant('plot.cancelButtonText')
+      confirmButtonText: this.translate.instant('ใช่, ลบเลย'),
+      cancelButtonText: this.translate.instant('ยกเลิก')
     }).then((result) => {
       if (result.isConfirmed) {
         this.cassavaAreaService.deletePlot(plotId).subscribe(
           response => {
             Swal.fire(
-              this.translate.instant('plot.deleteSuccessTitle'),
-              this.translate.instant('plot.deleteSuccessText'),
+              this.translate.instant('ลบสำเร็จ'),
+              this.translate.instant('แปลงนี้ถูกลบเรียบร้อยแล้ว'),
               'success'
             );
-            this.loadPlots(); // โหลดข้อมูลใหม่หลังลบสำเร็จ
+            this.loadPlots(); // โหลดข้อมูลใหม่หลังอัปเดต
           },
           error => {
             Swal.fire(
-              this.translate.instant('plot.deleteErrorTitle'),
-              this.translate.instant('plot.deleteErrorText'),
+              this.translate.instant('เกิดข้อผิดพลาด'),
+              this.translate.instant('ไม่สามารถลบแปลงนี้ได้ กรุณาลองใหม่อีกครั้ง'),
               'error'
             );
-            console.error('Error deleting plot:', error);
+            console.error('เกิดข้อผิดพลาดขณะลบแปลง:', error);
           }
         );
       }
     });
   }
+  
 
   // ฟังก์ชันโหลดข้อมูล
   loadPlots() {

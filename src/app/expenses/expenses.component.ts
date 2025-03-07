@@ -18,7 +18,7 @@ export class ExpensesComponent implements OnInit, AfterViewInit {
   @ViewChild('addFormSection') addFormSection!: ElementRef; // ✅ ดึงตำแหน่งของฟอร์มแก้ไข
   
   @ViewChild('editFormSection') editFormSection!: ElementRef; // ✅ ดึงตำแหน่งของฟอร์มแก้ไข
-  displayedColumns: string[] = ['expenses_date', 'category', 'total_price', 'actions'];
+  displayedColumns: string[] = ['expenses_date','plot_name', 'category', 'total_price', 'actions'];
   dataSource = new MatTableDataSource<any>([]);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -55,7 +55,8 @@ selectedCategory: string | null = null;
     this.searchForm = this.fb.group({
       category: [''],
       startDate: [''],
-      endDate: ['']
+      endDate: [''],
+      plot: ['']
     });
   }
 
@@ -89,6 +90,7 @@ selectedCategory: string | null = null;
   }
 
   loadExpenses(filters: any = {}) {
+    console.log('filters', filters);
     this.expensesService.getExpenses(this.userId, filters).subscribe({
       next: (res: any) => {
         this.dataSource.data = res;

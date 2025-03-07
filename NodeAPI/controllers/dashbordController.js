@@ -242,89 +242,122 @@ AND a.is_delete = 0;
 
     const [ExpenseIncomePlot] = await db.promise().query(
       `
-      SELECT 
-    COALESCE(p.plot_id, 'ไม่ระบุแปลง') AS plot_id,  -- ✅ ถ้าไม่มี plot_id ให้แสดงว่า "ไม่ระบุแปลง"
-    p.plot_name,
-    COALESCE(incomeData.totalIncome, 0) AS totalIncome,
-    COALESCE(expenseData.totalExpense, 0) AS totalExpense,
-    COALESCE(expenseData.expenseCategory, 'ไม่ระบุประเภท') AS expenseCategory  -- ✅ ประเภทค่าใช้จ่าย
-FROM plots p
-LEFT JOIN (
-    -- ✅ รายรับจากการเก็บเกี่ยว แยกตามแปลง
+WITH IncomeData AS (
     SELECT 
         h.plot_id, 
+        h.user_id,
         SUM(h.amount) AS totalIncome
     FROM harvests h
-    WHERE h.user_id = ? 
-    AND h.harvest_date BETWEEN ? AND ?
-    AND h.is_delete = 0
-    GROUP BY h.plot_id
-) incomeData ON p.plot_id = incomeData.plot_id
-LEFT JOIN (
-    -- ✅ รายจ่ายแยกตามแปลง และค่าใช้จ่ายทั่วไป
+    WHERE h.user_id = ?
+      AND h.harvest_date BETWEEN ? AND ?
+      AND h.is_delete = 0
+    GROUP BY h.plot_id, h.user_id
+),
+ExpenseData AS (
     SELECT 
         COALESCE(h.plot_id, f.plot_id, he.plot_id, fu.plot_id, cv.plot_id, 
-                 l.plot_id, ex.plot_id, tc.plot_id, 
-                 pl.plot_id, ws.plot_id, hs.plot_id, 'ไม่ระบุแปลง') AS plot_id, 
+                 l.plot_id, ex.plot_id, tc.plot_id, pl.plot_id, ws.plot_id, 
+                 hs.plot_id, 'ไม่ระบุแปลง') AS plot_id,
+        e.user_id,
+        e.category AS expenseCategory,
         SUM(
-            COALESCE(h.total_price, 0) + COALESCE(f.total_price, 0) + COALESCE(he.total_price, 0) + 
-            COALESCE(fu.total_price, 0) + COALESCE(cv.total_price, 0) + COALESCE(l.total_price, 0) + 
-            COALESCE(ex.total_price, 0) + COALESCE(tc.total_price, 0) + COALESCE(pl.total_price, 0) + 
-            COALESCE(ws.total_price, 0) + COALESCE(hs.total_price, 0)
-        ) AS totalExpense,
-        e.category AS expenseCategory  
+            COALESCE(h.total_price, 0) + COALESCE(f.total_price, 0) + 
+            COALESCE(he.total_price, 0) + COALESCE(fu.total_price, 0) + 
+            COALESCE(cv.total_price, 0) + COALESCE(er.repair_cost, 0) + 
+            COALESCE(ep.purchase_price, 0) + COALESCE(l.total_price, 0) + 
+            COALESCE(ex.total_price, 0) + COALESCE(tc.total_price, 0) + 
+            COALESCE(pl.total_price, 0) + COALESCE(ws.total_price, 0) + 
+            COALESCE(hs.total_price, 0)
+        ) AS expenseAmount
     FROM expenses e
     LEFT JOIN HormoneData h ON e.expense_id = h.expense_id
     LEFT JOIN FertilizerData f ON e.expense_id = f.expense_id
     LEFT JOIN HerbicideData he ON e.expense_id = he.expense_id
     LEFT JOIN FuelData fu ON e.expense_id = fu.expense_id
     LEFT JOIN CassavaVarietyData cv ON e.expense_id = cv.expense_id
+    LEFT JOIN EquipmentRepairData er ON e.expense_id = er.expense_id
+    LEFT JOIN EquipmentPurchaseData ep ON e.expense_id = ep.expense_id
     LEFT JOIN LandRentalData l ON e.expense_id = l.expense_id
     LEFT JOIN ExcavationData ex ON e.expense_id = ex.expense_id
     LEFT JOIN TreeCutting tc ON e.expense_id = tc.expense_id
     LEFT JOIN Planting pl ON e.expense_id = pl.expense_id
     LEFT JOIN WeedSpraying ws ON e.expense_id = ws.expense_id
     LEFT JOIN HormoneSpraying hs ON e.expense_id = hs.expense_id
-    WHERE e.user_id = ? 
-    AND e.expenses_date BETWEEN ? AND ?
-    AND e.is_deleted = 0
-    GROUP BY plot_id, e.category  
+    WHERE e.user_id = ?
+      AND e.expenses_date BETWEEN ? AND ?
+      AND e.is_deleted = 0
+    GROUP BY plot_id, e.category
+),
+Combined AS (
+    SELECT
+        i.plot_id,
+        i.totalIncome,
+        COALESCE(e.expenseAmount, 0) AS totalExpense,
+        e.expenseCategory,
+        e.expenseAmount
+    FROM IncomeData i
+    LEFT JOIN ExpenseData e ON i.plot_id = e.plot_id
 
     UNION ALL
 
-    -- ✅ ค่าใช้จ่ายที่ไม่มี plot_id (ค่าใช้จ่ายทั่วไป)
-    SELECT 
-        'ไม่ระบุแปลง' AS plot_id, 
-        SUM(
-            COALESCE(er.repair_cost, 0) + COALESCE(ep.purchase_price, 0)
-        ) AS totalExpense,
-        'ค่าใช้จ่ายทั่วไป' AS expenseCategory  
-    FROM expenses e
-    LEFT JOIN EquipmentRepairData er ON e.expense_id = er.expense_id
-    LEFT JOIN EquipmentPurchaseData ep ON e.expense_id = ep.expense_id
-    WHERE e.user_id = ? 
-    AND e.expenses_date BETWEEN ? AND ?
-    AND e.is_deleted = 0
-) expenseData ON p.plot_id = expenseData.plot_id
-WHERE p.user_id = ? 
-AND p.is_delete = 0
-ORDER BY plot_id, expenseData.expenseCategory;
-` , [userId, startDate, endDate, userId, startDate, endDate, userId, startDate, endDate, userId]);
+    SELECT
+        e.plot_id,
+        0 AS totalIncome,
+        e.expenseAmount AS totalExpense,
+        e.expenseCategory,
+        e.expenseAmount
+    FROM ExpenseData e
+    WHERE e.plot_id NOT IN (SELECT plot_id FROM IncomeData)
+)
+SELECT 
+    COALESCE(p.plot_name, 'ไม่ระบุแปลง') AS plot_name,  -- ✅ ใช้ plot_name แทน plot_id
+    SUM(totalIncome) AS totalIncome,
+    SUM(totalExpense) AS totalExpense,
+    (SUM(totalIncome) - SUM(totalExpense)) AS netIncome,
+     IFNULL(
+        CONCAT(
+            '{',
+            GROUP_CONCAT(CONCAT('"', expenseCategory, '":', expenseAmount) SEPARATOR ','),
+            '}'
+        ),
+        '{}'
+    ) AS expenseCategory 
+FROM Combined c
+LEFT JOIN plots p ON p.plot_id = c.plot_id  -- ✅ ใช้ JOIN เพื่อดึงชื่อแปลง
+GROUP BY p.plot_name
+ORDER BY p.plot_name;
 
-    
+` , [userId, startDate, endDate, userId, startDate, endDate]);
 
+// ✅ แปลง JSON String ให้เป็น Object ก่อนส่งไปยัง Angular
+const formattedData = ExpenseIncomePlot.map(plot => {
+    let expenseCategoryObj = {};
+
+    // ✅ ตรวจสอบก่อนแปลง JSON
+    if (typeof plot.expenseCategory === "string" && plot.expenseCategory.startsWith("{")) {
+        try {
+            expenseCategoryObj = JSON.parse(plot.expenseCategory.replace(/\\"/g, '"'));
+        } catch (error) {
+            console.error("❌ Error parsing expenseCategory:", error);
+        }
+    }
+
+    return {
+        ...plot,
+        expenseCategory: expenseCategoryObj // ✅ ตอนนี้เป็น Object แล้ว
+    };
+});
     res.json({
       summary: summary[0] || {},
       IncomExpent: IncomExpent[0] || {},
       monthlyIncomeExpense: monthlyIncomeExpense || [],
       categoryExpents: categoryExpents || [],
       expenseDetails: expenseDetails || [],
-      ExpenseIncomePlot: ExpenseIncomePlot || [],
+      ExpenseIncomePlot: formattedData  || [],
       startDate,   // ✅ เปลี่ยนจาก selectedYear เป็น startDate
       endDate,     // ✅ เพิ่ม endDate เพื่อให้แสดงช่วงวันที่ที่ใช้จริง
       userId,
 });
-
   } catch (error) {
     console.error("❌ เกิดข้อผิดพลาดในการดึงข้อมูล:", error);
     res.status(500).json({ message: "เกิดข้อผิดพลาดในการดึงข้อมูล" });

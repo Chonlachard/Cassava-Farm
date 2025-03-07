@@ -1,9 +1,22 @@
-import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { DashbordService } from './dashbord.service';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
 import { ExpensesDetailComponent } from '../expenses-detail/expenses-detail.component';
 import { FormControl, FormGroup } from '@angular/forms';
+
+
+
+
+
+export interface PlotInfo {
+  plot_id: string;
+  plot_name?: string;
+  totalIncome: number;
+  totalExpense: number;
+  netIncome: number;
+  expenseCategory: { [key: string]: number };
+}
 
 @Component({
   selector: 'app-dashbord',
@@ -26,6 +39,11 @@ export class DashbordComponent implements OnInit {
   showPopup: boolean = false; // ✅ ควบคุมการเปิด/ปิด Popup
   selectedCategory: string = ''; // ✅ หมวดหมู่ที่เลือก
   cashFlowForm!: FormGroup;
+  expenseIncomePlots: any[] = [];
+  expenseIncomePlot: PlotInfo[] = [];
+
+  @ViewChild('expenseReportContainer') expenseReportContainer!: ElementRef;
+  @ViewChild('plotInfo') plotInfo!: ElementRef;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   // ✅ กำหนดค่าเริ่มต้นให้ startMonth และ endMonth
@@ -71,32 +89,37 @@ export class DashbordComponent implements OnInit {
     }
   }
 
-// ✅ โหลดข้อมูลจาก API ตามช่วงวันที่ที่เลือก
-loadCashFlowReport(): void {
-  const startDate = this.cashFlowForm.get('startDate')?.value;
-  const endDate = this.cashFlowForm.get('endDate')?.value;
+  // ✅ โหลดข้อมูลจาก API ตามช่วงวันที่ที่เลือก
+  loadCashFlowReport(): void {
+    const startDate = this.cashFlowForm.get('startDate')?.value;
+    const endDate = this.cashFlowForm.get('endDate')?.value;
 
-  // ✅ ตรวจสอบว่าค่าของ startDate และ endDate ไม่เป็นค่าว่าง
-  if (!startDate || !endDate) {
-    console.error("❌ ค่าของ startDate หรือ endDate ไม่ถูกต้อง:", { startDate, endDate });
-    return;
+    // ✅ ตรวจสอบว่าค่าของ startDate และ endDate ไม่เป็นค่าว่าง
+    if (!startDate || !endDate) {
+      console.error("❌ ค่าของ startDate หรือ endDate ไม่ถูกต้อง:", { startDate, endDate });
+      return;
+    }
+
+    console.log(`📌 กำลังโหลดข้อมูลช่วงวันที่: ${startDate} - ${endDate}`);
+
+    this.dashbordService.getCashFlowReport(this.userId, startDate, endDate).subscribe({
+      next: (data) => {
+        this.summary = data.summary;
+        this.incomeExpense = data.IncomExpent;
+        this.monthlyIncomeExpense = data.monthlyIncomeExpense;
+        this.categoryExpents = data.categoryExpents;
+        this.expenseDetails = data.expenseDetails;
+
+        this.expenseIncomePlot = data.ExpenseIncomePlot;
+        console.log('expenseIncomePlot', this.expenseIncomePlot);
+
+
+        this.updateExpenses();
+        this.updateChart();
+      },
+      error: (err) => console.error('❌ เกิดข้อผิดพลาดในการโหลดข้อมูลกระแสเงินสด:', err),
+    });
   }
-
-  console.log(`📌 กำลังโหลดข้อมูลช่วงวันที่: ${startDate} - ${endDate}`);
-
-  this.dashbordService.getCashFlowReport(this.userId, startDate, endDate).subscribe({
-    next: (data) => {
-      this.summary = data.summary;
-      this.incomeExpense = data.IncomExpent;
-      this.monthlyIncomeExpense = data.monthlyIncomeExpense;
-      this.categoryExpents = data.categoryExpents;
-      this.expenseDetails = data.expenseDetails;
-      this.updateExpenses();
-      this.updateChart();
-    },
-    error: (err) => console.error('❌ เกิดข้อผิดพลาดในการโหลดข้อมูลกระแสเงินสด:', err),
-  });
-}
 
 
   updateExpenses(): void {
@@ -120,7 +143,7 @@ loadCashFlowReport(): void {
   // ✅ ฟังก์ชันแปลงตัวเลขเดือนเป็นชื่อเดือน
   getMonthName(monthString: string | null | undefined): string {
     if (!monthString || !monthString.includes('-')) {
-        return 'ไม่ระบุเดือน';
+      return 'ไม่ระบุเดือน';
     }
 
     // แยกปีและเดือนออกจากกัน (เช่น "2024-05" -> ["2024", "05"])
@@ -129,17 +152,17 @@ loadCashFlowReport(): void {
     // แปลงเป็นตัวเลข และตรวจสอบว่าถูกต้องหรือไม่
     const monthNumber = parseInt(month, 10);
     if (isNaN(monthNumber) || monthNumber < 1 || monthNumber > 12) {
-        return 'ไม่ระบุเดือน';
+      return 'ไม่ระบุเดือน';
     }
 
     // รายชื่อเดือนภาษาไทย
     const monthNames = [
-        'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
-        'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
+      'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
+      'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
     ];
 
     return `${monthNames[monthNumber - 1]} ${year}`; // เช่น "พฤษภาคม 2024"
-}
+  }
 
   selectExpense(expense: any) {
     this.selectedCategory = expense.expense_detail;
@@ -174,7 +197,7 @@ loadCashFlowReport(): void {
           label: 'รายรับ (บาท)',
           data: this.monthlyIncomeExpense.map(item => item.totalIncome),
           backgroundColor: '#42A5F5',
-          
+
         },
         {
           type: 'bar',
@@ -182,9 +205,9 @@ loadCashFlowReport(): void {
           data: this.monthlyIncomeExpense.map(item => item.totalExpense),
           backgroundColor: '#FF6384',
           opacity: 0.7,
-          
+
         },
-        
+
       ]
     };
 
@@ -323,8 +346,12 @@ loadCashFlowReport(): void {
       }
     });
   }
-
-
+  scrollToPlotInfo() {
+    this.plotInfo.nativeElement.scrollIntoView({ behavior: 'smooth' });
+  }
+  scrollToExpenseReport() {
+    this.expenseReportContainer.nativeElement.scrollIntoView({ behavior: 'smooth' });
+  }
 
 
   // ✅ ฟังก์ชันปิด Popup

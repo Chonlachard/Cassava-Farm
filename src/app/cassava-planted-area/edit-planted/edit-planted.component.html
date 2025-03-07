@@ -57,14 +57,6 @@
                         </google-map>
                       </div>
 
-                    <!-- Polygon Coordinates and Area Information -->
-                    <div class="mb-3">
-                        <h5> {{ 'plot.polygonCoordinates' | translate }}:</h5>
-                        <ul class="list-unstyled">
-                            <li *ngFor="let coord of polygonCoords">Lat: {{coord.lat}}, Lng: {{coord.lng}}</li>
-                        </ul>
-                    </div>
-
                     <!-- Displaying Selected Coordinates -->
                     <div class="mb-3">
                         <p *ngFor="let marker of markers; let i = index">{{ 'plot.pinLocation' | translate }} {{ i + 1 }}: {{

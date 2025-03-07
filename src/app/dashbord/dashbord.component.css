@@ -116,10 +116,36 @@
 
     
 }
-/* .summary-item:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-} */
+/* ✅ เฉพาะ summary-item ที่สามารถกดได้ */
+.summary-item.clickable {
+    cursor: pointer; /* ✅ เปลี่ยนเมาส์เป็น pointer */
+}
+/* ✅ เพิ่มเอฟเฟกต์ Hover เฉพาะอันที่กดได้ */
+.summary-item.clickable:hover {
+    transform: translateY(-3px); /* ✅ ยกขึ้นเล็กน้อยเมื่อ Hover */
+    box-shadow: 0 4px 12px rgba(0, 122, 217, 0.3); /* ✅ เพิ่มเงา */
+    border: 2px solid #007ad9; /* ✅ เพิ่มขอบสีฟ้า */
+}
+
+/* ✅ เอฟเฟกต์เมื่อกด */
+.summary-item.clickable:active {
+    transform: scale(0.95); /* ✅ ย่อขนาดเล็กลงเล็กน้อยเมื่อกด */
+    box-shadow: 0 2px 8px rgba(0, 122, 217, 0.5);
+}
+
+/* ✅ ไอคอนภายใน summary-item */
+.summary-item i {
+    display: block;
+    font-size: 30px;
+    margin-bottom: 8px;
+    color: #007ad9;
+    transition: color 0.3s ease;
+}
+
+/* ✅ เปลี่ยนสีไอคอนเมื่อ Hover เฉพาะอันที่กดได้ */
+.summary-item.clickable:hover i {
+    color: #0056b3;
+}
 .summary-item i {
     display: block;
     font-size: 30px;
@@ -149,10 +175,6 @@
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* .income:hover, .expense:hover, .net-income:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-} */
 
 
 /* ✅ สีพื้นหลังของแต่ละหมวดหมู่ */
@@ -174,8 +196,8 @@
 /* ✅ ปรับขนาดของ Chart Container */
 .chart-container {
     width: 100%;
-    height: 400px;
-    margin: 20px auto;
+    height: 450px;
+    margin: 40px auto; /* ✅ เพิ่มระยะขอบด้านบนและล่าง */
     background-color: #fff;
     padding: 20px;
     border-radius: 12px;
@@ -183,6 +205,7 @@
     align-items: center;
     justify-content: center;
 }
+
 
 /* ✅ จัดตำแหน่ง Pie Chart และ ตาราง */
 .expense-report-container {
@@ -244,6 +267,160 @@
 .clickable-row:hover {
     background-color: #f0f8ff; /* ✅ เปลี่ยนสีเมื่อ Hover */
 }
+
+
+/* ✅ ทำให้ expense ดูเหมือนปุ่ม */
+.expense.clickable {
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* ✅ เพิ่มเอฟเฟกต์ Hover */
+.expense.clickable:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+}
+
+/* ✅ เอฟเฟกต์เมื่อกด */
+.expense.clickable:active {
+    transform: scale(0.95);
+}
+
+
+/* พื้นฐานของหน้า */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 20px;
+}
+
+/* ส่วนหัว */
+h3 {
+    font-size: 22px;
+    color: #007bff;
+    text-align: center;
+    margin-top: 30px; /* เพิ่มระยะห่างด้านบน */
+    margin-bottom: 25px; /* เพิ่มระยะห่างด้านล่าง */
+    padding: 10px 0; /* เพิ่มระยะ Padding ให้ดูสมดุล */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px; /* ปรับระยะห่างระหว่างไอคอนกับข้อความ */
+}
+
+/* ไอคอนเฉพาะใน h3 */
+h3 i {
+    font-size: 24px; /* ทำให้ไอคอนใหญ่ขึ้น */
+    color: #007bff;
+    margin-right: 5px; /* ปรับระยะห่างของไอคอน */
+}
+
+/* ไอคอนหัวข้อ */
+h3 i, h4 i, h5 i, p i {
+    margin-right: 8px;
+    color: #007bff;
+}
+
+/* ส่วนของกล่องแสดงข้อมูล */
+.plot-info {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* จัดกล่องข้อมูลแปลงแบบ Flex */
+.plot-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+/* สไตล์กล่องข้อมูลของแต่ละแปลง */
+.plot-card {
+    background: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    width: 100%;
+    max-width: 350px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out;
+    text-align: center;
+}
+
+
+/* ไอคอนหัวข้อ */
+.plot-card h4 {
+    font-size: 20px;
+    color: #343a40;
+    margin-bottom: 10px;
+}
+
+/* สไตล์ Badge สำหรับตัวเลข */
+.badge {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: bold;
+    margin-left: 10px;
+    text-align: center;
+    min-width: 80px;
+}
+
+/* สีตัวเลขรายรับ รายจ่าย กำไร ในป้าย Badge เท่านั้น */
+.badge.income {
+    background-color: #28a745;
+    color: white;
+}
+
+.badge.expense {
+    background-color: #dc3545;
+    color: white;
+}
+
+.badge.net-income {
+    background-color: #007bff;
+    color: white;
+}
+
+/* ทำให้ป้าย Badge ดูมีมิติขึ้น */
+.badge {
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+    padding: 5px 10px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: bold;
+    margin-left: 10px;
+    text-align: center;
+    min-width: 80px;
+}
+
+
+/* รายละเอียดรายจ่าย */
+.plot-card ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 10px;
+}
+
+.plot-card ul li {
+    font-size: 14px;
+    color: #dc3545;
+    padding: 5px 0;
+    border-bottom: 1px solid #eee;
+    text-align: center;
+}
+
+/* ทำให้ป้าย Badge ดูมีมิติขึ้น */
+.badge {
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+
 
 /* ✅ Responsive สำหรับมือถือและแท็บเล็ต */
 @media (max-width: 768px) {
