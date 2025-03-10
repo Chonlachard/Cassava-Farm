@@ -249,10 +249,10 @@ export class AddexpensesComponent implements OnInit {
         }
         break;
       case 'ค่าคนปลูก':
-        if ( formValue.worker_name && formValue.land_area && formValue.price_per_rai && formValue.plot_id) {
+        if (  formValue.land_area && formValue.price_per_rai && formValue.plot_id) {
           details = { 
            
-            worker_name: formValue.worker_name,
+           
             land_area: formValue.land_area,
             price_per_rai: formValue.price_per_rai,
             plot_id: formValue.plot_id,

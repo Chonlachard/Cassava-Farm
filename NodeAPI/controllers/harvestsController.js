@@ -128,7 +128,7 @@ exports.getSerch = (req, res) => {
     }
 
     // คำสั่ง SQL สำหรับดึง plot_id และ plot_name โดยใช้ user_id
-    const query = 'SELECT plot_id as value, plot_name as text FROM plots WHERE user_id = ?';
+    const query = 'SELECT plot_id as value, plot_name as text FROM plots WHERE user_id = ? AND is_delete = 0';
 
     // ทำการ query ฐานข้อมูล
     db.query(query, [userId], (err, results) => {
@@ -264,6 +264,7 @@ exports.updateHarvest = async (req, res) => {
 
 exports.getUpdateHarvest = async (req, res) => {
     const harvestId = req.params.harvest_id;
+    console.log(harvestId)
 
     // ตรวจสอบว่าได้ส่ง harvest_id หรือไม่
     if (!harvestId) {
@@ -271,7 +272,7 @@ exports.getUpdateHarvest = async (req, res) => {
     }
 
     const query = `
-    SELECT a.harvest_id , a.harvest_date, b.plot_name, a.company_name, a.net_weight_kg, a.starch_percentage,a.price, a.amount , a.image_path
+    SELECT a.harvest_id ,a.plot_id , a.harvest_date, a.company_name, a.net_weight_kg, a.starch_percentage,a.price, a.amount , a.image_path
     FROM harvests a
     LEFT JOIN plots b ON a.plot_id = b.plot_id
     WHERE a.harvest_id = ?

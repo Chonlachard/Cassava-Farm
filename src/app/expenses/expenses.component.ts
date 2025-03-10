@@ -119,10 +119,24 @@ selectedCategory: string | null = null;
 
 
   closeForm() {
+    debugger
     this.showAddForm = false; // ปิดฟอร์มเมื่อบันทึกสำเร็จ
     this.showEditForm = false; // ปิดฟอร์มเมื่อบันทึกสำเร็จ
     this.showPreviewForm = false; // ปิดฟอร์มเมื่อบันทึกสำเร็จ
+
+    console.log('📢 เรียกใช้ loadExpenses()');
+    this.loadExpenses();
   }
+  handleCloseEditForm(): void {
+    console.log('📢 handleCloseEditForm() ถูกเรียก');
+
+    this.showEditForm = false; // ✅ ปิดฟอร์ม
+    this.selectedExpenseId = null; // ✅ ล้างค่า
+    this.selectedCategory = null; // ✅ ล้างค่า
+
+    // ✅ โหลดข้อมูลใหม่
+    this.loadExpenses();
+}
 
 
   editExpense(expenseId: number, category: string): void {

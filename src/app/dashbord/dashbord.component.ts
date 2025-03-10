@@ -202,7 +202,7 @@ export class DashbordComponent implements OnInit {
         {
           type: 'bar',
           label: 'รายจ่าย (บาท)',
-          data: this.monthlyIncomeExpense.map(item => item.totalExpense),
+          data: this.monthlyIncomeExpense.map(item => -item.totalExpense),
           backgroundColor: '#FF6384',
           opacity: 0.7,
 
@@ -298,6 +298,7 @@ export class DashbordComponent implements OnInit {
       },
       scales: {
         x: {
+          stacked: true,
           grid: {
             display: true,
             drawBorder: false,
@@ -311,6 +312,7 @@ export class DashbordComponent implements OnInit {
           ticks: { font: { size: 14 } }
         },
         y: {
+          stacked: true,
           beginAtZero: true,
           title: {
             display: true,

@@ -16,6 +16,8 @@ export class LoginComponent implements OnInit {
   hidePassword = true;
   showRegister = false;
 
+hideConfirmPassword: boolean = true;
+
   constructor(
     private fb: FormBuilder,
     private authService: LoginService,
@@ -43,14 +45,31 @@ export class LoginComponent implements OnInit {
     }, { validator: this.passwordMatchValidator });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.registerForm.get('password')?.valueChanges.subscribe(() => {
+      this.registerForm.get('confirmPassword')?.updateValueAndValidity();
+    });
+  }
 
   // ฟังก์ชันสำหรับตรวจสอบการตรงกันของรหัสผ่าน
-  private passwordMatchValidator(formGroup: FormGroup) {
+  private passwordMatchValidator(formGroup: FormGroup): { [key: string]: boolean } | null {
     const password = formGroup.get('password')?.value;
     const confirmPassword = formGroup.get('confirmPassword')?.value;
-    return password === confirmPassword ? null : { passwordMismatch: true };
+  
+    if (!confirmPassword) {
+      formGroup.get('confirmPassword')?.setErrors({ required: true });
+      return null;
+    }
+  
+    if (password !== confirmPassword) {
+      return { passwordMismatch: true };
+    }
+  
+    return null; // ✅ เพิ่ม return ค่า null เพื่อป้องกัน error TS7030
   }
+  
+  
+  
 
   // ฟังก์ชันสำหรับเข้าสู่ระบบ
   onLogin(): void {
@@ -184,7 +203,9 @@ private showEmailExistsAlert(): void {
   togglePasswordVisibility() {
     this.hidePassword = !this.hidePassword;
   }
-
+  toggleConfirmPasswordVisibility() {
+    this.hideConfirmPassword = !this.hideConfirmPassword;
+  }
   forgotPassword() {
     this.router.navigate(['/forgotPassword']);
   }

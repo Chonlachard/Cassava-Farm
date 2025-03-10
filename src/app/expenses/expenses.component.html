@@ -169,11 +169,10 @@
     <!-- แสดงฟอร์มแก้ไขเมื่อกดปุ่ม -->
     <div *ngIf="showEditForm" #editFormSection class="mt-4">
         <app-editexpenses [expenseId]="selectedExpenseId!" [category]="selectedCategory!"
-            (closeForm)="showEditForm = false">
+        (closeForm)="handleCloseEditForm()">
         </app-editexpenses>
     </div>
 
-     <!-- แสดงฟอร์มแก้ไขเมื่อกดปุ่ม -->
      <div *ngIf="showPreviewForm" #showPreviewSection class="mt-4">
         <app-expense-detail [expenseId]="selectedExpenseId!" [category]="selectedCategory!"
             (closeForm)="showEditForm = false">

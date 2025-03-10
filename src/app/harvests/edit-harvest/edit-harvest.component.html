@@ -18,7 +18,7 @@
                     </label>
                     <select id="plot" formControlName="plot_id">
                         <option value="" disabled selected>{{ 'harvest.selectPlot' | translate }}</option>
-                        <option *ngFor="let plot of plots" [value]="plot.value.value">{{ plot.text }}</option>
+                        <option *ngFor="let plot of plots" [value]="plot.value">{{ plot.text }}</option>
                     </select>
                 </div>
 
@@ -72,7 +72,7 @@
             </div>
 
             <!-- ปุ่มบันทึก -->
-            <button type="submit" [disabled]="!harvestForm.valid" class="submit-button">
+            <button type="submit"  class="submit-button">
                 <i class="fas fa-save"></i> {{ 'harvest.save' | translate }}
             </button>
         </form>

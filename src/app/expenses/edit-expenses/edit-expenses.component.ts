@@ -113,7 +113,7 @@ export class EditExpensesComponent implements OnInit, OnChanges {
     // ✅ ตรวจจับการเปลี่ยนแปลงค่าในฟอร์มและคำนวณราคารวมใหม่
     this.expenseForm.valueChanges.subscribe(() => {
       this.calculateTotalPrice();
-    });
+  });
 
     // ✅ อัปเดตฟิลด์ตามประเภทค่าใช้จ่ายเมื่อ category เปลี่ยนแปลง
     this.expenseForm.get('category')?.valueChanges.subscribe(value => {
@@ -296,7 +296,7 @@ export class EditExpensesComponent implements OnInit, OnChanges {
       'ค่าปุ๋ย': ['brand', 'formula', 'price_per_bag', 'quantity', 'purchase_location', 'plot_id'],
       'ค่ายาฆ่าหญ้า': ['brand', 'volume', 'price_per_bottle', 'quantity', 'purchase_location', 'plot_id'],
       'ค่าคนตัดต้น': ['number_of_trees', 'price_per_tree', 'plot_id'],
-      'ค่าคนปลูก': ['worker_name', 'land_area', 'price_per_rai', 'plot_id'],
+      'ค่าคนปลูก': [ 'land_area', 'price_per_rai', 'plot_id'],
       'ค่าคนฉีดยาฆ่าหญ้า': ['number_of_cans', 'price_per_can', 'plot_id'],
       'ค่าคนฉีดยาฮอโมน': ['number_of_cans', 'price_per_can', 'plot_id'],
       'ค่าน้ำมัน': ['price_per_liter', 'quantity_liters', 'plot_id'],
@@ -391,55 +391,58 @@ export class EditExpensesComponent implements OnInit, OnChanges {
     this.expenseForm.get('formula')?.setValue(formattedValue, { emitEvent: false });
   }
   calculateTotalPrice(): void {
-    this.expenseForm.valueChanges.subscribe(() => {
-      const category = this.expenseForm.get('category')?.value || '';
-      let totalPrice = 0;
+    const category = this.expenseForm.get('category')?.value || '';
+    let totalPrice = 0;
 
-      switch (category) {
+    switch (category) {
         case 'ค่าฮอร์โมน':
-          totalPrice = this.calculateHormoneCost();
-          break;
+            totalPrice = this.calculateHormoneCost();
+            break;
         case 'ค่าปุ๋ย':
-          totalPrice = this.calculateFertilizerCost();
-          break;
+            totalPrice = this.calculateFertilizerCost();
+            break;
         case 'ค่ายาฆ่าหญ้า':
-          totalPrice = this.calculateWeedKillerCost();
-          break;
+            totalPrice = this.calculateWeedKillerCost();
+            break;
         case 'ค่าคนตัดต้น':
-          totalPrice = this.calculateTreeCuttingCost();
-          break;
+            totalPrice = this.calculateTreeCuttingCost();
+            break;
         case 'ค่าคนปลูก':
-          totalPrice = this.calculateTreePlantingCost();
-          break;
+            totalPrice = this.calculateTreePlantingCost();
+            break;
         case 'ค่าคนฉีดยาฆ่าหญ้า':
-          totalPrice = this.calculateWeedSprayingCost();
-          break;
+            totalPrice = this.calculateWeedSprayingCost();
+            break;
         case 'ค่าคนฉีดยาฮอโมน':
-          totalPrice = this.calculateHormoneSprayingCost();
-          break;
+            totalPrice = this.calculateHormoneSprayingCost();
+            break;
         case 'ค่าน้ำมัน':
-          totalPrice = this.calculateFuelCost();
-          break;
+            totalPrice = this.calculateFuelCost();
+            break;
         case 'ค่าพันธุ์มัน':
-          totalPrice = this.calculateSeedCost();
-          break;
+            totalPrice = this.calculateSeedCost();
+            break;
         case 'ค่าซ่อมอุปกรณ์':
-          totalPrice = this.calculateRepairCost();
-          break;
+            totalPrice = this.calculateRepairCost();
+            break;
         case 'ค่าอุปกรณ์':
-          totalPrice = this.calculateEquipmentCost();
-          break;
+            totalPrice = this.calculateEquipmentCost();
+            break;
         case 'ค่าเช่าที่ดิน':
-          totalPrice = this.calculateRentCost();
-          break;
+            totalPrice = this.calculateRentCost();
+            break;
         case 'ค่าขุด':
-          totalPrice = this.calculateDiggingCost();
-          break;
-      }
+            totalPrice = this.calculateDiggingCost();
+            break;
+    }
 
-      this.calculatedTotalPrice = totalPrice;
-    });
-  }
+    // ✅ อัปเดตค่า total_price ในฟอร์มให้แสดงผลใน UI
+    this.expenseForm.patchValue({ total_price: totalPrice }, { emitEvent: false });
+
+    // ✅ เก็บค่าไว้ในตัวแปรเพื่อนำไปแสดงผล
+    this.calculatedTotalPrice = totalPrice;
+    console.log('📢 คำนวณราคาใหม่:', totalPrice);
+}
 
   // Separate cost calculation methods for each category (sample implementations)
   calculateHormoneCost(): number {
