@@ -23,6 +23,9 @@ export class ExpensesComponent implements OnInit, AfterViewInit {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
+
+  plotForm!: FormGroup;
+  
   searchForm: FormGroup;
   showAddForm = false;
   showEditForm = false;
@@ -45,6 +48,7 @@ export class ExpensesComponent implements OnInit, AfterViewInit {
   ];
 
   userId: string = '';
+  selectedPlotIdForAddForm: number | null = null;
   selectedExpenseId: number | null = null;
 selectedCategory: string | null = null;
 
@@ -64,6 +68,11 @@ selectedCategory: string | null = null;
   ngOnInit() {
     this.userId = localStorage.getItem('userId') || '';
     this.fetchPlots();
+
+     // ✅ สร้าง plotForm เพื่อเก็บค่าแปลงที่เลือก
+     this.plotForm = this.fb.group({
+      selectedPlot: [null] // ค่าเริ่มต้นเป็น null (ยังไม่ได้เลือกแปลง)
+    });
 
     // Auto-search when form values change
     this.searchForm.valueChanges
@@ -100,22 +109,40 @@ selectedCategory: string | null = null;
   }
 
   onSearch() {
-    const filters = this.searchForm.value;
+    // ✅ ดึงค่าจากฟอร์มค้นหา
+    const filters = { ...this.searchForm.value };
+
+    // ✅ เพิ่มค่า plot_id ถ้ามีการเลือกแปลง
+    const selectedPlot = this.plotForm?.get('selectedPlot')?.value;
+    if (selectedPlot) {
+        filters.plot = selectedPlot;
+    }
+
+    console.log("🔍 ค่าที่ส่งไปโหลดข้อมูล:", filters);
+    
     this.loadExpenses(filters);
-  }
+}
 
-  openAddExpense(): void {
-    this.showAddForm = !this.showAddForm; // สลับสถานะเปิด/ปิดฟอร์ม
-    this.showEditForm = false; // ปิดฟอร์มแก้ไข
-    this.showPreviewForm = false; // ปิดฟอร์มแสดงตัวอย่าง
 
-    setTimeout(() => {
-      if (this.addFormSection) {
-          this.addFormSection.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      } else {
-          console.warn("⚠️ ไม่พบ element addFormSection");
-      }
-  }, 100); }
+openAddExpense(): void {
+  // ✅ ดึงค่า plotId ถ้ามีการเลือกแปลง
+  this.selectedPlotIdForAddForm = this.plotForm?.get('selectedPlot')?.value || null;
+
+  console.log("📍 plot_id ที่จะส่งไปยังฟอร์มเพิ่มค่าใช้จ่าย:", this.selectedPlotIdForAddForm);
+
+  this.showAddForm = !this.showAddForm; // ✅ สลับสถานะเปิด/ปิดฟอร์ม
+  this.showEditForm = false; // ✅ ปิดฟอร์มแก้ไข
+  this.showPreviewForm = false; // ✅ ปิดฟอร์มแสดงตัวอย่าง
+
+  setTimeout(() => {
+    if (this.addFormSection) {
+        this.addFormSection.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+        console.warn("⚠️ ไม่พบ element addFormSection");
+    }
+  }, 100);
+}
+
 
 
   closeForm() {
@@ -241,5 +268,23 @@ selectedCategory: string | null = null;
     }
   
 }
+
+
+togglePlot(plotId: number): void {
+  if (!this.plotForm) return;
+
+  const currentPlot = this.plotForm.get('selectedPlot')?.value;
+
+  // ✅ ถ้ากดแปลงเดิม ให้เซ็ตเป็น null (ล้างค่า)
+  this.plotForm.get('selectedPlot')?.setValue(currentPlot === plotId ? null : plotId);
+
+  // ✅ โหลดข้อมูลใหม่จาก API ตามแปลงที่เลือก
+  this.onSearch();
+}
+
+isSelected(plotId: number): boolean {
+  return this.plotForm.get('selectedPlot')?.value === plotId;
+}
+
   
 }

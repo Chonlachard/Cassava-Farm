@@ -12,7 +12,7 @@
                 <div class="search-container p-4 bg-white rounded shadow-sm">
                     <div class="row g-3">
 
-                        <div class="col-md-3">
+                        <!-- <div class="col-md-3">
                             <div class="form-group">
                                 <label for="plot" class="form-label">ค้นหาตามแปลง</label>
                                 <select formControlName="plot" id="plot" class="form-select">
@@ -21,10 +21,8 @@
                                     </option>
                                 </select>
                             </div>
-                        </div>
+                        </div> -->
 
-
-    
                         <!-- ช่องเลือกหมวดหมู่ -->
                         <div class="col-md-3">
                             <label for="category" class="form-label">หมวดหมู่ค่าใช้จ่าย</label>
@@ -35,8 +33,6 @@
                                 </option>
                             </select>
                         </div>
-
-
                         <div class="col-md-3">
                             <label for="startDate" class="form-label">
                                 วันทีเริ่มต้น
@@ -51,16 +47,25 @@
                             </label>
                             <input type="date" id="endDate" class="form-control" formControlName="endDate">
                         </div>
-
-
-
                     </div>
-
-
-
                 </div>
             </form>
         </div>
+
+        <!-- ✅ ปุ่มเลือกแปลง -->
+        <div class="container mt-3">
+            <form [formGroup]="plotForm">
+                <div class="border border-success p-2 rounded d-flex flex-wrap align-items-center gap-2">
+                    <p class="fw-bold mb-0">เลือกแปลง:</p>
+                    <button *ngFor="let plot of plots" type="button" class="btn"
+                        [ngClass]="isSelected(plot.plot_id) ? 'btn-success' : 'btn-outline-success'"
+                        (click)="togglePlot(plot.plot_id)">
+                        {{ plot.plot_name }}
+                    </button>
+                </div>
+            </form>
+        </div>
+
 
         <!-- ตารางแสดงข้อมูล -->
         <mat-card-content>
@@ -128,8 +133,8 @@
                             </button>
 
                             <!-- ✅ ปุ่ม Preview รายจ่าย -->
-                            <button mat-icon-button color="accent" (click)="previewExpense(expense.expense_id, expense.category)"
-                                matTooltip="รายละเอียด">
+                            <button mat-icon-button color="accent"
+                                (click)="previewExpense(expense.expense_id, expense.category)" matTooltip="รายละเอียด">
                                 <mat-icon>visibility</mat-icon>
                             </button>
                         </td>
@@ -163,17 +168,18 @@
 
 
     <div *ngIf="showAddForm" #addFormSection class="mt-4">
-        <app-addexpenses (closeForm)="closeForm()"></app-addexpenses>
+        <app-addexpenses [plotId]="selectedPlotIdForAddForm" (closeForm)="closeForm()"></app-addexpenses>
     </div>
+    
 
     <!-- แสดงฟอร์มแก้ไขเมื่อกดปุ่ม -->
     <div *ngIf="showEditForm" #editFormSection class="mt-4">
         <app-editexpenses [expenseId]="selectedExpenseId!" [category]="selectedCategory!"
-        (closeForm)="handleCloseEditForm()">
+            (closeForm)="handleCloseEditForm()">
         </app-editexpenses>
     </div>
 
-     <div *ngIf="showPreviewForm" #showPreviewSection class="mt-4">
+    <div *ngIf="showPreviewForm" #showPreviewSection class="mt-4">
         <app-expense-detail [expenseId]="selectedExpenseId!" [category]="selectedCategory!"
             (closeForm)="showEditForm = false">
         </app-expense-detail>

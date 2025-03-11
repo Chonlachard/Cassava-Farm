@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Inject, Output, EventEmitter, Input } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ExpensesService } from '../expenses.service';
@@ -35,12 +35,13 @@ export class AddexpensesComponent implements OnInit {
   totalPrice: number = 0;
 
   @Output() closeForm = new EventEmitter<void>();
+  @Input() plotId: number | null = null;
 
   constructor(
     private transactionService: ExpensesService,
     private fb: FormBuilder,
     private translate: TranslateService,
-  
+
 
   ) {
     this.expenseForm = this.fb.group({
@@ -50,9 +51,9 @@ export class AddexpensesComponent implements OnInit {
       category: ['', Validators.required],  // ต้องการตรวจสอบการกรอกข้อมูล
       cutting_date: [''],
       details: [''],
-      descript : [''],
+      descript: [''],
       equipmentCost: [''],
-      expenses_date: [''],  
+      expenses_date: [''],
       fuel_date: [''],
       formula: ['', Validators.required],  // ต้องการตรวจสอบการกรอกข้อมูล
       land_area: [''],
@@ -61,7 +62,7 @@ export class AddexpensesComponent implements OnInit {
       owner_name: [''],
       owner_phone: [''],
       payment_date: [''],
-      plot_id: ['', Validators.required],  // ต้องการตรวจสอบการกรอกข้อมูล
+      plot_id: [{ value: this.plotId || '', disabled: !!this.plotId }, Validators.required], // ✅ ล็อกค่าถ้ามี plotId  // ต้องการตรวจสอบการกรอกข้อมูล
       price_per_can: [''],
       price_per_liter: [''],
       price_per_rai: [''], // ต้องการตรวจสอบการกรอกข้อมูล
@@ -92,8 +93,8 @@ export class AddexpensesComponent implements OnInit {
       volume: [''],
       weight: [''],
       worker_name: [''],
-      item_name : [''],
-      total_price : ['']
+      item_name: [''],
+      total_price: ['']
 
     });
 
@@ -104,6 +105,14 @@ export class AddexpensesComponent implements OnInit {
     this.fetchPlots();
     this.calculateTotalPrice();
     this.onCategoryChange();
+
+    // ✅ ถ้ามี `plotId` ที่ส่งมา ให้กำหนดค่าให้ `expenseForm`
+    if (this.plotId) {
+      debugger
+      this.expenseForm.patchValue({ plot_id: this.plotId });
+      this.expenseForm.get('plot_id')?.disable(); // ✅ ล็อกการแก้ไข
+    }
+
   }
 
   // Initialize form with user ID
@@ -135,10 +144,10 @@ export class AddexpensesComponent implements OnInit {
   }
 
   onSubmit(): void {
-    
+
     const formValue = this.expenseForm.getRawValue();
     const category = formValue.category;
-  
+
     // ตรวจสอบข้อมูลที่จำเป็นสำหรับแต่ละประเภท
     const details = this.getDetailsForCategory(category, formValue);
     if (!details) {
@@ -153,15 +162,15 @@ export class AddexpensesComponent implements OnInit {
       });
       return; // หยุดการดำเนินการหากข้อมูลไม่ครบถ้วน
     }
-  
+
     // จัดเตรียมข้อมูลสำหรับส่ง
     const expenseData = {
       user_id: formValue.user_id,
       category: category,
-      expenses_date : formValue.expenses_date,
+      expenses_date: formValue.expenses_date,
       details: details, // ส่งข้อมูลที่เกี่ยวข้องกับประเภท
     };
-  
+
 
     this.transactionService.addExpense(expenseData).subscribe(
       () => {
@@ -193,67 +202,67 @@ export class AddexpensesComponent implements OnInit {
       });
     });
   }
-  
+
   getDetailsForCategory(category: string, formValue: any) {
     debugger
     let details: any = null;  // ใช้ null แทนการส่งกลับค่าเป็นอ็อบเจ็กต์เปล่า
-  
+
     switch (category) {
-      
+
       case 'ค่าฮอร์โมน':
         if (formValue.brand && formValue.volume && formValue.price_per_bottle && formValue.quantity && formValue.plot_id && formValue.purchase_location) {
-          details = { 
-              brand: formValue.brand,
-              volume: formValue.volume,
-              price_per_bottle: formValue.price_per_bottle, // ตรวจสอบว่าใช้ price_per_bottle ในการคำนวณหรือไม่
-              quantity: formValue.quantity, 
-              purchase_location : formValue.purchase_location, 
-              plot_id: formValue.plot_id, // เปลี่ยนจาก plotId เป็น plot_id ตามชื่อที่ถูกต้อง
-              totalPrice: this.calculatedTotalPrice // ตรวจสอบการคำนวณ totalPrice ที่ถูกต้อง
+          details = {
+            brand: formValue.brand,
+            volume: formValue.volume,
+            price_per_bottle: formValue.price_per_bottle, // ตรวจสอบว่าใช้ price_per_bottle ในการคำนวณหรือไม่
+            quantity: formValue.quantity,
+            purchase_location: formValue.purchase_location,
+            plot_id: formValue.plot_id, // เปลี่ยนจาก plotId เป็น plot_id ตามชื่อที่ถูกต้อง
+            totalPrice: this.calculatedTotalPrice // ตรวจสอบการคำนวณ totalPrice ที่ถูกต้อง
           };
           console.log('Details:', details);
-      }
+        }
         break;
       case 'ค่าปุ๋ย':
-        if (formValue.brand && formValue.price_per_bag && formValue.quantity &&  formValue.plot_id) {
-          details = { 
+        if (formValue.brand && formValue.price_per_bag && formValue.quantity && formValue.plot_id) {
+          details = {
             brand: formValue.brand,
 
-            price_per_bag: formValue.price_per_bag, 
-            quantity: formValue.quantity, 
+            price_per_bag: formValue.price_per_bag,
+            quantity: formValue.quantity,
             plot_id: formValue.plot_id,
             totalPrice: this.calculatedTotalPrice
           };
         }
         break;
       case 'ค่ายาฆ่าหญ้า':
-        if (formValue.brand && formValue.volume && formValue.price_per_bottle && formValue.quantity &&  formValue.plot_id) {
-          details = { 
+        if (formValue.brand && formValue.volume && formValue.price_per_bottle && formValue.quantity && formValue.plot_id) {
+          details = {
             brand: formValue.brand,
             volume: formValue.volume,
             price_per_bottle: formValue.price_per_bottle,
-            quantity: formValue.quantity, 
+            quantity: formValue.quantity,
             plot_id: formValue.plot_id,
             totalPrice: this.calculatedTotalPrice
           };
         }
         break;
       case 'ค่าคนตัดต้น':
-        if ( formValue.price_per_tree && formValue.number_of_trees && formValue.plot_id) {
-          details = { 
-      
-            price_per_tree: formValue.price_per_tree, 
-            number_of_trees: formValue.number_of_trees, 
+        if (formValue.price_per_tree && formValue.number_of_trees && formValue.plot_id) {
+          details = {
+
+            price_per_tree: formValue.price_per_tree,
+            number_of_trees: formValue.number_of_trees,
             totalPrice: this.calculatedTotalPrice,
             plot_id: formValue.plot_id
           };
         }
         break;
       case 'ค่าคนปลูก':
-        if (  formValue.land_area && formValue.price_per_rai && formValue.plot_id) {
-          details = { 
-           
-           
+        if (formValue.land_area && formValue.price_per_rai && formValue.plot_id) {
+          details = {
+
+
             land_area: formValue.land_area,
             price_per_rai: formValue.price_per_rai,
             plot_id: formValue.plot_id,
@@ -262,9 +271,9 @@ export class AddexpensesComponent implements OnInit {
         }
         break;
       case 'ค่าคนฉีดยาฆ่าหญ้า':
-        if ( formValue.number_of_cans && formValue.price_per_can && formValue.plot_id) {
-          details = { 
-            
+        if (formValue.number_of_cans && formValue.price_per_can && formValue.plot_id) {
+          details = {
+
             number_of_cans: formValue.number_of_cans,
             price_per_can: formValue.price_per_can,
             plot_id: formValue.plot_id,
@@ -273,9 +282,9 @@ export class AddexpensesComponent implements OnInit {
         }
         break;
       case 'ค่าคนฉีดยาฮอโมน':
-        if ( formValue.number_of_cans && formValue.price_per_can && formValue.plot_id) {
-          details = { 
-           
+        if (formValue.number_of_cans && formValue.price_per_can && formValue.plot_id) {
+          details = {
+
             number_of_cans: formValue.number_of_cans,
             price_per_can: formValue.price_per_can,
             plot_id: formValue.plot_id,
@@ -284,10 +293,10 @@ export class AddexpensesComponent implements OnInit {
         }
         break;
       case 'ค่าน้ำมัน':
-        if ( formValue.price_per_liter && formValue.quantity_liters && formValue.plot_id) {
-          details = { 
-          
-            price_per_liter: formValue.price_per_liter, 
+        if (formValue.price_per_liter && formValue.quantity_liters && formValue.plot_id) {
+          details = {
+
+            price_per_liter: formValue.price_per_liter,
             // quantity_liters: formValue.quantity_liters, 
             plot_id: formValue.plot_id,
             totalPrice: formValue.total_price
@@ -295,9 +304,9 @@ export class AddexpensesComponent implements OnInit {
         }
         break;
       case 'ค่าพันธุ์มัน':
-        if ( formValue.quantity && formValue.price_per_tree && formValue.plot_id && formValue.variety_name && formValue.purchase_location) {
-          details = { 
-           
+        if (formValue.quantity && formValue.price_per_tree && formValue.plot_id && formValue.variety_name && formValue.purchase_location) {
+          details = {
+
             quantity: formValue.quantity,
             price_per_tree: formValue.price_per_tree,
             plot_id: formValue.plot_id,
@@ -308,20 +317,20 @@ export class AddexpensesComponent implements OnInit {
         }
         break;
       case 'ค่าซ่อมอุปกรณ์':
-        if ( formValue.repair_names && formValue.repair_cost && formValue.shop_name) {
-          details = { 
-        
+        if (formValue.repair_names && formValue.repair_cost && formValue.shop_name) {
+          details = {
+
             repair_names: formValue.repair_names,
             details: formValue.details,
-            repair_cost: formValue.repair_cost, 
+            repair_cost: formValue.repair_cost,
             shop_name: formValue.shop_name
           };
         }
         break;
       case 'ค่าอุปกรณ์':
-        if ( formValue.item_name && formValue.shop_name && formValue.purchase_price) {
-          details = { 
-            
+        if (formValue.item_name && formValue.shop_name && formValue.purchase_price) {
+          details = {
+
             item_name: formValue.item_name,
             shop_name: formValue.shop_name,
             purchase_price: formValue.purchase_price,
@@ -331,8 +340,8 @@ export class AddexpensesComponent implements OnInit {
         break;
       case 'ค่าเช่าที่ดิน':
         if (formValue.owner_name && formValue.owner_phone && formValue.area && formValue.price_per_rai && formValue.rental_period && formValue.plot_id) {
-          details = { 
-            
+          details = {
+
             owner_name: formValue.owner_name,
             owner_phone: formValue.owner_phone,
             area: formValue.area,
@@ -344,11 +353,11 @@ export class AddexpensesComponent implements OnInit {
         }
         break;
       case 'ค่าขุด':
-        if ( formValue.weight && formValue.price_per_ton) {
-          details = { 
-           
+        if (formValue.weight && formValue.price_per_ton) {
+          details = {
+
             weight: formValue.weight,
-            price_per_ton: formValue.price_per_ton, 
+            price_per_ton: formValue.price_per_ton,
             totalPrice: this.calculatedTotalPrice
           };
         }
@@ -357,10 +366,10 @@ export class AddexpensesComponent implements OnInit {
         details = null; // ถ้าไม่พบประเภท
         break;
     }
-  
+
     return details; // คืนค่า details หรือ null ถ้าไม่ครบถ้วน
   }
-  
+
   // Handle formula input for proper formatting
   onFormulaInput(event: any): void {
     const inputValue = event.target.value;
