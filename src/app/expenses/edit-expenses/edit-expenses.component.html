@@ -92,11 +92,11 @@
           <label for="brand">ยี่ห้อ</label>
           <input id="brand" type="text" formControlName="brand" placeholder="กรอกยี่ห้อ" />
         </div>
-        <div class="form-field">
+        <!-- <div class="form-field">
           <label for="formula">สูตร</label>
           <input id="formula" type="text" formControlName="formula" placeholder="กรอกสูตร (เช่น 15-15-15)"
             (input)="onFormulaInput($event)" />
-        </div>
+        </div> -->
 
         <div class="form-field">
           <label for="pricePerBag">ราคาต่อถุง</label>
@@ -327,18 +327,17 @@
           <input id="price_per_liter" type="number" formControlName="price_per_liter" placeholder="กรอกราคาต่อลิตร" />
         </div>
 
-        <!-- จำนวนลิตร -->
+        <!-- จำนวนลิตร
         <div class="form-field">
           <label for="quantityLiters">จำนวนลิตร</label>
           <input id="quantity_liters" type="number" formControlName="quantity_liters" placeholder="กรอกจำนวนลิตร" />
-        </div>
+        </div> -->
 
-        <!-- ราคาที่จ่าย (คำนวณ) -->
-        <div class="form-field">
-          <label for="totalPrice">ราคาที่จ่าย</label>
-          <input id="totalPrice" type="number" formControlName="total_price" readonly
-            placeholder="ราคาที่จ่ายจะคำนวณอัตโนมัติ" />
-        </div>
+      <!-- ราคาที่จ่าย (คำนวณ) -->
+      <div class="form-field">
+        <label for="totalPrice">ราคาที่จ่าย</label>
+        <input id="totalPrice" type="number" formControlName="total_price" placeholder="กรอกราคาที่จ่าย" />
+      </div>
 
         
       </div>

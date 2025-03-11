@@ -95,7 +95,7 @@ export class EditExpensesComponent implements OnInit, OnChanges {
       weight: [''],
       worker_name: [''],
       item_name: [''],
-      total_price: [''],
+      total_price: [0],
       expenses_date: [''],
 
     });
@@ -132,6 +132,7 @@ export class EditExpensesComponent implements OnInit, OnChanges {
   }
 
   loadExpenseData(): void {
+    debugger
     if (!this.expenseId) return; // ✅ ป้องกันการโหลดถ้า `expenseId` ไม่มีค่า
 
     this.transactionService.getExpenseById(this.expenseId).subscribe((expenseData) => {
@@ -148,7 +149,7 @@ export class EditExpensesComponent implements OnInit, OnChanges {
       switch (expenseData.category) {
         case 'ค่าน้ำมัน':
           formattedData.price_per_liter = parseFloat(expenseData.price_per_liter) || 0;
-          formattedData.quantity_liters = parseFloat(expenseData.quantity_liters) || 0;
+          formattedData.total_price = parseFloat(expenseData.total_price) || 0;
           break;
 
         case 'ค่าคนตัดต้น':
@@ -293,13 +294,13 @@ export class EditExpensesComponent implements OnInit, OnChanges {
 
     const categoryFields: { [key: string]: string[] } = {
       'ค่าฮอร์โมน': ['brand', 'volume', 'price_per_bottle', 'quantity', 'purchase_location', 'plot_id'],
-      'ค่าปุ๋ย': ['brand', 'formula', 'price_per_bag', 'quantity', 'purchase_location', 'plot_id'],
+      'ค่าปุ๋ย': ['brand', 'price_per_bag', 'quantity', 'purchase_location', 'plot_id'],
       'ค่ายาฆ่าหญ้า': ['brand', 'volume', 'price_per_bottle', 'quantity', 'purchase_location', 'plot_id'],
       'ค่าคนตัดต้น': ['number_of_trees', 'price_per_tree', 'plot_id'],
       'ค่าคนปลูก': [ 'land_area', 'price_per_rai', 'plot_id'],
       'ค่าคนฉีดยาฆ่าหญ้า': ['number_of_cans', 'price_per_can', 'plot_id'],
       'ค่าคนฉีดยาฮอโมน': ['number_of_cans', 'price_per_can', 'plot_id'],
-      'ค่าน้ำมัน': ['price_per_liter', 'quantity_liters', 'plot_id'],
+      'ค่าน้ำมัน': ['price_per_liter', 'plot_id','total_price'],
       'ค่าพันธุ์มัน': ['variety_name', 'quantity', 'price_per_tree', 'purchase_location', 'plot_id'],
       'ค่าซ่อมอุปกรณ์': ['repair_names', 'details', 'repair_cost', 'shop_name'],
       'ค่าอุปกรณ์': ['item_name', 'shop_name', 'purchase_price', 'descript'],

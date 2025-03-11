@@ -98,6 +98,22 @@
             </form>
         </div>
 
+        <!-- ปุ่มเลือกแปลง -->
+        <div class="container mt-3">
+            <form [formGroup]="plotForm">
+                <div class="border border-success p-2 rounded d-flex flex-wrap align-items-center gap-2">
+                    <p class="fw-bold mb-0">เลือกแปลง:</p>
+                    <button *ngFor="let plot of plots" type="button" class="btn"
+                        [ngClass]="isSelected(plot.value) ? 'btn-success' : 'btn-outline-success'"
+                        (click)="togglePlot(plot.value)">
+                        {{ plot.text }}
+                    </button>
+                </div>
+            </form>
+        </div>
+
+
+
         <!-- ตารางข้อมูล -->
         <mat-card-content>
             <div class="table-container">
@@ -188,7 +204,7 @@
     </div>
 
     <!-- แสดงฟอร์มเพิ่มข้อมูลด้านล่างเมื่อ showAddForm เป็น true -->
-    <div *ngIf="showAddForm"  #addFormSection class="mt-4">
+    <div *ngIf="showAddForm" #addFormSection class="mt-4">
         <app-add-harvest (closeForm)="closeForm()"></app-add-harvest>
     </div>
 

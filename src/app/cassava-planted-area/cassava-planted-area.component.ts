@@ -178,6 +178,8 @@ export class CassavaPlantedAreaComponent implements OnInit, AfterViewInit {
   closeForm() {
     this.showAddForm = false; // ปิดฟอร์มเมื่อบันทึกสำเร็จ
     this.showEditForm = false; // ปิดฟอร์มเมื่อบันทึกสำเร็จ
+
+    this.loadPlots(); // โหลดข้อมูลใหม่หลังอัปเดต
   }
 
 

@@ -32,6 +32,7 @@ export class AddexpensesComponent implements OnInit {
   ];
   selectedCategory: string | null = null;
   calculatedTotalPrice: number = 0;
+  totalPrice: number = 0;
 
   @Output() closeForm = new EventEmitter<void>();
 
@@ -214,10 +215,10 @@ export class AddexpensesComponent implements OnInit {
       }
         break;
       case 'ค่าปุ๋ย':
-        if (formValue.brand && formValue.formula && formValue.price_per_bag && formValue.quantity &&  formValue.plot_id) {
+        if (formValue.brand && formValue.price_per_bag && formValue.quantity &&  formValue.plot_id) {
           details = { 
             brand: formValue.brand,
-            formula: formValue.formula,
+
             price_per_bag: formValue.price_per_bag, 
             quantity: formValue.quantity, 
             plot_id: formValue.plot_id,
@@ -287,9 +288,9 @@ export class AddexpensesComponent implements OnInit {
           details = { 
           
             price_per_liter: formValue.price_per_liter, 
-            quantity_liters: formValue.quantity_liters, 
+            // quantity_liters: formValue.quantity_liters, 
             plot_id: formValue.plot_id,
-            totalPrice: this.calculatedTotalPrice
+            totalPrice: formValue.total_price
           };
         }
         break;

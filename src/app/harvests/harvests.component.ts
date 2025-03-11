@@ -1,13 +1,11 @@
 import { Component, OnInit, ViewChild, AfterViewInit, ElementRef } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { HarvestsService } from './harvests.service';
-import { AddHarvestComponent } from './add-harvest/add-harvest.component';
 import Swal from 'sweetalert2';
 import { TranslateService } from '@ngx-translate/core';
-import { EditHarvestComponent } from './edit-harvest/edit-harvest.component';
 import { debounceTime } from 'rxjs/operators';
 
 @Component({
@@ -37,6 +35,10 @@ export class HarvestsComponent implements OnInit, AfterViewInit {
   showAddForm = false;
   showEditForm = false;
   selectedHarvestId: number | null = null; //
+  plotForm!: FormGroup; // ประกาศ plotForm ให้ Angular รู้จัก
+  filteredData: any[] = [];  // ข้อมูลที่ผ่านการกรอง
+  originalData: any[] = [];  // ข้อมูลต้นฉบับ
+
 
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
 
@@ -68,6 +70,11 @@ export class HarvestsComponent implements OnInit, AfterViewInit {
         this.onSearch();
       });
     }
+
+    // ✅ ใช้ FormControl เพื่อเก็บค่าเดียว
+    this.plotForm = this.fb.group({
+      selectedPlot: [null] // ✅ เลือกแค่ 1 แปลงเท่านั้น
+    });
   }
 
   ngAfterViewInit() {
@@ -93,9 +100,16 @@ export class HarvestsComponent implements OnInit, AfterViewInit {
 
   // เรียกเมื่อมีการค้นหา
   onSearch() {
+    debugger
     const filters = this.prepareFilters(this.searchForm.value);
+  
+    // ✅ กรองข้อมูลตามแปลงที่เลือก
+    const selectedPlotId = this.plotForm.get('selectedPlot')?.value;
+    filters.plot_id = selectedPlotId ? selectedPlotId : null;
+  
     this.loadHarvests(filters);
   }
+  
 
   // รีเซ็ตฟอร์มการค้นหา
   clearSearch() {
@@ -180,22 +194,24 @@ export class HarvestsComponent implements OnInit, AfterViewInit {
 
     setTimeout(() => {
       if (this.addFormSection) {
-          this.addFormSection.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        this.addFormSection.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
       } else {
-          console.warn("⚠️ ไม่พบ element addFormSection");
+        console.warn("⚠️ ไม่พบ element addFormSection");
       }
-  }, 100);
+    }, 100);
   }
   closeForm() {
     this.showAddForm = false; // ปิดฟอร์มเมื่อบันทึกสำเร็จ
     this.showEditForm = false; // ปิดฟอร์มเมื่อบันทึกสำเร็จ
+
+    this.loadHarvests(); // โหลดข้อมูลใหม่หลังจากบันทึก
   }
 
   // แก้ไขข้อมูลการเก็บเกี่ยว
   EditHarvest(harvestId: number): void {
     if (!harvestId) {
-        console.error("❌ harvestId เป็นค่าว่าง");
-        return;
+      console.error("❌ harvestId เป็นค่าว่าง");
+      return;
     }
 
     // ✅ ปิดฟอร์มเพิ่มข้อมูล
@@ -203,13 +219,13 @@ export class HarvestsComponent implements OnInit, AfterViewInit {
 
     // ✅ ถ้าเลือกอันใหม่ ให้เปลี่ยนค่าแล้วโหลดข้อมูลใหม่
     if (this.selectedHarvestId !== harvestId) {
-        this.selectedHarvestId = harvestId;
-        this.showEditForm = false; // ปิดฟอร์มก่อน แล้วเปิดใหม่
-        setTimeout(() => {
-          this.showEditForm = true;
-        }, 10); // ✅ ให้ Angular อัปเดต UI ก่อน
+      this.selectedHarvestId = harvestId;
+      this.showEditForm = false; // ปิดฟอร์มก่อน แล้วเปิดใหม่
+      setTimeout(() => {
+        this.showEditForm = true;
+      }, 10); // ✅ ให้ Angular อัปเดต UI ก่อน
 
-        console.log("✅ เปลี่ยนข้อมูลฟอร์มแก้ไขไปที่ harvestId:", this.selectedHarvestId);
+      console.log("✅ เปลี่ยนข้อมูลฟอร์มแก้ไขไปที่ harvestId:", this.selectedHarvestId);
     }
 
     // ✅ เลื่อนหน้าไปยังฟอร์มแก้ไข
@@ -220,7 +236,7 @@ export class HarvestsComponent implements OnInit, AfterViewInit {
         console.warn("⚠️ ไม่พบ element editFormSection");
       }
     }, 100);
-}
+  }
 
 
 
@@ -255,4 +271,27 @@ export class HarvestsComponent implements OnInit, AfterViewInit {
     this.showModal = false;
     this.imageUrl = '';
   }
+
+
+  togglePlot(plotId: number): void {
+    if (!this.plotForm) return;
+  
+    const currentPlot = this.plotForm.get('selectedPlot')?.value;
+  
+    // ✅ ถ้ากดแปลงเดิม ให้เซ็ตเป็น null (ล้างค่า)
+    this.plotForm.get('selectedPlot')?.setValue(currentPlot === plotId ? null : plotId);
+  
+    // ✅ โหลดข้อมูลใหม่จาก API ตามแปลงที่เลือก
+    this.onSearch();
+  }
+  
+
+
+
+  isSelected(plotId: number): boolean {
+    return this.plotForm.get('selectedPlot')?.value === plotId;
+  }
+  
+
+
 }

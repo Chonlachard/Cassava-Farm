@@ -333,19 +333,18 @@
           <input id="price_per_liter" type="number" formControlName="price_per_liter" placeholder="กรอกราคาต่อลิตร" />
         </div>
 
-        <!-- จำนวนลิตร -->
+        <!-- จำนวนลิตร
         <div class="form-field">
           <label for="quantityLiters">จำนวนลิตร</label>
           <input id="quantity_liters" type="number" formControlName="quantity_liters" placeholder="กรอกจำนวนลิตร" />
-        </div>
+        </div> -->
 
         <!-- ราคาที่จ่าย (คำนวณ) -->
         <div class="form-field">
           <label for="totalPrice">ราคาที่จ่าย</label>
-          <input id="totalPrice" type="number" [value]="calculatedTotalPrice" readonly
-            placeholder="ราคาที่จ่ายจะคำนวณอัตโนมัติ" />
+          <input id="totalPrice" type="number" formControlName="totalPrice" placeholder="กรอกราคาที่จ่าย" />
         </div>
-
+        
        
       </div>
 
