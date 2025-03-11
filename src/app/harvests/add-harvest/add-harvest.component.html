@@ -16,11 +16,12 @@
                     <label for="plot">
                         <i class="fas fa-map-marker-alt option-icon"></i> {{ 'harvest.plot' | translate }}
                     </label>
-                    <select id="plot" formControlName="plot_id">
+                    <select id="plot" formControlName="plot_id" [disabled]="plotId !== null">
                         <option value="" disabled selected>{{ 'harvest.selectPlot' | translate }}</option>
                         <option *ngFor="let plot of plots" [value]="plot.value">{{ plot.text }}</option>
                     </select>
                 </div>
+
 
                 <!-- ชื่อบริษัท -->
                 <div class="form-field">
@@ -49,7 +50,8 @@
                 <!-- ราคา/กก. -->
                 <div class="form-field">
                     <label for="price">
-                        <i class="fas fa-dollar-sign option-icon"></i> {{ 'harvest.searchPricePerkilogram' | translate }}
+                        <i class="fas fa-dollar-sign option-icon"></i> {{ 'harvest.searchPricePerkilogram' | translate
+                        }}
                     </label>
                     <input type="number" id="price" formControlName="price" step="0.01">
                 </div>

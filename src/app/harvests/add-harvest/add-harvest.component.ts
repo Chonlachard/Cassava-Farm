@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { HarvestsService } from '../harvests.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import Swal from 'sweetalert2';
@@ -12,7 +12,7 @@ import { debounceTime } from 'rxjs/operators';
 })
 export class AddHarvestComponent implements OnInit {
   @Output() closeForm = new EventEmitter<void>(); // ✅ ส่ง event กลับไปที่ parent component
-
+  @Input() plotId: number | null = null;
   harvestForm: FormGroup;
   userId: string = '';
   plots: any[] = [];
@@ -41,6 +41,15 @@ export class AddHarvestComponent implements OnInit {
     this.harvestForm.patchValue({ harvest_date: today });
 
     await this.fetchPlots(); // ✅ โหลดข้อมูลแปลง
+    console.log("🔍 plot_id ที่ได้รับ:", this.plotId);
+    // ✅ ถ้ามี plotId → ตั้งค่า plot_id และล็อกช่องเลือกแปลง
+    if (this.plotId) {
+      debugger
+      this.harvestForm.patchValue({ plot_id: this.plotId });
+      this.harvestForm.get('plot_id')?.disable(); // ✅ ล็อกการแก้ไข
+    }
+
+
     this.setupAutoCalculation(); // ✅ ตั้งค่าการคำนวณ amount อัตโนมัติ
   }
 

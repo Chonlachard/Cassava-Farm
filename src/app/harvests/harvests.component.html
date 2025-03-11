@@ -13,7 +13,7 @@
                 <div class="search-container p-4 bg-white rounded shadow-sm">
                     <div class="row g-3">
                         <!-- แถวที่ 1 -->
-                        <div class="col-md-4">
+                        <!-- <div class="col-md-4">
                             <div class="form-group">
                                 <label for="plot" class="form-label">{{ 'harvest.searchByPlot' | translate }}</label>
                                 <select formControlName="plot" id="plot" class="form-select">
@@ -21,17 +21,7 @@
                                     <option *ngFor="let plot of plots" [value]="plot.value">{{ plot.text }}</option>
                                 </select>
                             </div>
-                        </div>
-
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label for="company_name" class="form-label">{{ 'harvest.companyName' | translate
-                                    }}</label>
-                                <input type="text" formControlName="company_name" id="company_name" class="form-control"
-                                    placeholder="{{ 'harvest.SelectCompany' | translate }}" />
-                            </div>
-                        </div>
-
+                        </div> -->
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label for="harvest_date_start" class="form-label">{{ 'harvest.searchStartDate' |
@@ -48,6 +38,18 @@
                                     class="form-control">
                             </div>
                         </div>
+
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="company_name" class="form-label">{{ 'harvest.companyName' | translate
+                                    }}</label>
+                                <input type="text" formControlName="company_name" id="company_name" class="form-control"
+                                    placeholder="{{ 'harvest.SelectCompany' | translate }}" />
+                            </div>
+                        </div>
+
+
 
                         <!-- แถวที่ 2 -->
                         <div class="col-md-4">
@@ -203,10 +205,11 @@
         </div>
     </div>
 
-    <!-- แสดงฟอร์มเพิ่มข้อมูลด้านล่างเมื่อ showAddForm เป็น true -->
+    <!-- ✅ ส่ง plotId ไปยัง app-add-harvest -->
     <div *ngIf="showAddForm" #addFormSection class="mt-4">
-        <app-add-harvest (closeForm)="closeForm()"></app-add-harvest>
+        <app-add-harvest [plotId]="plotForm.get('selectedPlot')?.value" (closeForm)="closeForm()"></app-add-harvest>
     </div>
+
 
     <!-- แสดงฟอร์มแก้ไขข้อมูลด้านล่างเมื่อ showAddForm เป็น true -->
     <div *ngIf="showEditForm" #editFormSection class="mt-4">

@@ -38,6 +38,7 @@ export class HarvestsComponent implements OnInit, AfterViewInit {
   plotForm!: FormGroup; // ประกาศ plotForm ให้ Angular รู้จัก
   filteredData: any[] = [];  // ข้อมูลที่ผ่านการกรอง
   originalData: any[] = [];  // ข้อมูลต้นฉบับ
+  selectedPlotIdForAddForm: number | null = null; // ✅ แปลงที่เลือกสำหรับฟอร์มเพิ่มข้อมูล
 
 
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
@@ -189,6 +190,11 @@ export class HarvestsComponent implements OnInit, AfterViewInit {
   }
 
   openAdd() {
+    const selectedPlotId = this.plotForm.get('selectedPlot')?.value || null; // ✅ ดึงค่า plot_id ถ้ามี
+
+    console.log("📍 plot_id ที่จะส่งไปยังฟอร์มเพิ่มข้อมูล:", selectedPlotId);
+    
+    this.selectedPlotIdForAddForm = selectedPlotId; // ✅ เก็บ plot_id ไว้ใช้งานใน HTML
     this.showAddForm = !this.showAddForm; // สลับสถานะเปิด/ปิดฟอร์ม
     this.showEditForm = false; // ปิดฟอร์มแก้ไข
 
@@ -199,7 +205,9 @@ export class HarvestsComponent implements OnInit, AfterViewInit {
         console.warn("⚠️ ไม่พบ element addFormSection");
       }
     }, 100);
-  }
+}
+
+  
   closeForm() {
     this.showAddForm = false; // ปิดฟอร์มเมื่อบันทึกสำเร็จ
     this.showEditForm = false; // ปิดฟอร์มเมื่อบันทึกสำเร็จ
