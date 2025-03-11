@@ -7,6 +7,7 @@ import { HarvestsService } from './harvests.service';
 import Swal from 'sweetalert2';
 import { TranslateService } from '@ngx-translate/core';
 import { debounceTime } from 'rxjs/operators';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-harvests',
@@ -42,6 +43,7 @@ export class HarvestsComponent implements OnInit, AfterViewInit {
 
 
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
+  @ViewChild(MatSort) sort!: MatSort; 
 
   constructor(
     private fb: FormBuilder,
@@ -81,6 +83,9 @@ export class HarvestsComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     if (this.paginator) {
       this.dataSource.paginator = this.paginator;
+    }
+    if (this.sort) {
+      this.dataSource.sort = this.sort;  // ✅ เพิ่ม Sort
     }
   }
 

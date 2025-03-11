@@ -10,6 +10,7 @@ import { TranslateService } from '@ngx-translate/core'; // ใช้ TranslateSe
 import { AddPlantedAreaComponent } from './add-planted-area/add-planted-area.component';
 import { debounceTime } from 'rxjs/operators'; // ใช้ debounceTime
 import { EditPlantedComponent } from './edit-planted/edit-planted.component';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-cassava-planted-area',
@@ -23,6 +24,8 @@ export class CassavaPlantedAreaComponent implements OnInit, AfterViewInit {
   @ViewChild('addFormSection') addFormSection!: ElementRef;
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
   @ViewChild('editFormSection') editFormSection!: ElementRef;
+  @ViewChild(MatSort) sort!: MatSort; 
+  
 
   userId: string = '';
   searchForm: FormGroup;
@@ -99,6 +102,9 @@ export class CassavaPlantedAreaComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     if (this.paginator) {
       this.dataSource.paginator = this.paginator;
+    }
+    if (this.sort) {
+      this.dataSource.sort = this.sort;  // ✅ เพิ่ม Sort
     }
   }
 

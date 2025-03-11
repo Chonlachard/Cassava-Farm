@@ -8,6 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { EditExpensesComponent } from './edit-expenses/edit-expenses.component';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { DetailComponent } from './detail/detail.component';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-expenses',
@@ -22,7 +23,7 @@ export class ExpensesComponent implements OnInit, AfterViewInit {
   dataSource = new MatTableDataSource<any>([]);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-
+  @ViewChild(MatSort) sort!: MatSort; 
 
   plotForm!: FormGroup;
   
@@ -86,6 +87,7 @@ selectedCategory: string | null = null;
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
   }
 
   fetchPlots(): void {
