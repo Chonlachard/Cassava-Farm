@@ -53,7 +53,7 @@ export class AddexpensesComponent implements OnInit {
       details: [''],
       descript: [''],
       equipmentCost: [''],
-      expenses_date: [''],
+      expenses_date: [new Date().toISOString().split('T')[0]],
       fuel_date: [''],
       formula: ['', Validators.required],  // ต้องการตรวจสอบการกรอกข้อมูล
       land_area: [''],

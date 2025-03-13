@@ -19,14 +19,18 @@ export class ExpensesComponent implements OnInit, AfterViewInit {
   @ViewChild('addFormSection') addFormSection!: ElementRef; // ✅ ดึงตำแหน่งของฟอร์มแก้ไข
   @ViewChild('showPreviewSection') showPreviewSection!: ElementRef; // ✅ ดึงตำแหน่งของฟอร์มแก้ไข
   @ViewChild('editFormSection') editFormSection!: ElementRef; // ✅ ดึงตำแหน่งของฟอร์มแก้ไข
-  displayedColumns: string[] = ['expenses_date','plot_name', 'category', 'total_price', 'actions'];
+  displayedColumns: string[] = ['expenses_date', 'plot_name', 'category', 'total_price', 'actions'];
   dataSource = new MatTableDataSource<any>([]);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort; 
+  @ViewChild(MatSort) sort!: MatSort;
 
   plotForm!: FormGroup;
-  
+
+  budgetYears: any[] = []; // ✅ เก็บค่าปีงบประมาณที่ดึงมาจาก Database
+  selectedYear: number | null = null; // ✅ เก็บค่าปีที่เลือก
+  yearForm: FormGroup; // ✅ เพิ่ม yearForm ที่นี่
+
   searchForm: FormGroup;
   showAddForm = false;
   showEditForm = false;
@@ -51,13 +55,20 @@ export class ExpensesComponent implements OnInit, AfterViewInit {
   userId: string = '';
   selectedPlotIdForAddForm: number | null = null;
   selectedExpenseId: number | null = null;
-selectedCategory: string | null = null;
+  selectedCategory: string | null = null;
 
   constructor(
     private fb: FormBuilder,
     private expensesService: ExpensesService,
     private translate: TranslateService
   ) {
+    // ✅ กำหนดค่าเริ่มต้นให้ yearForm
+    this.yearForm = this.fb.group({
+      selectedYear: [null]
+    });
+
+
+
     this.searchForm = this.fb.group({
       category: [''],
       startDate: [''],
@@ -69,9 +80,10 @@ selectedCategory: string | null = null;
   ngOnInit() {
     this.userId = localStorage.getItem('userId') || '';
     this.fetchPlots();
+    this.loadBudgetYears();
 
-     // ✅ สร้าง plotForm เพื่อเก็บค่าแปลงที่เลือก
-     this.plotForm = this.fb.group({
+    // ✅ สร้าง plotForm เพื่อเก็บค่าแปลงที่เลือก
+    this.plotForm = this.fb.group({
       selectedPlot: [null] // ค่าเริ่มต้นเป็น null (ยังไม่ได้เลือกแปลง)
     });
 
@@ -85,6 +97,8 @@ selectedCategory: string | null = null;
     }
   }
 
+
+
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
@@ -97,6 +111,17 @@ selectedCategory: string | null = null;
       },
       error: () => {
         this.showError('harvest.errorLoadingPlots');
+      }
+    });
+  }
+  loadBudgetYears(): void {
+    this.expensesService.getBudgetYears(this.userId).subscribe({
+      next: (res: any) => {
+        this.budgetYears = res;
+        console.log('ข้อมูลปีงบประมาณที่โหลดมา', this.budgetYears);
+      },
+      error: () => {
+        this.showError('harvest.errorLoadingBudgetYears');
       }
     });
   }
@@ -117,33 +142,33 @@ selectedCategory: string | null = null;
     // ✅ เพิ่มค่า plot_id ถ้ามีการเลือกแปลง
     const selectedPlot = this.plotForm?.get('selectedPlot')?.value;
     if (selectedPlot) {
-        filters.plot = selectedPlot;
+      filters.plot = selectedPlot;
     }
 
     console.log("🔍 ค่าที่ส่งไปโหลดข้อมูล:", filters);
-    
+
     this.loadExpenses(filters);
-}
+  }
 
 
-openAddExpense(): void {
-  // ✅ ดึงค่า plotId ถ้ามีการเลือกแปลง
-  this.selectedPlotIdForAddForm = this.plotForm?.get('selectedPlot')?.value || null;
+  openAddExpense(): void {
+    // ✅ ดึงค่า plotId ถ้ามีการเลือกแปลง
+    this.selectedPlotIdForAddForm = this.plotForm?.get('selectedPlot')?.value || null;
 
-  console.log("📍 plot_id ที่จะส่งไปยังฟอร์มเพิ่มค่าใช้จ่าย:", this.selectedPlotIdForAddForm);
+    console.log("📍 plot_id ที่จะส่งไปยังฟอร์มเพิ่มค่าใช้จ่าย:", this.selectedPlotIdForAddForm);
 
-  this.showAddForm = !this.showAddForm; // ✅ สลับสถานะเปิด/ปิดฟอร์ม
-  this.showEditForm = false; // ✅ ปิดฟอร์มแก้ไข
-  this.showPreviewForm = false; // ✅ ปิดฟอร์มแสดงตัวอย่าง
+    this.showAddForm = !this.showAddForm; // ✅ สลับสถานะเปิด/ปิดฟอร์ม
+    this.showEditForm = false; // ✅ ปิดฟอร์มแก้ไข
+    this.showPreviewForm = false; // ✅ ปิดฟอร์มแสดงตัวอย่าง
 
-  setTimeout(() => {
-    if (this.addFormSection) {
+    setTimeout(() => {
+      if (this.addFormSection) {
         this.addFormSection.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    } else {
+      } else {
         console.warn("⚠️ ไม่พบ element addFormSection");
-    }
-  }, 100);
-}
+      }
+    }, 100);
+  }
 
 
 
@@ -165,36 +190,36 @@ openAddExpense(): void {
 
     // ✅ โหลดข้อมูลใหม่
     this.loadExpenses();
-}
+  }
 
 
   editExpense(expenseId: number, category: string): void {
     if (expenseId && category) { // ✅ ตรวจสอบว่า expenseId และ category มีค่า
-        this.selectedExpenseId = expenseId;
-        this.selectedCategory = category;
-        this.showEditForm = true;
-        this.showAddForm = false;
-        this.showPreviewForm = false
+      this.selectedExpenseId = expenseId;
+      this.selectedCategory = category;
+      this.showEditForm = true;
+      this.showAddForm = false;
+      this.showPreviewForm = false
 
-        // ✅ เลื่อนหน้าไปยังฟอร์มแก้ไข
-        setTimeout(() => {
-            if (this.editFormSection) {
-                this.editFormSection.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            } else {
-                console.warn("⚠️ ไม่พบ element editFormSection");
-            }
-        }, 100);
+      // ✅ เลื่อนหน้าไปยังฟอร์มแก้ไข
+      setTimeout(() => {
+        if (this.editFormSection) {
+          this.editFormSection.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+          console.warn("⚠️ ไม่พบ element editFormSection");
+        }
+      }, 100);
     } else {
-        console.warn("❌ ไม่สามารถแก้ไขได้: expenseId หรือ category ไม่ถูกต้อง");
-        Swal.fire({
-            icon: 'error',
-            title: 'เกิดข้อผิดพลาด',
-            text: 'ไม่สามารถแก้ไขค่าใช้จ่ายได้ กรุณาลองอีกครั้ง!',
-            confirmButtonText: 'ตกลง'
-        });
+      console.warn("❌ ไม่สามารถแก้ไขได้: expenseId หรือ category ไม่ถูกต้อง");
+      Swal.fire({
+        icon: 'error',
+        title: 'เกิดข้อผิดพลาด',
+        text: 'ไม่สามารถแก้ไขค่าใช้จ่ายได้ กรุณาลองอีกครั้ง!',
+        confirmButtonText: 'ตกลง'
+      });
     }
-  
-}
+
+  }
 
   deleteExpense(expenseId: number): void {
     Swal.fire({
@@ -245,48 +270,68 @@ openAddExpense(): void {
 
   previewExpense(expenseId: number, category: string): void {
     if (expenseId && category) { // ✅ ตรวจสอบว่า expenseId และ category มีค่า
-        this.selectedExpenseId = expenseId;
-        this.selectedCategory = category;
-        this.showEditForm = false;
-        this.showAddForm = false;
-        this.showPreviewForm = true
+      this.selectedExpenseId = expenseId;
+      this.selectedCategory = category;
+      this.showEditForm = false;
+      this.showAddForm = false;
+      this.showPreviewForm = true
 
-        // ✅ เลื่อนหน้าไปยังฟอร์มแก้ไข
-        setTimeout(() => {
-            if (this.showPreviewSection) {
-                this.showPreviewSection.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            } else {
-                console.warn("⚠️ ไม่พบ element editFormSection");
-            }
-        }, 100);
+      // ✅ เลื่อนหน้าไปยังฟอร์มแก้ไข
+      setTimeout(() => {
+        if (this.showPreviewSection) {
+          this.showPreviewSection.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+          console.warn("⚠️ ไม่พบ element editFormSection");
+        }
+      }, 100);
     } else {
-        console.warn("❌ ไม่สามารถแก้ไขได้: expenseId หรือ category ไม่ถูกต้อง");
-        Swal.fire({
-            icon: 'error',
-            title: 'เกิดข้อผิดพลาด',
-            text: 'ไม่สามารถแก้ไขค่าใช้จ่ายได้ กรุณาลองอีกครั้ง!',
-            confirmButtonText: 'ตกลง'
-        });
+      console.warn("❌ ไม่สามารถแก้ไขได้: expenseId หรือ category ไม่ถูกต้อง");
+      Swal.fire({
+        icon: 'error',
+        title: 'เกิดข้อผิดพลาด',
+        text: 'ไม่สามารถแก้ไขค่าใช้จ่ายได้ กรุณาลองอีกครั้ง!',
+        confirmButtonText: 'ตกลง'
+      });
     }
-  
-}
+
+  }
 
 
-togglePlot(plotId: number): void {
-  if (!this.plotForm) return;
+  togglePlot(plotId: number): void {
+    if (!this.plotForm) return;
 
-  const currentPlot = this.plotForm.get('selectedPlot')?.value;
+    const currentPlot = this.plotForm.get('selectedPlot')?.value;
 
-  // ✅ ถ้ากดแปลงเดิม ให้เซ็ตเป็น null (ล้างค่า)
-  this.plotForm.get('selectedPlot')?.setValue(currentPlot === plotId ? null : plotId);
+    // ✅ ถ้ากดแปลงเดิม ให้เซ็ตเป็น null (ล้างค่า)
+    this.plotForm.get('selectedPlot')?.setValue(currentPlot === plotId ? null : plotId);
 
-  // ✅ โหลดข้อมูลใหม่จาก API ตามแปลงที่เลือก
-  this.onSearch();
-}
+    // ✅ โหลดข้อมูลใหม่จาก API ตามแปลงที่เลือก
+    this.onSearch();
+  }
 
-isSelected(plotId: number): boolean {
-  return this.plotForm.get('selectedPlot')?.value === plotId;
-}
+  isSelected(plotId: number): boolean {
+    return this.plotForm.get('selectedPlot')?.value === plotId;
+  }
 
-  
+  toggleYear(year: number): void {
+    this.selectedYear = this.selectedYear === year ? null : year;
+
+    // คำนวณช่วงวันที่ของปีงบประมาณที่เลือก
+    let startDate = null;
+    let endDate = null;
+
+    if (this.selectedYear) {
+      startDate = `${this.selectedYear}-04-01`; // 1 เมษายน ปีที่เลือก
+      endDate = `${this.selectedYear + 1}-03-31`; // 31 มีนาคม ปีถัดไป
+    }
+
+    // ✅ อัปเดตค่า `startDate`, `endDate` ใน `searchForm`
+    this.searchForm.patchValue({ startDate, endDate });
+
+    // ✅ เรียก `onSearch()` และส่งค่าค้นหา
+    this.onSearch();
+  }
+
+
+
 }

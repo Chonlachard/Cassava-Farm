@@ -696,4 +696,37 @@ exports.updateExpense = async (req, res) => {
     });
 };
 
+exports.getMonthExpense = async (req, res) => {
+    const userId = req.query.user_id;
+
+    // ตรวจสอบว่ามีการส่ง user_id มาหรือไม่
+    if (!userId) {
+        return res.status(400).json({ message: 'กรุณาระบุ user_id' });
+    }
+
+    const query = `SELECT 
+    YEAR(DATE_SUB(e.expenses_date, INTERVAL 3 MONTH)) AS budget_year,
+    CONCAT(
+        YEAR(DATE_SUB(e.expenses_date, INTERVAL 3 MONTH)), ' - ', 
+        YEAR(DATE_SUB(e.expenses_date, INTERVAL 3 MONTH)) + 1
+    ) AS budget_period,
+    CONCAT(YEAR(DATE_SUB(e.expenses_date, INTERVAL 3 MONTH)), '-04-01') AS start_date,
+    CONCAT(YEAR(DATE_SUB(e.expenses_date, INTERVAL 3 MONTH)) + 1, '-03-31') AS end_date
+FROM expenses e
+WHERE e.is_deleted = 0
+AND e.user_id = ?
+GROUP BY budget_year
+ORDER BY budget_year;
+ ` ;
+ 
+    db.query(query, [userId], (err, results) => {
+        if (err) {
+            console.error('Error executing query:', err.stack);
+            return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการดึงข้อมูลค่าใช้จ่าย' });
+        }
+
+        res.json(results);
+    });
+}
+
 

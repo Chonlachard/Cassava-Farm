@@ -257,11 +257,6 @@ exports.updateHarvest = async (req, res) => {
 };
 
 
-
-
-
-
-
 exports.getUpdateHarvest = async (req, res) => {
     const harvestId = req.params.harvest_id;
     console.log(harvestId)

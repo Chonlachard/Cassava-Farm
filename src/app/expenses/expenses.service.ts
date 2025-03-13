@@ -87,4 +87,11 @@ export class ExpensesService {
       params: { expense_id: expenseId }
     });
   }
+
+
+  getBudgetYears(userId: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/getMonthExpense?user_id=${userId}`);
+}
+
+
 }

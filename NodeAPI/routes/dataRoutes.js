@@ -90,6 +90,7 @@ router.post('/addExpenses', expensesController.addExpense);
 router.put('/expenses/:expense_id', expensesController.deleteExpense);
 router.put('/editExpenses', expensesController.updateExpense);
 router.get('/getExpenseEdit', expensesController.getExpenseEdit);
+router.get('/getMonthExpense', expensesController.getMonthExpense);
 
 
 // 8 Expense Detail Routes

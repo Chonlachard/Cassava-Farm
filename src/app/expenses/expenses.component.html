@@ -12,17 +12,6 @@
                 <div class="search-container p-4 bg-white rounded shadow-sm">
                     <div class="row g-3">
 
-                        <!-- <div class="col-md-3">
-                            <div class="form-group">
-                                <label for="plot" class="form-label">ค้นหาตามแปลง</label>
-                                <select formControlName="plot" id="plot" class="form-select">
-                                    <option value="" disabled selected>เลือกแปลง</option>
-                                    <option *ngFor="let plot of plots" [value]="plot.plot_id">{{ plot.plot_name }}
-                                    </option>
-                                </select>
-                            </div>
-                        </div> -->
-
                         <!-- ช่องเลือกหมวดหมู่ -->
                         <div class="col-md-3">
                             <label for="category" class="form-label">หมวดหมู่ค่าใช้จ่าย</label>
@@ -65,6 +54,20 @@
                 </div>
             </form>
         </div>
+        <!-- ✅ ปุ่มเลือกช่วงปีงบประมาณ ดึงข้อมูลจาก Database -->
+        <div class="container mt-3">
+            <form [formGroup]="searchForm">
+                <div class="border border-primary p-2 rounded d-flex flex-wrap align-items-center gap-2">
+                    <p class="fw-bold mb-0">เลือกช่วงปีงบประมาณ:</p>
+                    <button *ngFor="let budget of budgetYears; let i = index" type="button" class="btn"
+                        [ngClass]="selectedYear === budget.budget_year ? 'btn-primary' : 'btn-outline-primary'"
+                        (click)="toggleYear(budget.budget_year)">
+                        ครั้งที่ {{ i + 1 }} ปี {{ budget.budget_year }}
+                    </button>
+                </div>
+            </form>
+        </div>
+        
 
 
         <!-- ตารางแสดงข้อมูล -->
