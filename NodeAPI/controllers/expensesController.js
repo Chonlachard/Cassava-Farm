@@ -78,7 +78,7 @@ WHERE e.user_id = ? AND e.is_deleted = 0
     }
 
     // เรียงลำดับตามวันที่
-    query += ' ORDER BY e.expenses_date ASC';
+    query += ' ORDER BY e.expenses_date DESC';
 
     // การรันคำสั่ง SQL
     db.query(query, values, (err, results) => {
